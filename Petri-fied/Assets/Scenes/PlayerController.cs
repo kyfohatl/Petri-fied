@@ -5,43 +5,42 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
   [SerializeField]
-  private float forwardSpeedMult = 10f, strafeSpeedMult = 5f, hoverSpeedMult = 5f;
-  private float forwardVelocity, strafeVelocity, hoverVelocity;
-  private float forwardAcceleration = 2.5f, strafeAcceleration = 2f, hoverAcceleration = 2f;
-
+  private CharacterController controller;
   [SerializeField]
-  private float rotationSpeed = 90f;
-  private Vector2 mousePos, screenCentre, mouseToCentreDist;
+  private float speedMultiplier = 10f;
+  [SerializeField]
+  private float acceleration = 2f;
+  // Controls how smoothly the player turns from one direction to another
+  [SerializeField]
+  private float turnSmooth = 0.05f;
+  public Transform cam;
+
+  private Vector3 curDir = new Vector3(0f, 0f, 0f);
 
   // Start is called before the first frame update
   void Start()
   {
-    screenCentre.x = Screen.width / 2.0f;
-    screenCentre.y = Screen.height / 2.0f;
+
   }
 
   // Update is called once per frame
   void Update()
   {
-    mouseToCentreDist.x = (Input.mousePosition.x - screenCentre.x) / screenCentre.x;
-    // TODO: Check if division by screenCentre.y is correct below
-    mouseToCentreDist.y = (Input.mousePosition.y - screenCentre.y) / screenCentre.y;
+    // Calculate the target direction of movement
+    Vector3 horizontalMoveDir = cam.right * Input.GetAxisRaw("Horizontal");
+    Vector3 verticalMoveDir = cam.forward * Input.GetAxisRaw("Vertical");
+    Vector3 hoverMoveDir = cam.up * Input.GetAxisRaw("Hover");
+    Vector3 tgtDir = (horizontalMoveDir + verticalMoveDir + hoverMoveDir).normalized;
 
-    mouseToCentreDist = Vector2.ClampMagnitude(mouseToCentreDist, 1f);
+    if (tgtDir.magnitude >= 0.1f)
+    {
+      // Calculate direction based on acceleration
+      curDir = Vector3.Lerp(curDir, tgtDir, acceleration * Time.deltaTime);
 
-    transform.Rotate(
-      -mouseToCentreDist.y * rotationSpeed * Time.deltaTime,
-      mouseToCentreDist.x * rotationSpeed * Time.deltaTime,
-      0f,
-      Space.Self
-    );
-
-    forwardVelocity = Mathf.Lerp(forwardVelocity, forwardSpeedMult * Input.GetAxisRaw("Vertical"), forwardAcceleration * Time.deltaTime);
-    strafeVelocity = Mathf.Lerp(strafeVelocity, strafeSpeedMult * Input.GetAxisRaw("Horizontal"), strafeAcceleration * Time.deltaTime);
-    hoverVelocity = Mathf.Lerp(hoverVelocity, hoverSpeedMult * Input.GetAxisRaw("Hover"), hoverAcceleration * Time.deltaTime);
-
-    transform.position += transform.forward * forwardVelocity * Time.deltaTime;
-    transform.position += transform.right * strafeVelocity * Time.deltaTime;
-    transform.position += transform.up * hoverVelocity * Time.deltaTime;
+      // Rotate the model to face the direction of travel
+      transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(tgtDir), turnSmooth);
+      // Move towards the current direction
+      controller.Move(curDir * speedMultiplier * Time.deltaTime);
+    }
   }
 }
