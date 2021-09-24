@@ -14,13 +14,15 @@ public class PlayerController : MonoBehaviour
   [SerializeField]
   private float turnSmooth = 0.05f;
   public Transform cam;
+  public GameObject bubbleEffectObject;
+  private ParticleSystem bubbleEffect;
 
   private Vector3 curDir = new Vector3(0f, 0f, 0f);
 
   // Start is called before the first frame update
   void Start()
   {
-
+    bubbleEffect = bubbleEffectObject.GetComponent<ParticleSystem>();
   }
 
   // Update is called once per frame
@@ -32,8 +34,11 @@ public class PlayerController : MonoBehaviour
     Vector3 hoverMoveDir = cam.up * Input.GetAxisRaw("Hover");
     Vector3 tgtDir = (horizontalMoveDir + verticalMoveDir + hoverMoveDir).normalized;
 
+    var emission = bubbleEffect.emission;
+
     if (tgtDir.magnitude >= 0.1f)
     {
+      emission.rateOverTime = 5f;
       // Calculate direction based on acceleration
       curDir = Vector3.Lerp(curDir, tgtDir, acceleration * Time.deltaTime);
 
@@ -41,6 +46,10 @@ public class PlayerController : MonoBehaviour
       transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(tgtDir), turnSmooth);
       // Move towards the current direction
       controller.Move(curDir * speedMultiplier * Time.deltaTime);
+    }
+    else
+    {
+      emission.rateOverTime = 0.5f;
     }
   }
 }
