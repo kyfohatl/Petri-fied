@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(IsMoving))]
 public class PlayerController : MonoBehaviour
 {
   [SerializeField]
@@ -20,7 +21,6 @@ public class PlayerController : MonoBehaviour
   // Start is called before the first frame update
   void Start()
   {
-
   }
 
   // Update is called once per frame
@@ -34,6 +34,9 @@ public class PlayerController : MonoBehaviour
 
     if (tgtDir.magnitude >= 0.1f)
     {
+      // Player is moving
+      gameObject.GetComponent<IsMoving>().isMoving = true;
+
       // Calculate direction based on acceleration
       curDir = Vector3.Lerp(curDir, tgtDir, acceleration * Time.deltaTime);
 
@@ -42,6 +45,11 @@ public class PlayerController : MonoBehaviour
       
       // Move towards the current direction
       controller.Move(curDir * speedMultiplier * Time.deltaTime / transform.localScale.x);
+    }
+    else
+    {
+      // Player is not moving
+      gameObject.GetComponent<IsMoving>().isMoving = false;
     }
   }
 }
