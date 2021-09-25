@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(IsMoving))]
 public class PlayerController : MonoBehaviour
 {
   [SerializeField]
@@ -14,15 +15,12 @@ public class PlayerController : MonoBehaviour
   [SerializeField]
   private float turnSmooth = 0.05f;
   public Transform cam;
-  public GameObject bubbleEffectObject;
-  private ParticleSystem bubbleEffect;
 
   private Vector3 curDir = new Vector3(0f, 0f, 0f);
 
   // Start is called before the first frame update
   void Start()
   {
-    bubbleEffect = bubbleEffectObject.GetComponent<ParticleSystem>();
   }
 
   // Update is called once per frame
@@ -34,11 +32,11 @@ public class PlayerController : MonoBehaviour
     Vector3 hoverMoveDir = cam.up * Input.GetAxisRaw("Hover");
     Vector3 tgtDir = (horizontalMoveDir + verticalMoveDir + hoverMoveDir).normalized;
 
-    var emission = bubbleEffect.emission;
-
     if (tgtDir.magnitude >= 0.1f)
     {
-      emission.rateOverTime = 5f;
+      // Player is moving
+      gameObject.GetComponent<IsMoving>().isMoving = true;
+
       // Calculate direction based on acceleration
       curDir = Vector3.Lerp(curDir, tgtDir, acceleration * Time.deltaTime);
 
@@ -49,7 +47,8 @@ public class PlayerController : MonoBehaviour
     }
     else
     {
-      emission.rateOverTime = 0.5f;
+      // Player is not moving
+      gameObject.GetComponent<IsMoving>().isMoving = false;
     }
   }
 }
