@@ -39,8 +39,9 @@ public class PlayerController : MonoBehaviour
 
       // Rotate the model to face the direction of travel
       transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(tgtDir), turnSmooth);
+      
       // Move towards the current direction
-      controller.Move(curDir * speedMultiplier * Time.deltaTime);
+      controller.Move(curDir * speedMultiplier * Time.deltaTime / transform.localScale.x);
     }
   }
 }
