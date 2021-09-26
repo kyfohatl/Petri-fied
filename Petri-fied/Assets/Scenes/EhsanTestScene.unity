@@ -14,10 +14,10 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_Fog: 1
+  m_FogColor: {r: 0.06407974, g: 0.9056604, b: 0.64044404, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.03
+  m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
@@ -438,7 +438,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.04937478, y: -0.000000017613296, z: 8.4163093e-10, w: 0.99878037}
+  m_LocalRotation: {x: 0.04937478, y: -0.000000017613289, z: 8.415166e-10, w: 0.99878037}
   m_LocalPosition: {x: 0, y: 1.36, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -938,15 +938,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1925168326587776939, guid: b4a7cd11e42531143a791734fc0b756c, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.031247322
+      value: 0.03124732
       objectReference: {fileID: 0}
     - target: {fileID: 1925168326587776939, guid: b4a7cd11e42531143a791734fc0b756c, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000017164455
+      value: 0.000000017265126
       objectReference: {fileID: 0}
     - target: {fileID: 1925168326587776939, guid: b4a7cd11e42531143a791734fc0b756c, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 5.3660537e-10
+      value: -5.3975246e-10
       objectReference: {fileID: 0}
     - target: {fileID: 1925168327321270273, guid: b4a7cd11e42531143a791734fc0b756c, type: 3}
       propertyPath: m_LocalRotation.y
@@ -1014,11 +1014,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1925168327493606404, guid: b4a7cd11e42531143a791734fc0b756c, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000017167098
+      value: 0.000000017167102
       objectReference: {fileID: 0}
     - target: {fileID: 1925168327493606404, guid: b4a7cd11e42531143a791734fc0b756c, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.0000000011620138
+      value: -0.0000000011620142
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4a7cd11e42531143a791734fc0b756c, type: 3}
