@@ -129,7 +129,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh26424
+  m_Name: pb_Mesh29664
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -723,12 +723,36 @@ PrefabInstance:
       value: ControllablePlayer
       objectReference: {fileID: 0}
     - target: {fileID: 8203020860479167202, guid: bf63ce55e87d3ba458e76fc6903eb92a, type: 3}
+      propertyPath: m_XAxis.m_MaxSpeed
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 8203020860479167202, guid: bf63ce55e87d3ba458e76fc6903eb92a, type: 3}
+      propertyPath: m_YAxis.m_MaxSpeed
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8203020860479167202, guid: bf63ce55e87d3ba458e76fc6903eb92a, type: 3}
+      propertyPath: m_XAxis.m_AccelTime
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8203020860479167202, guid: bf63ce55e87d3ba458e76fc6903eb92a, type: 3}
+      propertyPath: m_YAxis.m_SpeedMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8203020860479167202, guid: bf63ce55e87d3ba458e76fc6903eb92a, type: 3}
       propertyPath: m_Lens.m_SensorSize.x
-      value: 0.8810742
+      value: 1.6850575
       objectReference: {fileID: 0}
     - target: {fileID: 8203020860479167202, guid: bf63ce55e87d3ba458e76fc6903eb92a, type: 3}
       propertyPath: m_YAxis.m_InvertInput
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8203020860479167202, guid: bf63ce55e87d3ba458e76fc6903eb92a, type: 3}
+      propertyPath: m_XAxis.m_InputAxisName
+      value: HorizontalLook
+      objectReference: {fileID: 0}
+    - target: {fileID: 8203020860479167202, guid: bf63ce55e87d3ba458e76fc6903eb92a, type: 3}
+      propertyPath: m_YAxis.m_InputAxisName
+      value: HoverLook
       objectReference: {fileID: 0}
     - target: {fileID: 8203020860479167203, guid: bf63ce55e87d3ba458e76fc6903eb92a, type: 3}
       propertyPath: m_LocalPosition.y
