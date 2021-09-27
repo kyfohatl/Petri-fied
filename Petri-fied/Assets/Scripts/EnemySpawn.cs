@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class EnemySpawn : MonoBehaviour
 {
-  // Track Arena
-  public GameObject Arena;
-  
   // Enemy prefab
   public GameObject Enemy;
   
@@ -23,7 +20,6 @@ public class EnemySpawn : MonoBehaviour
   // Start is called before the first frame update
   void Start()
   {
-    Arena = GameObject.FindGameObjectWithTag("Arena");
     deltaSpawn = 1f / spawnRate;
     timer = deltaSpawn;
   }
@@ -50,8 +46,8 @@ public class EnemySpawn : MonoBehaviour
   void Generate()
   {
     // Determine spawn position
-    float radius = 500f;
-    float height = 150f;
+    float radius = 150f;
+    float height = 50f;
     
     Vector2 coord = Random.insideUnitCircle * radius;
     float y = Random.Range(transform.position.z - height / 2f, transform.position.z + height / 2f);
