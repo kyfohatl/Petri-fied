@@ -34,7 +34,7 @@ public class IntelligentAgent : MonoBehaviour
     {
         this.FoodGrowthMultiplier = UnityEngine.Random.Range(1f, 3f);
         this.SpeedMultiplier = UnityEngine.Random.Range(1f, 3f);
-        this.ScoreDecayRate = UnityEngine.Random.Range(0.001f, 0.05f);
+        this.ScoreDecayRate = UnityEngine.Random.Range(0.01f, 0.05f);
     }
     
     // Function called on collisions

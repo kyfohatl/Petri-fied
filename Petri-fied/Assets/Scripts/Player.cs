@@ -26,7 +26,7 @@ public class Player : IntelligentAgent
   {
     nameLabel.text = Name;
     UpdateGUI();
-    InvokeRepeating("DecayScore", 10.0f, 10.0f); // first call: 10s, repeats: 10s
+    InvokeRepeating("DecayScore", 10.0f, 30.0f); // first call: 10s, repeats: 30s
   }
   
   // Update is called once per frame
