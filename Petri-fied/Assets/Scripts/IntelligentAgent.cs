@@ -4,21 +4,24 @@ using UnityEngine;
 
 public class IntelligentAgent : MonoBehaviour
 {
-    // Agent metadata elements
-    public string Name;
+    // Agent data elements
+    public string Name = "JoeMama-420";
     public int Score = 1;
     public float Radius = 1f;
     
     // Agent genetic modifiers
     public float FoodGrowthMultiplier;
     public float SpeedMultiplier;
-    public float ScoreDecayMultiplier;
+    public float ScoreDecayRate; // percentage of score loss per decay
     
-    // Agent statistics tracking
-    private float initialisationTime;
+    // Agent statistics
     private int peakScore;
+    private float initialisationTime;
     
-    // Second constructor with string argument
+    // Game manager to load other entities
+    public GameManager GameManager;
+    
+    // Default Constructor
     public IntelligentAgent(string givenName)
     {
         initialisationTime = Time.timeSinceLevelLoad;
@@ -31,7 +34,7 @@ public class IntelligentAgent : MonoBehaviour
     {
         this.FoodGrowthMultiplier = UnityEngine.Random.Range(1f, 3f);
         this.SpeedMultiplier = UnityEngine.Random.Range(1f, 3f);
-        this.ScoreDecayMultiplier = UnityEngine.Random.Range(0.5f, 3f);
+        this.ScoreDecayRate = UnityEngine.Random.Range(0.001f, 0.05f);
     }
     
     // Function called on collisions
@@ -53,7 +56,7 @@ public class IntelligentAgent : MonoBehaviour
                 
                 if (scoreDifference > 0)
                 {
-                    UpdateScore(scoreDifference);
+                    UpdateScore(otherPlayer.getScore());
                     Destroy(other.gameObject);
                     GameManager.RemoveEnemy(other.gameObject.GetInstanceID());
                 }
@@ -82,16 +85,26 @@ public class IntelligentAgent : MonoBehaviour
     // Function to update size
     public void UpdateSize()
     {
-        float increment = 0.01f;
-        float sizeDifference = transform.localScale.x - this.Radius;
+        float sizeChangeSpeed = 5.0f;
+        float sizeDifference = this.Radius - transform.localScale.x;
         
-        if (sizeDifference < 0)
+        float X = transform.localScale.x + sizeDifference;
+        float Y = transform.localScale.y + sizeDifference;
+        float Z = transform.localScale.z + sizeDifference;
+        Vector3 newScale = new Vector3(X, Y, Z);
+        
+        transform.localScale = Vector3.Lerp(transform.localScale, newScale, sizeChangeSpeed * Time.deltaTime);
+    }
+    
+    // Function to implement score decay
+    public void DecayScore()
+    {
+        int reduction = (int)Mathf.Floor(this.ScoreDecayRate * this.Score);
+        if (this.Score > 1)
         {
-            transform.localScale += new Vector3(increment, increment, increment);
-        }
-        else if (sizeDifference > 0 && sizeDifference > increment)
-        {
-            transform.localScale -= new Vector3(increment, increment, increment);
+            // Minimum reduction per decay is 1, take min between calculated neg reduction and -1
+            reduction = (int)Mathf.Min(-reduction, -1);
+            UpdateScore(reduction);
         }
     }
     
@@ -113,13 +126,19 @@ public class IntelligentAgent : MonoBehaviour
         return this.Radius;
     }
     
+    // Getter method for speed multiplier
+    public float getSpeedMultiplier()
+    {
+        return this.SpeedMultiplier;
+    }
+    
     // Getter method for initialisation time
     public float getInitialisationTime()
     {
         return this.initialisationTime;
     }
     
-    // Getter method for initialisation time
+    // Getter method for peak score
     public float getPeakScore()
     {
         return this.peakScore;

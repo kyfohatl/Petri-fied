@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     public static GameManager inst;
     public bool gameOver = false;
     
-    // Dictionaries containing game entities
+    // Variety of game entities
     public GameObject Player;
     private Dictionary<int, GameObject> Food;
     private Dictionary<int, GameObject> Enemies;
@@ -17,11 +17,12 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         inst = this;
+        Player = GameObject.FindGameObjectWithTag("Player");
         Food = new Dictionary<int, GameObject>();
         Enemies = new Dictionary<int, GameObject>();
     }
     
-    // Functions for adding / removing food and emenies from tracker
+    // Function for adding food to manager dictionary
     public static void AddFood(int id, GameObject obj)
     {
         if (inst.Food.ContainsKey(id))
@@ -34,6 +35,7 @@ public class GameManager : MonoBehaviour
         Debug.Log(inst.Food.Count);
     }
     
+    // Function for adding an enemy to manager dictionary
     public static void AddEnemy(int id, GameObject obj)
     {
         if (inst.Enemies.ContainsKey(id))
@@ -46,6 +48,7 @@ public class GameManager : MonoBehaviour
         Debug.Log(inst.Enemies.Count);
     }
     
+    // Function for removing food from manager dictionary
     public static void RemoveFood(int id)
     {
         if (!inst.Food.ContainsKey(id))
@@ -58,6 +61,7 @@ public class GameManager : MonoBehaviour
         Debug.Log(inst.Food.Count);
     }
     
+    // Function for removing an enemy from manager dictionary
     public static void RemoveEnemy(int id)
     {
         if (!inst.Enemies.ContainsKey(id))

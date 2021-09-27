@@ -8,8 +8,6 @@ public class Enemy : IntelligentAgent
 {
     // Target and determination delay
     public Transform Target;
-    private float delayTimer;
-    private float deltaDetermine = 1.0f; // delay between targeting
     
     // Track player
     public GameObject Player;
@@ -17,9 +15,6 @@ public class Enemy : IntelligentAgent
     // Radius of player visibility
     public float LookRadius;
     public float LookRadiusMultiplier = 5f;
-    
-    // Game manager to load other entities
-    public GameManager GameManager;
     
     // Function to call parent contructor
     public Enemy(string givenName) : base(givenName)
@@ -33,26 +28,23 @@ public class Enemy : IntelligentAgent
         GenerateRandomName();
         Player = GameObject.FindGameObjectWithTag("Player");
         LookRadius = LookRadiusMultiplier * Radius;
-        DetermineTarget();
-        delayTimer = deltaDetermine;
+        InvokeRepeating("DecayScore", 10.0f, 30.0f); // first call: 10s, repeats: 10s
     }
     
     // Update is called once per frame
     void Update()
     {
         UpdateSize();
-        this.delayTimer -= Time.deltaTime;
         
-        if (this.delayTimer < 0f)
+        if (Target == null)
         {
-            this.delayTimer = this.deltaDetermine;
             DetermineTarget();
         }
         
         if (Target != null)
         {
             FaceTarget();
-            transform.position += transform.forward * SpeedMultiplier * Time.deltaTime;
+            transform.position += 2.0f * transform.forward * this.SpeedMultiplier * Time.deltaTime / transform.localScale.x;
         }
     }
     
@@ -60,7 +52,7 @@ public class Enemy : IntelligentAgent
     public override void UpdateRadius()
     {
         base.UpdateRadius();
-        this.LookRadius = LookRadiusMultiplier * Radius;
+        this.LookRadius = this.LookRadiusMultiplier * Radius;
     }
     
     // Function to generate a random name
@@ -92,7 +84,7 @@ public class Enemy : IntelligentAgent
         if (playerDistance <= LookRadius && playerScore < this.getScore())
         {
             // Player has lower score and within 5 radius.
-            Target = Player.transform;
+            this.Target = Player.transform;
             return;
         }
         
@@ -111,7 +103,7 @@ public class Enemy : IntelligentAgent
             }
         }
         
-        // Thirdly, food
+        // Lastly, food
         closestFood = GetClosestObject(GameManager.get().getFood());
         if (closestFood != null)
         {
@@ -133,6 +125,7 @@ public class Enemy : IntelligentAgent
         GameObject tMin = null;
         float minDist = Mathf.Infinity;
         Vector3 currentPos = transform.position;
+        
         foreach (KeyValuePair<int, GameObject> t in objs)
         {
             float dist = Vector3.Distance(t.Value.transform.position, currentPos);
@@ -142,6 +135,7 @@ public class Enemy : IntelligentAgent
                 minDist = dist;
             }
         }
+        
         return tMin;
     }
 }
