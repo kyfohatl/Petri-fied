@@ -113,13 +113,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94753114c25ae4d408b221fffe02a6fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Score: 1
   Name: Protagonist
+  Score: 1
   Radius: 1
-  GrowthRate: 1
-  scoreLabel: {fileID: 3066977017271980628}
-  nameLabel: {fileID: 487154346464855007}
-  timeLabel: {fileID: 1625160652698126913}
+  FoodGrowthMultiplier: 1
+  SpeedMultiplier: 1
+  ScoreDecayRate: 0.02
+  GameManager: {fileID: 0}
+  scoreLabel: {fileID: 0}
+  nameLabel: {fileID: 0}
+  timeLabel: {fileID: 0}
 --- !u!1 &8850037745246912971
 GameObject:
   m_ObjectHideFlags: 0
@@ -5177,36 +5180,3 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3143953179349286918, guid: 77bc31b2966594a4dbd10f1ed53bd220, type: 3}
   m_PrefabInstance: {fileID: 850101291294676830}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3066977017271980628 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2403864229547394314, guid: 77bc31b2966594a4dbd10f1ed53bd220, type: 3}
-  m_PrefabInstance: {fileID: 850101291294676830}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &487154346464855007 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 940850806455473281, guid: 77bc31b2966594a4dbd10f1ed53bd220, type: 3}
-  m_PrefabInstance: {fileID: 850101291294676830}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1625160652698126913 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2108126208875814175, guid: 77bc31b2966594a4dbd10f1ed53bd220, type: 3}
-  m_PrefabInstance: {fileID: 850101291294676830}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

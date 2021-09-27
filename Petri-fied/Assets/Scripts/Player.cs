@@ -25,7 +25,7 @@ public class Player : IntelligentAgent
   void Start()
   {
     nameLabel.text = Name;
-    UpdateGUI();
+    //UpdateGUI();
     InvokeRepeating("DecayScore", 10.0f, 30.0f); // first call: 10s, repeats: 30s
   }
   
@@ -34,7 +34,7 @@ public class Player : IntelligentAgent
   {
     this.survivalTime = Time.timeSinceLevelLoad - base.getInitialisationTime();
     UpdateSize();
-    UpdateGUI();
+    //UpdateGUI();
   }
   
   // Function to update the GUI
