@@ -42,18 +42,20 @@ public class EnemySpawn : MonoBehaviour
     }
   }
 
-  // Function to instantiate new food objects into the scene: needs updating to map to petri-dish dimensions (can be a child of the petri dish to get dimensions from parent is my idea)
+  // Function to instantiate new food objects into the world
   void Generate()
   {
-    // Below variables currently spawn enemies
-    float x = Random.Range(-50, 50);
-    float y = Random.Range(-10, 10);
-    float z = Random.Range(-50, 50);
+    // Determine spawn position
+    float radius = 150f;
+    float height = 50f;
 
-    Vector3 Target = new Vector3(x, y, z);
+    Vector2 coord = Random.insideUnitCircle * radius;
+    float y = Random.Range(transform.position.z - height / 2f, transform.position.z + height / 2f);
+
+    Vector3 Target = new Vector3(transform.position.x + coord.x, transform.position.y + y, transform.position.z + coord.y);
 
     // Actually generates the food and sets as child of spawner
-    GameObject spawned = Instantiate(Enemy, Target, Quaternion.identity, transform);
+    GameObject spawned = Instantiate(Enemy, Target, Random.rotation, transform);
 
     // Track the Enemy spawned.
     GameManager.AddEnemy(spawned.GetInstanceID(), spawned);

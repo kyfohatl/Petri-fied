@@ -4,20 +4,25 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+  // Instantiate this object
   public static GameManager inst;
+  public bool gameOver = false;
 
-  Dictionary<int, GameObject> Food;
-  Dictionary<int, GameObject> Enemies;
+  // Variety of game entities
+  public GameObject Player;
+  private Dictionary<int, GameObject> Food;
+  private Dictionary<int, GameObject> Enemies;
 
+  // Call on start-up of game
   void Awake()
   {
     inst = this;
+    Player = GameObject.FindGameObjectWithTag("Player");
     Food = new Dictionary<int, GameObject>();
     Enemies = new Dictionary<int, GameObject>();
   }
 
-  // Functions for adding / removing food and emenies from tracker
-
+  // Function for adding food to manager dictionary
   public static void AddFood(int id, GameObject obj)
   {
     if (inst.Food.ContainsKey(id))
@@ -29,6 +34,8 @@ public class GameManager : MonoBehaviour
     inst.Food.Add(id, obj);
     Debug.Log(inst.Food.Count);
   }
+
+  // Function for adding an enemy to manager dictionary
   public static void AddEnemy(int id, GameObject obj)
   {
     if (inst.Enemies.ContainsKey(id))
@@ -41,6 +48,7 @@ public class GameManager : MonoBehaviour
     Debug.Log(inst.Enemies.Count);
   }
 
+  // Function for removing food from manager dictionary
   public static void RemoveFood(int id)
   {
     if (!inst.Food.ContainsKey(id))
@@ -52,6 +60,8 @@ public class GameManager : MonoBehaviour
     inst.Food.Remove(id);
     Debug.Log(inst.Food.Count);
   }
+
+  // Function for removing an enemy from manager dictionary
   public static void RemoveEnemy(int id)
   {
     if (!inst.Enemies.ContainsKey(id))
@@ -67,16 +77,16 @@ public class GameManager : MonoBehaviour
   // Get all food in the world
   public Dictionary<int, GameObject> getFood()
   {
-    return Food;
+    return this.Food;
   }
 
   // Get all enemies in the world
   public Dictionary<int, GameObject> getEnemies()
   {
-    return Enemies;
+    return this.Enemies;
   }
 
-  // Get instance of this gamemanger
+  // Get instance of this GameManager
   public static GameManager get()
   {
     return inst;

@@ -4,126 +4,119 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
-public class Enemy : MonoBehaviour
+public class Enemy : IntelligentAgent
 {
-  // Enemy data elements
-  public int Score;
-  public string Name;
-  public float Radius; // derivable radius
-  public float GrowthRate = 1f;// growth rate: when eating food
-
-  // Chosen target.
+  // Target and determination delay
   public Transform Target;
 
-  // Track player.
+  // Track player
   public GameObject Player;
 
   // Radius of player visibility
-  public float LookRadius = 5f;
+  public float LookRadius;
+  public float LookRadiusMultiplier = 5f;
 
-  // Game manager to load other entities
-  public GameManager GameManager;
+  // Function to call parent contructor
+  public Enemy(string givenName) : base(givenName)
+  {
+    Debug.Log("Enemy: " + Name + " has been generated into the game.");
+  }
 
   // Start is called before the first frame update
   void Start()
   {
+    GenerateRandomName();
     Player = GameObject.FindGameObjectWithTag("Player");
-    Radius = Mathf.Sqrt(Score);
+    LookRadius = LookRadiusMultiplier * Radius;
+    InvokeRepeating("DecayScore", 10.0f, 30.0f); // first call: 10s, repeats: 30s
   }
 
   // Update is called once per frame
   void Update()
   {
-    float increment = 0.01f;
-    float sizeDifference = transform.localScale.x - Radius;
+    UpdateSize();
 
-    if (sizeDifference <= 0)
+    if (Target == null)
     {
-      transform.localScale += new Vector3(increment, increment, increment);
-    }
-    else if (sizeDifference > 0 && sizeDifference > increment)
-    {
-      transform.localScale -= new Vector3(increment, increment, increment);
+      DetermineTarget();
     }
 
-    GameObject closestEnemy = GetClosestObject(GameManager.get().getEnemies());
+    if (Target != null)
+    {
+      FaceTarget();
+      transform.position += 2.0f * transform.forward * this.SpeedMultiplier * Time.deltaTime / transform.localScale.x;
+    }
+  }
 
-    if (Vector3.Distance(transform.position, Player.transform.position) <= LookRadius && Player.GetComponent<Player>().getScore() < this.getScore())
+  // Override Function to update radius and also look radius
+  public override void UpdateRadius()
+  {
+    base.UpdateRadius();
+    this.LookRadius = this.LookRadiusMultiplier * Radius;
+  }
+
+  // Function to generate a random name
+  private void GenerateRandomName()
+  {
+    string randomString = "";
+    int digitCount = 3;
+
+    randomString += (char)UnityEngine.Random.Range('A', 'Z');
+    for (int i = 0; i < digitCount; i++)
+    {
+      randomString += (char)UnityEngine.Random.Range('0', '9');
+    }
+    randomString += "-" + (char)UnityEngine.Random.Range('A', 'Z');
+
+    this.Name = randomString;
+  }
+
+  // Function to determine target
+  public void DetermineTarget()
+  {
+    GameObject closestEnemy = null;
+    GameObject closestFood = null;
+
+    float playerDistance = Vector3.Distance(transform.position, Player.transform.position);
+    int playerScore = Player.GetComponent<Player>().getScore();
+
+    // Prioritise player first
+    if (playerDistance <= LookRadius && playerScore < this.getScore())
     {
       // Player has lower score and within 5 radius.
-      Target = Player.transform;
+      this.Target = Player.transform;
+      return;
     }
-    else if (Vector3.Distance(transform.position, closestEnemy.transform.position) <= LookRadius && closestEnemy.GetComponent<Enemy>().getScore() < this.getScore())
-    {
-      // Another enemy has lower score and within 5 radius.
-      Target = closestEnemy.transform;
-    }
-    else
-    {
-      // Go for food
-      Target = GetClosestObject(GameManager.get().getFood()).transform;
-    }
-    transform.LookAt(Target);
-    transform.position += transform.forward * 2f * Time.deltaTime;
-    FaceTarget();
-  }
 
-  // Function to update Score: called by collision events
-  public void UpdateScore(int amount)
-  {
-    Score += amount;
-    Radius = Mathf.Sqrt(Score);
-  }
+    // Secondly, other enemies
+    closestEnemy = GetClosestObject(GameManager.get().getEnemies());
+    if (closestEnemy != null)
+    {
+      float enemyDistance = Vector3.Distance(transform.position, closestEnemy.transform.position);
+      int enemyScore = closestEnemy.GetComponent<Enemy>().getScore();
 
-  // Function called on collisions
-  void OnTriggerEnter(Collider other)
-  {
-    if (other.gameObject.tag == "Food")
-    {
-      int increase = (int)Mathf.Ceil(GrowthRate);
-      UpdateScore(increase);
-      Destroy(other.gameObject);
-      GameManager.RemoveFood(other.gameObject.GetInstanceID());
-    }
-    else if (other.gameObject.tag == "Enemy")
-    {
-      if (other.gameObject.GetComponent("Enemy") != null)
+      if (enemyDistance <= this.LookRadius && enemyScore < this.getScore())
       {
-        Enemy otherPlayer = other.gameObject.GetComponent<Enemy>();
-        int scoreDifference = Score - otherPlayer.getScore();
-        if (scoreDifference > 0)
-        {
-          UpdateScore(scoreDifference);
-          Destroy(other.gameObject);
-          GameManager.RemoveEnemy(other.gameObject.GetInstanceID());
-        }
-        else if (scoreDifference < 0)
-        {
-          Destroy(gameObject);
-          GameManager.RemoveEnemy(gameObject.GetInstanceID());
-        }
+        // Another enemy has lower score and within 5 radius.
+        this.Target = closestEnemy.transform;
+        return;
       }
     }
+
+    // Lastly, food
+    closestFood = GetClosestObject(GameManager.get().getFood());
+    if (closestFood != null)
+    {
+      this.Target = closestFood.transform;
+    }
   }
 
-  // Getter method for score
-  public int getScore()
-  {
-    return Score;
-  }
-
-  // Getter method for radius
-  public float getRadius()
-  {
-    return Radius;
-  }
-
-  // Look at target
+  // Rotate enemy towards at target
   void FaceTarget()
   {
     Vector3 direction = (Target.position - transform.position).normalized;
-    Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+    Quaternion lookRotation = Quaternion.LookRotation(direction);
+    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 1f);
   }
 
   // Find nearest object in a dictionary
@@ -132,6 +125,7 @@ public class Enemy : MonoBehaviour
     GameObject tMin = null;
     float minDist = Mathf.Infinity;
     Vector3 currentPos = transform.position;
+
     foreach (KeyValuePair<int, GameObject> t in objs)
     {
       float dist = Vector3.Distance(t.Value.transform.position, currentPos);
@@ -141,6 +135,7 @@ public class Enemy : MonoBehaviour
         minDist = dist;
       }
     }
+
     return tMin;
   }
 }
