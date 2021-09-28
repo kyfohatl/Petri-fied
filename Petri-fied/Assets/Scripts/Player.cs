@@ -34,7 +34,7 @@ public class Player : IntelligentAgent
   {
     this.survivalTime = Time.timeSinceLevelLoad - base.getInitialisationTime();
     UpdateSize();
-    //UpdateGUI();
+    UpdateGUI();
   }
 
   // Function to update the GUI

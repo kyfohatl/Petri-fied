@@ -8,11 +8,11 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8868703001289155555}
-  - component: {fileID: 8868703001289155554}
-  - component: {fileID: 8868703001289155553}
-  - component: {fileID: 4146568384330467428}
-  - component: {fileID: 1113824652631462107}
+  - component: {fileID: 888029972118381575}
+  - component: {fileID: 888029972118381568}
+  - component: {fileID: 888029972118381569}
+  - component: {fileID: 888029972118381570}
+  - component: {fileID: 888029972118381571}
   m_Layer: 0
   m_Name: Food
   m_TagString: Food
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 888029972118381692}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -40,9 +40,9 @@ MeshFilter:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8868703001289155551}
+  m_GameObject: {fileID: 888029972118381692}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &8868703001289155553
+--- !u!23 &888029972118381569
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
