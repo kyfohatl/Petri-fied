@@ -227,10 +227,10 @@ MonoBehaviour:
   Score: 1
   Radius: 1
   FoodGrowthMultiplier: 1
-  SpeedMultiplier: 1
   ScoreDecayMultiplier: 1
+  SpeedMultiplier: 1
+  GameManager: {fileID: 0}
   Target: {fileID: 0}
   Player: {fileID: 0}
   LookRadius: 5
-  LookRadiusMultiplier: 5
-  GameManager: {fileID: 0}
+  LookRadiusMultiplier: 10

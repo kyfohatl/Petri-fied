@@ -27,12 +27,12 @@ public class GameManager : MonoBehaviour
     {
         if (inst.Food.ContainsKey(id))
         {
-            Debug.Log("Duplicate registration attempted... " + id.ToString());
+			Debug.Log("Duplicate registration attempted... " + id.ToString());
             return;
         }
         
         inst.Food.Add(id, obj);
-        Debug.Log(inst.Food.Count);
+        // Debug.Log(inst.Food.Count);
     }
     
     // Function for adding an enemy to manager dictionary
@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
         }
         
         inst.Enemies.Add(id, obj);
-        Debug.Log(inst.Enemies.Count);
+        // Debug.Log(inst.Enemies.Count);
     }
     
     // Function for removing food from manager dictionary
@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviour
         }
         
         inst.Food.Remove(id);
-        Debug.Log(inst.Food.Count);
+        // Debug.Log(inst.Food.Count);
     }
     
     // Function for removing an enemy from manager dictionary
@@ -66,12 +66,12 @@ public class GameManager : MonoBehaviour
     {
         if (!inst.Enemies.ContainsKey(id))
         {
-            Debug.Log("No object with this ID... " + id.ToString());
+			Debug.Log("No object with this ID... " + id.ToString());
             return;
         }
         
         inst.Enemies.Remove(id);
-        Debug.Log(inst.Enemies.Count);
+        // Debug.Log(inst.Enemies.Count);
     }
     
     // Get all food in the world
