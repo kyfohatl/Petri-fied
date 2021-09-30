@@ -46,8 +46,8 @@ public class FoodSpawn : MonoBehaviour
   void Generate()
   {
     // Determine spawn position
-    float radius = 150f;
-    float height = 50f;
+    float radius = 300f;
+    float height = 150f;
 
     Vector2 coord = Random.insideUnitCircle * radius;
     float y = Random.Range(transform.position.z - height / 2f, transform.position.z + height / 2f);
