@@ -134,6 +134,10 @@ PrefabInstance:
       propertyPath: Score
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 3969881777830091656, guid: 0d7a8193080dc4a938ac6d164358777b, type: 3}
+      propertyPath: LookRadiusMultiplier
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 6618504731896277006, guid: 0d7a8193080dc4a938ac6d164358777b, type: 3}
       propertyPath: m_RootOrder
       value: 6
@@ -465,6 +469,10 @@ PrefabInstance:
     - target: {fileID: 1500843667955228913, guid: bf63ce55e87d3ba458e76fc6903eb92a, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1526420284501404080, guid: bf63ce55e87d3ba458e76fc6903eb92a, type: 3}
+      propertyPath: Name
+      value: K326-S
       objectReference: {fileID: 0}
     - target: {fileID: 1526420284501404080, guid: bf63ce55e87d3ba458e76fc6903eb92a, type: 3}
       propertyPath: Score
@@ -1451,7 +1459,7 @@ MonoBehaviour:
   spawnRate: 1
   spawnMin: 10
   spawnMax: 20
-  spawnLimit: 200
+  spawnLimit: 500
 --- !u!4 &752346714 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1526420284501404087, guid: bf63ce55e87d3ba458e76fc6903eb92a, type: 3}
@@ -1486,7 +1494,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7603628577363795775, guid: b4a7cd11e42531143a791734fc0b756c, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -1e-45
+      value: 1e-45
       objectReference: {fileID: 0}
     - target: {fileID: 7603628577363795775, guid: b4a7cd11e42531143a791734fc0b756c, type: 3}
       propertyPath: m_LocalRotation.z
@@ -1518,7 +1526,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8719916434744607314, guid: b4a7cd11e42531143a791734fc0b756c, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 1e-45
+      value: -1e-45
       objectReference: {fileID: 0}
     - target: {fileID: 8719916434744607314, guid: b4a7cd11e42531143a791734fc0b756c, type: 3}
       propertyPath: m_LocalRotation.z
@@ -2148,7 +2156,7 @@ Transform:
   m_GameObject: {fileID: 1746476488}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalScale: {x: 1000, y: 1000, z: 1000}
   m_Children: []
   m_Father: {fileID: 1726226907}
   m_RootOrder: 0
@@ -2348,7 +2356,7 @@ GameObject:
   - component: {fileID: 1879855139}
   m_Layer: 0
   m_Name: Arena
-  m_TagString: Untagged
+  m_TagString: Arena
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

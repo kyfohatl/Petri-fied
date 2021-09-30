@@ -49,10 +49,12 @@ public class EnemySpawn : MonoBehaviour
     float radius = 150f;
     float height = 150f;
     
-    Vector2 coord = Random.insideUnitCircle * radius;
-    float y = Random.Range(transform.position.z - height / 2f, transform.position.z + height / 2f);
-    
-    Vector3 Target = new Vector3(transform.position.x + coord.x, transform.position.y + y, transform.position.z + coord.y);
+	Vector2 coord = Random.insideUnitCircle * radius;
+	float y = Random.Range(-height / 2f, height / 2f);
+	
+	GameObject Arena = GameObject.FindGameObjectWithTag("Arena");
+	
+	Vector3 Target = new Vector3(Arena.transform.position.x + coord.x, Arena.transform.position.y + y, Arena.transform.position.z + coord.y);
     
     // Actually generates the food and sets as child of spawner
     GameObject spawned = Instantiate(Enemy, Target, Random.rotation, transform);
