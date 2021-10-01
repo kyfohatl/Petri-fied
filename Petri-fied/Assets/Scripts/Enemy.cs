@@ -9,9 +9,8 @@ public class Enemy : IntelligentAgent
 	// Track player
 	public GameObject Player;
 	
-	// Radius of player visibility
-	public float LookRadius;
-	public float LookRadiusMultiplier = 10f;
+	// Determination timer
+	private float determineTimer = 0f;
 	
 	// Start is called before the first frame update
 	void Start()
@@ -19,7 +18,6 @@ public class Enemy : IntelligentAgent
 		StartLife();
 		this.Name = GenerateRandomName();
 		this.Player = GameObject.FindGameObjectWithTag("Player");
-		this.LookRadius = LookRadiusMultiplier * Radius;
 	}
 	
 	// Update is called once per frame
@@ -27,6 +25,14 @@ public class Enemy : IntelligentAgent
 	{
 		DecayScore();
 		UpdateSize();
+		
+		// Check once every second in case of target updates / closer better loot etc
+		determineTimer += Time.deltaTime;
+		if (determineTimer >= 1f)
+		{
+			determineTimer = 0f;
+			DetermineTarget();
+		}
 		
 		// If no current target, determine next
 		if (Target == null)
@@ -40,13 +46,6 @@ public class Enemy : IntelligentAgent
 			FaceTarget();
 			transform.position += 3f * base.getSpeedMultiplier() * transform.forward * Time.deltaTime / transform.localScale.x;
 		}
-	}
-	
-	// Override Function to update radius and also look radius
-	public override void UpdateRadius()
-	{
-		base.UpdateRadius();
-		this.LookRadius = this.LookRadiusMultiplier * this.Radius;
 	}
 	
 	// Function to generate a random name
@@ -69,67 +68,87 @@ public class Enemy : IntelligentAgent
 	public void DetermineTarget()
 	{
 		GameObject closestEnemy = null;
-		GameObject closestFood = null;
+		float expectedEnemyScore;
 		
-		float playerDistance = Vector3.Distance(transform.position, Player.transform.position);
+		GameObject closestFood = null;
+		float expectedFoodScore;
+		
+		GameObject newTarget = null;
+		float bestExpected = expectedTargetScore();
+		
 		int playerScore = Player.GetComponent<Player>().getScore();
+		float playerDistance = Vector3.Distance(transform.position, Player.transform.position);
+		float expectedPlayerScore = (float)playerScore / playerDistance;
 		
 		// Prioritise player first
-		if (playerDistance <= LookRadius && playerScore < this.getScore())
+		if (playerDistance <= this.getLockOnRadius()
+			&& playerScore < this.getScore()
+			&& expectedPlayerScore > bestExpected)
 		{
-			// Player has lower score and within 5 radius.
-			this.Target = Player;
-			return;
+			bestExpected = expectedPlayerScore;
+			newTarget = Player;
 		}
 		
 		// Secondly, other enemies
 		closestEnemy = GetClosestObject(GameManager.get().getEnemies());
 		if (closestEnemy != null)
 		{
-			float enemyDistance = Vector3.Distance(transform.position, closestEnemy.transform.position);
 			int enemyScore = closestEnemy.GetComponent<Enemy>().getScore();
+			float enemyDistance = Vector3.Distance(transform.position, closestEnemy.transform.position);
+			expectedEnemyScore = (float)enemyScore / enemyDistance;
 			
-			if (enemyDistance <= this.LookRadius && enemyScore < this.getScore())
+			if (enemyDistance <= this.getLockOnRadius()
+				&& enemyScore < this.getScore()
+				&& expectedEnemyScore > bestExpected)
 			{
 				// Another enemy has lower score and within 5 radius.
-				this.Target = closestEnemy;
-				return;
+				bestExpected = expectedEnemyScore;
+				newTarget = closestEnemy;
 			}
 		}
 		
-		// Lastly, food
+		// Thirdly, food entities
 		closestFood = GetClosestObject(GameManager.get().getFood());
 		if (closestFood != null)
 		{
-			this.Target = closestFood;
-		}
-	}
-	
-	// Rotate enemy towards at target
-	void FaceTarget()
-	{
-		Vector3 direction = (Target.transform.position - transform.position).normalized;
-		Quaternion lookRotation = Quaternion.LookRotation(direction);
-		transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 1f);
-	}
-	
-	// Find nearest object in a dictionary
-	GameObject GetClosestObject(Dictionary<int, GameObject> objs)
-	{
-		GameObject tMin = null;
-		float minDist = Mathf.Infinity;
-		Vector3 currentPos = transform.position;
-		
-		foreach (KeyValuePair<int, GameObject> t in objs)
-		{
-			float dist = Vector3.Distance(t.Value.transform.position, currentPos);
-			if (dist < minDist)
+			float foodDistance = Vector3.Distance(transform.position, closestFood.transform.position);
+			expectedFoodScore = this.getFoodGrowthMultiplier() / foodDistance;
+			
+			if (expectedFoodScore > bestExpected)
 			{
-				tMin = t.Value;
-				minDist = dist;
+				bestExpected = expectedFoodScore;
+				newTarget = closestFood;
 			}
 		}
 		
-		return tMin;
+		// Lastly, update Target
+		if (newTarget != null)
+		{
+			this.Target = newTarget;
+		}
+	}
+	
+	// Function to calculate expected score by going for target
+	public float expectedTargetScore()
+	{
+		if (this.Target == null)
+		{
+			return 0f;
+		}
+		
+		// Calculate distance to the current target
+		float dist = Vector3.Distance(transform.position, this.getTarget().transform.position);
+		
+		if (this.Target.tag == "Enemy")
+		{
+			return Target.GetComponent<Enemy>().getScore() / dist;
+		}
+		else if (this.Target.tag == "Player")
+		{
+			return Target.GetComponent<Player>().getScore() / dist;
+		}
+		
+		// Assume target is food otherwise
+		return this.getFoodGrowthMultiplier() / dist;
 	}
 }
