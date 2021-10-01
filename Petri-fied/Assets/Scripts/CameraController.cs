@@ -20,63 +20,41 @@ public class CameraController : MonoBehaviour
   private float curHorizontalRotation = 0f;
   // The current vertical rotation of the camera, in degrees, around the player
   private float curVerticalRotation = 0f;
-  // The current position of the camera along its orbit
-  private Vector3 curOrbitOffset;
 
   // Start is called before the first frame update
   void Start()
   {
-    curOrbitOffset = playerPos.position + new Vector3(0f, 0f, orbitDistance);
   }
 
   // Update is called once per frame
   void Update()
   {
-    float hMovementInput = Input.GetAxisRaw("HorizontalLook");
-    float vMovementInput = Input.GetAxis("VerticalLook");
-    Vector3 hOffset = new Vector3(0f, 0f, 0f);
-    Vector3 vOffset = new Vector3(0f, 0f, 0f);
+    // Get movement input
+    float hMovementInput = Input.GetAxisRaw("Mouse X");
+    float vMovementInput = Input.GetAxis("Mouse Y");
 
-    bool orbitCam = false;
+    // Increment horizontal and vertical rotation angles using input
+    curHorizontalRotation = incrementAngle(curHorizontalRotation, hMovementInput);
+    curVerticalRotation = incrementAngle(curVerticalRotation, vMovementInput);
 
-    // new horizontal position
-    if (Mathf.Abs(hMovementInput) > 0.1f)
-    {
-      orbitCam = true;
+    Vector3 newPosOffset = new Vector3(
+      orbitDistance * Mathf.Cos(curHorizontalRotation) * Mathf.Sin(curVerticalRotation),
+      orbitDistance * Mathf.Cos(curVerticalRotation),
+      orbitDistance * Mathf.Sin(curHorizontalRotation) * Mathf.Sin(curVerticalRotation)
+    );
 
-      // Find out new offset distance from the player position
-      curHorizontalRotation = incrementAngle(curHorizontalRotation, hMovementInput);
-      hOffset.x = orbitDistance * Mathf.Cos(curHorizontalRotation * Mathf.Deg2Rad);
-      hOffset.z = orbitDistance * Mathf.Sin(curHorizontalRotation * Mathf.Deg2Rad);
-    }
-
-    // new vertical position
-    if (Mathf.Abs(vMovementInput) > 0.1f)
-    {
-      orbitCam = true;
-
-      // Find out new offset distance from the player position
-      curVerticalRotation = incrementAngle(curVerticalRotation, vMovementInput);
-      vOffset.x = orbitDistance * Mathf.Cos(curVerticalRotation * Mathf.Deg2Rad);
-      vOffset.y = orbitDistance * Mathf.Sin(curVerticalRotation * Mathf.Deg2Rad);
-    }
-
-    // Always make sure the camera is looking at the player
-    cam.transform.LookAt(playerPos);
-
-    if (orbitCam)
-    {
-      // Calculate the camera's orbit offset position
-      curOrbitOffset = hOffset + vOffset;
-    }
-
-    // Finally set the camera position with respect to the player position
-    cam.transform.position = playerPos.position + curOrbitOffset;
+    cam.transform.position = playerPos.position + newPosOffset;
   }
 
   // Increments the given angle by the given amount, taking into account framerate, and returns the result
   private float incrementAngle(float angle, float amount)
   {
-    return (angle + amount * cameraSensitivityMultiplier * Time.deltaTime) % 360f;
+    return (angle + amount * cameraSensitivityMultiplier * Time.deltaTime) % (2 * Mathf.PI);
+  }
+
+  private void LateUpdate()
+  {
+    // Always make sure the camera is looking at the player
+    cam.transform.LookAt(playerPos);
   }
 }
