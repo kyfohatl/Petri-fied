@@ -50,6 +50,5 @@ public class Player : IntelligentAgent
   {
     base.UpdateRadius();
     GameEvents.instance.PlayerRadiusChange(Radius);
-    Debug.Log(Radius);
   }
 }

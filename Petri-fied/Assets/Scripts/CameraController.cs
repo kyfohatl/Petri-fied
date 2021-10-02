@@ -36,8 +36,8 @@ public class CameraController : MonoBehaviour
   void Update()
   {
     // Get movement input
-    float hMovementInput = Input.GetAxisRaw("Mouse X");
-    float vMovementInput = Input.GetAxis("Mouse Y");
+    float hMovementInput = Input.GetAxisRaw("Horizontal Look");
+    float vMovementInput = Input.GetAxis("Vertical Look");
 
     // Increment horizontal and vertical rotation angles using input
     curHorizontalRotation = incrementAngle(curHorizontalRotation, hMovementInput);
