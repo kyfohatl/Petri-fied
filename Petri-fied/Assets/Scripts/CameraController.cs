@@ -11,7 +11,7 @@ public class CameraController : MonoBehaviour
 
   // The camera orbit distance from the player character
   [SerializeField]
-  private float orbitDistance = 5f;
+  private float orbitDistanceMult = 10f;
   // Influences the sensitivity of camera movement
   [SerializeField]
   private float cameraSensitivityMultiplier = 1f;
@@ -20,10 +20,16 @@ public class CameraController : MonoBehaviour
   private float curHorizontalRotation = 0f;
   // The current vertical rotation of the camera, in degrees, around the player
   private float curVerticalRotation = 0f;
+  // The current orbit distance of the camera
+  private float curOrbitDistance;
 
   // Start is called before the first frame update
   void Start()
   {
+    // Set ant event on GameEvents to change camera zoom upon player scale change
+    GameEvents.instance.onPlayerRadiusChange += onPlayerRadiusChange;
+
+    curOrbitDistance = orbitDistanceMult;
   }
 
   // Update is called once per frame
@@ -38,12 +44,18 @@ public class CameraController : MonoBehaviour
     curVerticalRotation = incrementAngle(curVerticalRotation, vMovementInput);
 
     Vector3 newPosOffset = new Vector3(
-      orbitDistance * Mathf.Cos(curHorizontalRotation) * Mathf.Sin(curVerticalRotation),
-      orbitDistance * Mathf.Cos(curVerticalRotation),
-      orbitDistance * Mathf.Sin(curHorizontalRotation) * Mathf.Sin(curVerticalRotation)
+      curOrbitDistance * Mathf.Cos(curHorizontalRotation) * Mathf.Sin(curVerticalRotation),
+      curOrbitDistance * Mathf.Cos(curVerticalRotation),
+      curOrbitDistance * Mathf.Sin(curHorizontalRotation) * Mathf.Sin(curVerticalRotation)
     );
 
     cam.transform.position = playerPos.position + newPosOffset;
+  }
+
+  private void LateUpdate()
+  {
+    // Always make sure the camera is looking at the player
+    cam.transform.LookAt(playerPos);
   }
 
   // Increments the given angle by the given amount, taking into account framerate, and returns the result
@@ -52,9 +64,9 @@ public class CameraController : MonoBehaviour
     return (angle + amount * cameraSensitivityMultiplier * Time.deltaTime) % (2 * Mathf.PI);
   }
 
-  private void LateUpdate()
+  // Changes the camera distance to the player to match the new given player radius
+  private void onPlayerRadiusChange(float radius)
   {
-    // Always make sure the camera is looking at the player
-    cam.transform.LookAt(playerPos);
+    curOrbitDistance = orbitDistanceMult + 3f * radius;
   }
 }

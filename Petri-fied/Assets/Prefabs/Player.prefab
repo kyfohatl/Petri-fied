@@ -139,8 +139,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 0}
   playerPos: {fileID: 8850037745045172403}
-  orbitDistance: 10
-  cameraSensitivityMultiplier: 1
+  orbitDistanceMult: 10
+  cameraSensitivityMultiplier: 1.3
 --- !u!1 &8850037745246912971
 GameObject:
   m_ObjectHideFlags: 0
