@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8850037745045172407}
   - component: {fileID: 8850037745045172404}
   - component: {fileID: 8951172823056146455}
+  - component: {fileID: 7844567437350993018}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -124,6 +125,22 @@ MonoBehaviour:
   scoreLabel: {fileID: 4814187641100673769}
   nameLabel: {fileID: 2862551559114638893}
   timeLabel: {fileID: 4408414659671718017}
+--- !u!114 &7844567437350993018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8850037745045172400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ae617a4964abdb4e8e575cd552ca020, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cam: {fileID: 0}
+  playerPos: {fileID: 8850037745045172403}
+  orbitDistanceMult: 10
+  cameraSensitivityMultiplier: 1.3
 --- !u!1 &8850037745246912971
 GameObject:
   m_ObjectHideFlags: 0
