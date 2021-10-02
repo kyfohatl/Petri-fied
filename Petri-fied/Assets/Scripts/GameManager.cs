@@ -27,12 +27,12 @@ public class GameManager : MonoBehaviour
   {
     if (inst.Food.ContainsKey(id))
     {
-      //Debug.Log("Duplicate registration attempted... " + id.ToString());
+      Debug.Log("Duplicate registration attempted... " + id.ToString());
       return;
     }
 
     inst.Food.Add(id, obj);
-    //Debug.Log(inst.Food.Count);
+    // Debug.Log(inst.Food.Count);
   }
 
   // Function for adding an enemy to manager dictionary
@@ -40,12 +40,12 @@ public class GameManager : MonoBehaviour
   {
     if (inst.Enemies.ContainsKey(id))
     {
-      //Debug.Log("Duplicate registration attempted... " + id.ToString());
+      Debug.Log("Duplicate registration attempted... " + id.ToString());
       return;
     }
 
     inst.Enemies.Add(id, obj);
-    //Debug.Log(inst.Enemies.Count);
+    // Debug.Log(inst.Enemies.Count);
   }
 
   // Function for removing food from manager dictionary
@@ -53,12 +53,12 @@ public class GameManager : MonoBehaviour
   {
     if (!inst.Food.ContainsKey(id))
     {
-      //Debug.Log("No object with this ID... " + id.ToString());
+      Debug.Log("No object with this ID... " + id.ToString());
       return;
     }
 
     inst.Food.Remove(id);
-    //Debug.Log(inst.Food.Count);
+    // Debug.Log(inst.Food.Count);
   }
 
   // Function for removing an enemy from manager dictionary
@@ -66,12 +66,40 @@ public class GameManager : MonoBehaviour
   {
     if (!inst.Enemies.ContainsKey(id))
     {
-      //Debug.Log("No object with this ID... " + id.ToString());
+      Debug.Log("No object with this ID... " + id.ToString());
       return;
     }
 
     inst.Enemies.Remove(id);
-    //Debug.Log(inst.Enemies.Count);
+    // Debug.Log(inst.Enemies.Count);
+  }
+
+  // Function to determine interactable game objects visible to screen
+  public Dictionary<int, GameObject> getEnemiesVisible()
+  {
+    Dictionary<int, GameObject> visibleObjects = new Dictionary<int, GameObject>();
+
+    foreach (KeyValuePair<int, GameObject> enemyClone in Enemies)
+    {
+      Vector3 screenPoint = Camera.main.WorldToViewportPoint(enemyClone.Value.transform.position);
+      bool visibleToScreen = screenPoint.z > 0
+                   && screenPoint.x > 0
+                   && screenPoint.x < 1
+                   && screenPoint.y > 0
+                   && screenPoint.y < 1;
+      if (visibleToScreen)
+      {
+        visibleObjects.Add(enemyClone.Key, enemyClone.Value);
+      }
+    }
+
+    if (visibleObjects.Count == 0)
+    {
+      // No enemies are visible to screen
+      return null;
+    }
+
+    return visibleObjects;
   }
 
   // Get all food in the world
