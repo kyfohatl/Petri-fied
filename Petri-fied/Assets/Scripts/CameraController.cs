@@ -22,6 +22,8 @@ public class CameraController : MonoBehaviour
   private float curVerticalRotation = 0f;
   // The current orbit distance of the camera
   private float curOrbitDistance;
+  // The orbit distance the camera is aiming to get to
+  private float goalOrbitDistance;
 
   // Start is called before the first frame update
   void Start()
@@ -30,6 +32,7 @@ public class CameraController : MonoBehaviour
     GameEvents.instance.onPlayerRadiusChange += onPlayerRadiusChange;
 
     curOrbitDistance = orbitDistanceMult;
+    goalOrbitDistance = curOrbitDistance;
   }
 
   // Update is called once per frame
@@ -50,6 +53,13 @@ public class CameraController : MonoBehaviour
     );
 
     cam.transform.position = playerPos.position + newPosOffset;
+
+    // Camera scaling
+    // If the camera is not at the goal orbit distance, interpolate orbit distance till it gets there
+    if (Mathf.Abs(goalOrbitDistance - curOrbitDistance) > 0.1f)
+    {
+      curOrbitDistance = Mathf.Lerp(curOrbitDistance, goalOrbitDistance, 0.1f);
+    }
   }
 
   private void LateUpdate()
@@ -67,6 +77,6 @@ public class CameraController : MonoBehaviour
   // Changes the camera distance to the player to match the new given player radius
   private void onPlayerRadiusChange(float radius)
   {
-    curOrbitDistance = orbitDistanceMult + 3f * radius;
+    goalOrbitDistance = orbitDistanceMult + 3f * radius;
   }
 }
