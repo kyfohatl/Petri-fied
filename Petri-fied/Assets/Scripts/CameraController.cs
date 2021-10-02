@@ -39,8 +39,13 @@ public class CameraController : MonoBehaviour
   void Update()
   {
     // Get movement input
-    float hMovementInput = Input.GetAxisRaw("Horizontal Look");
-    float vMovementInput = Input.GetAxis("Vertical Look");
+    float hMouseInput = Input.GetAxisRaw("Mouse X");
+    float vMouseInput = Input.GetAxisRaw("Mouse Y");
+    float hKeyboardInput = Input.GetAxisRaw("Horizontal Look");
+    float vKeyboardInput = Input.GetAxisRaw("Vertical Look");
+
+    float hMovementInput = getMaxInputVal(hMouseInput, hKeyboardInput);
+    float vMovementInput = getMaxInputVal(vMouseInput, vKeyboardInput);
 
     // Increment horizontal and vertical rotation angles using input
     curHorizontalRotation = incrementAngle(curHorizontalRotation, hMovementInput);
@@ -78,5 +83,16 @@ public class CameraController : MonoBehaviour
   private void onPlayerRadiusChange(float radius)
   {
     goalOrbitDistance = orbitDistanceMult + 3f * radius;
+  }
+
+  // Returns the input with the grater magnitude
+  private float getMaxInputVal(float input1, float input2)
+  {
+    if (Mathf.Abs(input1) > Mathf.Abs(input2))
+    {
+      return input1;
+    }
+
+    return input2;
   }
 }
