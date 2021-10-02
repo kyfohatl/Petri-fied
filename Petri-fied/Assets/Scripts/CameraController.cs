@@ -58,7 +58,7 @@ public class CameraController : MonoBehaviour
     // If the camera is not at the goal orbit distance, interpolate orbit distance till it gets there
     if (Mathf.Abs(goalOrbitDistance - curOrbitDistance) > 0.1f)
     {
-      curOrbitDistance = Mathf.Lerp(curOrbitDistance, goalOrbitDistance, 0.1f);
+      curOrbitDistance = Mathf.Lerp(curOrbitDistance, goalOrbitDistance, 0.01f);
     }
   }
 
