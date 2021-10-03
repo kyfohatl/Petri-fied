@@ -71,7 +71,7 @@ Shader "Unlit/Outline"
             fixed4 frag (vertOut i) : COLOR
             {
                 // Set the color to be the outline color
-                fixed4 col = _OutlineColor;
+                fixed4 col = _OutlineColor * 10;
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;
