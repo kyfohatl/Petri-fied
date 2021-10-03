@@ -6,7 +6,8 @@ Shader "Unlit/Outline"
         _MainColor ("Main Color", Color) = (0.5,0.5,0.5,1)
         _OutlineColor ("Outline Color", Color) = (0,0,0,1)
         _InsideColor ("Inside Color", Color) = (0,0,0,1)
-        _OutlineThickness ("Outline Thickness", Range(1.05, 7.0)) = 1.5
+        _MinOutlineThickness ("Min Outline Thickness", Range(1.05, 3.0)) = 1.1
+        _MaxOutlineThickness ("Max Outline Thickness", Range(1.05, 3.0)) = 1.2
     }
     SubShader
     {
@@ -49,15 +50,17 @@ Shader "Unlit/Outline"
             };
 
             sampler2D _MainTex;
-            float _OutlineThickness;
+            float _MinOutlineThickness;
+            float _MaxOutlineThickness;
             float4 _OutlineColor;
 
             vertOut vert (vertIn v)
             {
 
-                // Multiply incoming vertex by outline tickness to scale the outline to be larger than the
-                // object itself
-                v.vertex.xyz *= _OutlineThickness;
+                // Multiply incoming vertex by some value between min and maximum outline thickness to 
+                // scale the outline to be larger than the object itself, and also to make the outline
+                // pulsate
+                v.vertex.xyz *= _MinOutlineThickness + ((_MaxOutlineThickness - _MinOutlineThickness) * (_SinTime.w + 1.0) / 2.0);
 
                 vertOut o;
                 // Now translate the vertex into world space
