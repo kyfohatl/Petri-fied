@@ -87,6 +87,7 @@ public class GameManager : MonoBehaviour
     }
 
     inst.Enemies.Remove(id);
+    Leaderboard.Instance.RemoveAgent(inst.Enemies[id].GetComponent<IntelligentAgent>());
     // Debug.Log(inst.Enemies.Count);
   }
 

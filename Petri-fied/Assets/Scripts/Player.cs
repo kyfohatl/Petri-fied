@@ -37,7 +37,7 @@ public class Player : IntelligentAgent
   // Function to update the GUI
   void UpdateGUI()
   {
-    this.scoreLabel.text = Score.ToString();
+    // this.scoreLabel.text = Score.ToString();
 
     int hours = TimeSpan.FromSeconds(this.survivalTime).Hours;
     int minutes = TimeSpan.FromSeconds(this.survivalTime).Minutes;

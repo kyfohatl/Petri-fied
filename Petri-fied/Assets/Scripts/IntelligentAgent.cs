@@ -92,6 +92,7 @@ public class IntelligentAgent : MonoBehaviour
       this.peakScore = this.Score;
     }
     UpdateRadius();
+    Leaderboard.Instance.SortLeaderboard();
   }
 
   // Function to update size
