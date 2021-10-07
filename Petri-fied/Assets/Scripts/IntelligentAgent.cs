@@ -15,6 +15,9 @@ public class IntelligentAgent : MonoBehaviour
   public int Score = 1;
   public float Radius = 1f;
   private float LockOnRadius;
+  
+  //Power up trackers
+  private float PowerUpSpeedMultiplier = 1.0f;
 
   // Agent genetic modifiers
   [SerializeField] private float FoodGrowthMultiplier;
@@ -208,6 +211,13 @@ public class IntelligentAgent : MonoBehaviour
     return tMin;
   }
 
+  // Setter method for Power Up speed multiplier
+  public void setPowerUpSpeedMultiplier(float NewMult)
+  {
+    this.PowerUpSpeedMultiplier = NewMult;
+  }
+  
+
   // Function to set the target of the agent
   public void setTarget(GameObject obj)
   {
@@ -242,6 +252,12 @@ public class IntelligentAgent : MonoBehaviour
   public float getLockOnRadius()
   {
     return this.LockOnRadius;
+  }
+
+  // Getter method for Power Up speed multiplier
+  public float getPowerUpSpeedMultiplier()
+  {
+    return this.PowerUpSpeedMultiplier;
   }
 
   // Getter method for speed multiplier

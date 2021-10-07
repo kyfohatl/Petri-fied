@@ -43,7 +43,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 207f8e576cb7f654ba908fcfc163aae4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Skin: {fileID: 6110990800758419540, guid: 6b485dd2c70abc94da7672c34692f937, type: 3}
   Mat: {fileID: 2100000, guid: 614c528daed6d12408ade0edeeb7c026, type: 2}
-  Wall: {fileID: 4351434512276507175, guid: 4394c83091f0e394eb26f3229ad46048, type: 3}
-  Flat: {fileID: 4575810467106451468, guid: 5c9dadd0d24333b46bde687951a53735, type: 3}
   ArenaRad: 50

@@ -44,7 +44,7 @@ public class Enemy : IntelligentAgent
 		if (Target != null)
 		{
 			FaceTarget();
-			transform.position += 3f * base.getSpeedMultiplier() * transform.forward * Time.deltaTime / transform.localScale.x;
+			transform.position += 3f * base.getSpeedMultiplier() * base.getPowerUpSpeedMultiplier() * transform.forward * Time.deltaTime / transform.localScale.x;
 		}
 	}
 	
