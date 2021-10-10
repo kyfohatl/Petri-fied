@@ -4788,8 +4788,44 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+<<<<<<< Updated upstream:Petri-fied/Assets/Prefabs/Arena/Arena Model.prefab
 --- !u!1001 &6345554353191881989
 PrefabInstance:
+=======
+<<<<<<< Updated upstream:Petri-fied/Assets/Prefabs/Arena/ArenaFlat.prefab
+--- !u!114 &-6680781848410257056
+MonoBehaviour:
+=======
+--- !u!114 &6578832214963730919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6110990800758419540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab0598d0a11838d4188e1ed8498af61d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1001 &6345554353191881989
+PrefabInstance:
+>>>>>>> Stashed changes:Petri-fied/Assets/Prefabs/Arena/Arena Model.prefab
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4575810467106451468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a7848e6516c37d41b22affc31c11b8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tagToHit: Player
+  shaderMat: {fileID: 2100000, guid: 86f18ce6e802dc54e8677c4646b3bb2f, type: 2}
+--- !u!64 &-2621598177475773203
+MeshCollider:
+>>>>>>> Stashed changes:Petri-fied/Assets/Prefabs/Arena/ArenaFlat.prefab
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
