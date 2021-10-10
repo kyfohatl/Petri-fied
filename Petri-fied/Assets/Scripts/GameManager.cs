@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
   public GameObject Player;
   private Dictionary<int, GameObject> Food;
   private Dictionary<int, GameObject> Enemies;
+  private Dictionary<int, GameObject> PowerUps;
+  
 
   // Call on start-up of game
   void Awake()
@@ -20,6 +22,7 @@ public class GameManager : MonoBehaviour
     Player = GameObject.FindGameObjectWithTag("Player");
     Food = new Dictionary<int, GameObject>();
     Enemies = new Dictionary<int, GameObject>();
+    PowerUps = new Dictionary<int, GameObject>();
   }
 
   // Function for adding food to manager dictionary
@@ -48,6 +51,19 @@ public class GameManager : MonoBehaviour
     // Debug.Log(inst.Enemies.Count);
   }
 
+  // Function for adding a PowerUp to manager dictionary
+  public static void AddPowerUp(int id, GameObject obj)
+  {
+    if (inst.PowerUps.ContainsKey(id))
+    {
+      Debug.Log("Duplicate registration attempted... " + id.ToString());
+      return;
+    }
+
+    inst.PowerUps.Add(id, obj);
+    // Debug.Log(inst.PowerUps.Count);
+  }
+
   // Function for removing food from manager dictionary
   public static void RemoveFood(int id)
   {
@@ -72,6 +88,19 @@ public class GameManager : MonoBehaviour
 
     inst.Enemies.Remove(id);
     // Debug.Log(inst.Enemies.Count);
+  }
+
+  // Function for removing a Power Up from manager dictionary
+  public static void RemovePowerUp(int id)
+  {
+    if (!inst.PowerUps.ContainsKey(id))
+    {
+      Debug.Log("No object with this ID... " + id.ToString());
+      return;
+    }
+
+    inst.PowerUps.Remove(id);
+    // Debug.Log(inst.PowerUps.Count);
   }
 
   // Function to determine interactable game objects visible to screen
@@ -113,6 +142,13 @@ public class GameManager : MonoBehaviour
   {
     return this.Enemies;
   }
+ 
+  // Get all PowerUps in the world
+  public Dictionary<int, GameObject> getPowerUps()
+  {
+    return this.PowerUps;
+  }
+
 
   // Get instance of this GameManager
   public static GameManager get()

@@ -72,6 +72,7 @@ Shader "Custom/SphereMask"
             o.Smoothness = _Glossiness;
             o.Alpha = lerpColor.a;
         }
+        
         ENDCG
     }
     FallBack "Standard"

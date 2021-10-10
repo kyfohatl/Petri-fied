@@ -56,7 +56,7 @@ public class PlayerController : MonoBehaviour
 			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(targetDir), turnSmooth);
 			
 			// Move towards the current direction
-			float geneticSpeedMultiplier = this.gameObject.GetComponent<Player>().getSpeedMultiplier();
+			float geneticSpeedMultiplier = this.gameObject.GetComponent<Player>().getSpeedMultiplier() * this.gameObject.GetComponent<Player>().getPowerUpSpeedMultiplier();
 			float finalSpeedMultiplier = this.speedMultiplier * geneticSpeedMultiplier;
 			controller.Move(curDir * finalSpeedMultiplier * Time.deltaTime / transform.localScale.x);
 		}

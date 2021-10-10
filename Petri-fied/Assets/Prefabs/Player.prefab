@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8850037745045172404}
   - component: {fileID: 8951172823056146455}
   - component: {fileID: 7844567437350993018}
+  - component: {fileID: -7738235378393031498}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -56,6 +57,7 @@ MonoBehaviour:
   acceleration: 2
   turnSmooth: 0.1
   cam: {fileID: 0}
+  GameManager: {fileID: 0}
 --- !u!143 &8850037745045172405
 CharacterController:
   m_ObjectHideFlags: 0
@@ -114,14 +116,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94753114c25ae4d408b221fffe02a6fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GameManager: {fileID: 0}
+  Target: {fileID: 0}
   Name: Protagonist
   Score: 1
   Radius: 1
   FoodGrowthMultiplier: 1
   ScoreDecayMultiplier: 0
   SpeedMultiplier: 1
-  GameManager: {fileID: 0}
-  Target: {fileID: 0}
+  LockOnRadiusMultiplier: 0
   scoreLabel: {fileID: 4814187641100673769}
   nameLabel: {fileID: 2862551559114638893}
   timeLabel: {fileID: 4408414659671718017}
@@ -141,6 +144,19 @@ MonoBehaviour:
   playerPos: {fileID: 8850037745045172403}
   orbitDistanceMult: 10
   cameraSensitivityMultiplier: 1.3
+--- !u!114 &-7738235378393031498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8850037745045172400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c5aa9de716ed9148a026e733590d6f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shaderMat: {fileID: 2100000, guid: 5f6e7eee21cc57c4c88d59d4934d113e, type: 2}
 --- !u!1 &8850037745246912971
 GameObject:
   m_ObjectHideFlags: 0
