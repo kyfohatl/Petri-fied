@@ -27,9 +27,9 @@ Material:
     m_Floats:
     - _Glossiness: 0.56
     - _Metallic: 0
-    - _Radius: 1.5
+    - _Radius: 2
     - _Softness: 2
     m_Colors:
     - _Color: {r: 0, g: 0.14799091, b: 1, a: 0.50980395}
-    - _Position: {r: 23.569107, g: -4.091901, b: -42.86088, a: 0}
+    - _Position: {r: 7.1737294, g: -6.0448976, b: -47.7729, a: 0}
   m_BuildTextureStacks: []
