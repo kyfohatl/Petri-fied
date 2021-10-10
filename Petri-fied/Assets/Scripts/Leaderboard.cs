@@ -6,18 +6,14 @@ using TMPro;
 
 public class Leaderboard : MonoBehaviour
 {
-  public static Leaderboard Instance { get; private set; }
 
-  private void Awake()
-  {
-    Instance = this;
-  }
+  // The number of positions to show in the leaderboard.
+  public int PositionsVisible = 4;
+
+  public static Leaderboard Instance { get; private set; }
 
   // List of agents in the game
   private List<IntelligentAgent> leaderboardAgents;
-
-  // UI elements
-  // public TMP_Text leaderboardDisplay;
 
   // Gameobjects
   public GameObject RowTemplate;
@@ -25,31 +21,36 @@ public class Leaderboard : MonoBehaviour
   // List of agents in the game
   private List<GameObject> renderedRows;
 
-  // Start is called before the first frame update
+  private void Awake()
+  {
+    Instance = this;
+  }
+
   void Start()
   {
     leaderboardAgents = new List<IntelligentAgent>();
     renderedRows = new List<GameObject>();
-    // LoadLeaderboard();
 
+    // Make sure the player is in the leaderboard.
     AddAgent(GameManager.get().Player.GetComponent<IntelligentAgent>());
   }
 
-  // Update is called once per frame
   void Update()
   {
   }
 
-
-  public void RenderLeaderboard()
+  /**
+  Function to (re)render the leaderboard UI.
+  */
+  public void UpdateLeaderboardUI()
   {
-    // Clear old UI
+    // Clear old UI.
     foreach (GameObject obj in renderedRows)
     {
       Destroy(obj);
     }
 
-    // Get top score
+    // Get the top scoring agent + player agent (and whether it is in top positions).
     int topScore = 0;
     IntelligentAgent topScoreAgent = null;
     IntelligentAgent playerAgent = null;
@@ -73,50 +74,66 @@ public class Leaderboard : MonoBehaviour
     int i = 1;
     foreach (IntelligentAgent agent in leaderboardAgents)
     {
-      // Show max 3 spots
-      if (i > 3 && !playerIsInTopShown)
+      // Show correct number of max top spots depending on whether player is in them or not.
+      if (i > PositionsVisible - 1 && !playerIsInTopShown)
       {
         break;
       }
-      else if (i > 4)
+      else if (i > PositionsVisible)
       {
         break;
       }
 
+      // Check if it's a player row.
       if (agent.GetType().ToString().Equals("Player"))
       {
         playerIsInTopShown = true;
       }
 
+      // Render the LeaderboardUIRow.
       GameObject row = Instantiate(RowTemplate) as GameObject;
       row.SetActive(true);
 
+      // Apply top score styling if #1.
       if (agent.Equals(topScoreAgent))
       {
         row.GetComponent<LeaderboardUIRow>().SetIsTopScore(true);
       }
+
+      // Apply player styling if === player.
       if (agent.Equals(playerAgent))
       {
         row.GetComponent<LeaderboardUIRow>().SetIsPlayer(true);
       }
+
+      // Set UIRow data.
       row.GetComponent<LeaderboardUIRow>().SetRank(i.ToString());
       row.GetComponent<LeaderboardUIRow>().SetName(agent.getName());
       row.GetComponent<LeaderboardUIRow>().SetScore(agent.getScore().ToString());
 
+      // Assign UI row to the parent (Leaderboard UI) GameObject.
       row.transform.SetParent(RowTemplate.transform.parent, false);
+
+      // Store this row as one we rendered so we can delete it for next re-render.
       renderedRows.Add(row);
       i++;
     }
-    if (i > 3 && !playerIsInTopShown)
+
+    // Conditional to show player agent at the bottom if they weren't in the top x positions.
+    if (i > PositionsVisible && !playerIsInTopShown)
     {
       foreach (IntelligentAgent agent in leaderboardAgents)
       {
         if (agent.Equals(playerAgent))
         {
+          // Render the LeaderboardUIRow.
           GameObject row = Instantiate(RowTemplate) as GameObject;
           row.SetActive(true);
+
+          // Add player styling to row.
           row.GetComponent<LeaderboardUIRow>().SetIsPlayer(true);
 
+          // Set UIRow data.
           row.GetComponent<LeaderboardUIRow>().SetRank(i.ToString());
           row.GetComponent<LeaderboardUIRow>().SetName(agent.getName());
           row.GetComponent<LeaderboardUIRow>().SetScore(agent.getScore().ToString());
@@ -129,61 +146,56 @@ public class Leaderboard : MonoBehaviour
     }
   }
 
+  /**
+  Function to add the agent to the leaderboard and re-sort/rerender the board.
+  */
   public void AddAgent(IntelligentAgent agent)
   {
     leaderboardAgents.Add(agent);
     SortLeaderboard();
   }
+
+  /**
+  Function to remove the agent from the leaderboard and re-sort/rerender the board.
+  */
   public void RemoveAgent(IntelligentAgent agent)
   {
     leaderboardAgents.Remove(agent);
     SortLeaderboard();
   }
 
+  /**
+  Function to reorder and rerender the leaderboard UI.
+  */
   public void SortLeaderboard()
   {
+    // Map through local leaderboard state.
     for (int i = leaderboardAgents.Count - 1; i > 0; i--)
     {
       if (leaderboardAgents[i].Score > leaderboardAgents[i - 1].Score)
       {
-        // Temp
+        // Temp store agent with lesser score.
         IntelligentAgent temp = leaderboardAgents[i - 1];
 
+        // Swap agents.
         leaderboardAgents[i - 1] = leaderboardAgents[i];
         leaderboardAgents[i] = temp;
       }
     }
-    UpdatePlayerPrefsString();
-  }
 
-  void UpdatePlayerPrefsString()
-  {
-    string stats = "";
-
-    for (int i = 0; i < leaderboardAgents.Count; i++)
-    {
-      stats += leaderboardAgents[i].getName() + ",";
-      stats += leaderboardAgents[i].getScore() + ",";
-
-    }
-
-    PlayerPrefs.SetString("Leaderboards", stats);
+    // Rerender the UI.
     UpdateLeaderboardUI();
   }
 
-  void UpdateLeaderboardUI()
-  {
-    // leaderboardDisplay.text = "";
-    // for (int i = 0; i <= leaderboardAgents.Count - 1; i++)
-    // {
-    //   leaderboardDisplay.text += leaderboardAgents[i].getName() + " : " + leaderboardAgents[i].getScore() + "\n";
-    // }
-    RenderLeaderboard();
-  }
-
+  /**
+  Function to initiate, load and sort/rerender the leaderboard data from the GameManager.
+  */
   void LoadLeaderboard()
   {
-    ClearPrefs();
+    // Reset the stored prefs state.
+    ClearLeaderboard();
+
+    // Add enemies and player together and then populate the leaderboard agents.
     Dictionary<int, GameObject> allAgentsDict = GameManager.get().getEnemies();
     allAgentsDict.Add(GameManager.get().Player.GetInstanceID(), GameManager.get().Player);
     foreach (KeyValuePair<int, GameObject> t in allAgentsDict)
@@ -192,26 +204,24 @@ public class Leaderboard : MonoBehaviour
       leaderboardAgents.Add(agent);
     }
 
+    // Clear the temp dictionary.
     allAgentsDict.Clear();
+
+    // Resort the leaderboard.
     SortLeaderboard();
-
-    // Code to load from storage
-    // string stats = PlayerPrefs.GetString("Leaderboards", "");
-
-    // string[] stats2 = stats.Split(",");
-
-    // for (int i = 0; i < stats2.Length- 2; i +=2){
-    //   IntelligentAgent p = new IntelligentAgent()
-    // }
   }
 
-  void ClearPrefs()
+  /**
+  Function to clear the leaderboard local data.
+  */
+  void ClearLeaderboard()
   {
-    PlayerPrefs.DeleteAll();
     leaderboardAgents.Clear();
-    // leaderboardDisplay.text = "";
   }
 
+  /**
+  Function to get all agents in the leaderboard (players and enemies in the game).
+  */
   public List<IntelligentAgent> GetLeaderboardAgents()
   {
     return this.leaderboardAgents;
