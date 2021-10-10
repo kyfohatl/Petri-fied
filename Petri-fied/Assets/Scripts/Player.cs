@@ -11,7 +11,6 @@ public class Player : IntelligentAgent
   private float survivalTime = 0.0f;
 
   // UI elements
-  public TMP_Text scoreLabel;
   public TMP_Text nameLabel;
   public TMP_Text timeLabel;
 
@@ -37,8 +36,6 @@ public class Player : IntelligentAgent
   // Function to update the GUI
   void UpdateGUI()
   {
-    // this.scoreLabel.text = Score.ToString();
-
     int hours = TimeSpan.FromSeconds(this.survivalTime).Hours;
     int minutes = TimeSpan.FromSeconds(this.survivalTime).Minutes;
     int seconds = TimeSpan.FromSeconds(this.survivalTime).Seconds;

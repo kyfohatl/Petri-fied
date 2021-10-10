@@ -62,8 +62,6 @@ public class Leaderboard : MonoBehaviour
         topScore = agent.getScore();
         topScoreAgent = agent;
       }
-      Debug.Log(agent);
-      Debug.Log(agent.GetType().ToString().Equals("Player"));
       if (agent.GetType().ToString().Equals("Player"))
       {
         playerAgent = agent;

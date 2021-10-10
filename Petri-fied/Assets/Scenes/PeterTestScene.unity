@@ -6124,6 +6124,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3872350939855161, guid: 8d4766e5df4b5cd4ba780ea0ebebc254, type: 3}
+      propertyPath: m_ScaleFactor
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 35126330062223468, guid: 8d4766e5df4b5cd4ba780ea0ebebc254, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -8795,6 +8799,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9720f32054c324379bface3f2d2aaeec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PositionsVisible: 4
   RowTemplate: {fileID: 1691622747}
 --- !u!1 &2104790150
 GameObject:
@@ -8850,7 +8855,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh25038
+  m_Name: pb_Mesh28068
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
