@@ -156,7 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c5aa9de716ed9148a026e733590d6f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shaderMat: {fileID: 2100000, guid: 86f18ce6e802dc54e8677c4646b3bb2f, type: 2}
+  shaderMat: {fileID: 2100000, guid: 5f6e7eee21cc57c4c88d59d4934d113e, type: 2}
 --- !u!1 &8850037745246912971
 GameObject:
   m_ObjectHideFlags: 0

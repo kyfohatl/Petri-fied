@@ -21,25 +21,15 @@ Material:
     m_TexEnvs:
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 76562b5f68186a0499ee1de42e681ea3, type: 3}
-        m_Scale: {x: -16.2, y: -5}
+        m_Scale: {x: -12.6, y: 3.6}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Glossiness: 0.5
+    - _Glossiness: 0.56
     - _Metallic: 0
-    - _Radius: 2
-    - _Softness: 0.5
+    - _Radius: 1.5
+    - _Softness: 2
     m_Colors:
-<<<<<<< Updated upstream
-    - _Color: {r: 1, g: 0, b: 0, a: 1}
-    - _Position: {r: -34.81787, g: -3.9558928, b: 41.50618, a: 0}
-=======
-<<<<<<< Updated upstream
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Position: {r: 0, g: 0, b: 0, a: 0}
-=======
-    - _Color: {r: 1, g: 0, b: 0, a: 1}
-    - _Position: {r: 4.450838, g: 0.00000026865123, b: -14.251472, a: 0}
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+    - _Color: {r: 0, g: 0.14799091, b: 1, a: 0.50980395}
+    - _Position: {r: 23.569107, g: -4.091901, b: -42.86088, a: 0}
   m_BuildTextureStacks: []
