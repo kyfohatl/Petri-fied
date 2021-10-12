@@ -146,7 +146,7 @@ public class IntelligentAgent : MonoBehaviour
     float foodGrowthMin = 1.0f;
     this.FoodGrowthMultiplier = Mathf.Max(foodGrowthMin, Mathf.Abs(normalRandom(1f, 1f))); // mean: 1, std: 1
 
-    float speedMultMin = 0.5f;
+    float speedMultMin = 1.0f;
     this.SpeedMultiplier = Mathf.Max(speedMultMin, Mathf.Abs(normalRandom(1f, 1f))); // mean: 1, std: 1
 
     float scoreDecayMax = 5f;
@@ -195,21 +195,24 @@ public class IntelligentAgent : MonoBehaviour
   // Find nearest object in a dictionary
   public GameObject GetClosestObject(Dictionary<int, GameObject> objs)
   {
-    GameObject tMin = null;
-    float minDist = Mathf.Infinity;
-    Vector3 currentPos = transform.position;
-
-    foreach (KeyValuePair<int, GameObject> t in objs)
-    {
-      float dist = Vector3.Distance(t.Value.transform.position, currentPos);
-      if (dist < minDist && dist > 0f)
-      {
-        tMin = t.Value;
-        minDist = dist;
-      }
-    }
-
-    return tMin;
+	  GameObject closest = null;
+	  float minDist = Mathf.Infinity;
+	  Vector3 currentPos = this.transform.position;
+	  float epsilon = 1e-4f;
+	  
+	  foreach (KeyValuePair<int, GameObject> t in objs)
+	  {
+		  Vector3 directionToObject = t.Value.transform.position - currentPos;
+		  float distSqrToTarget = directionToObject.sqrMagnitude;
+		  
+		  if (distSqrToTarget < minDist && distSqrToTarget > epsilon)
+		  {
+			  closest = t.Value;
+			  minDist = distSqrToTarget;
+		  }
+	  }
+	  
+	  return closest;
   }
 
   // Setter method for Power Up speed multiplier
