@@ -17,16 +17,17 @@ public class IntelligentAgent : MonoBehaviour
   private float LockOnRadius;
   
   //Power up trackers
-  private float PowerUpSpeedMultiplier = 1.0f;
+  private float PowerUpSpeedMultiplier = 1f;
+  private bool InvincibilityMode = false;
 
   // Agent genetic modifiers
-  [SerializeField] private float FoodGrowthMultiplier;
-  [SerializeField] private float ScoreDecayMultiplier;
-  [SerializeField] private float SpeedMultiplier;
-  [SerializeField] private float LockOnRadiusMultiplier;
+  [SerializeField] private float FoodGrowthMultiplier = 1f;
+  [SerializeField] private float ScoreDecayMultiplier = 1f;
+  [SerializeField] private float SpeedMultiplier = 1f;
+  [SerializeField] private float LockOnRadiusMultiplier = 5f;
 
   // Agent statistics
-  private int peakScore;
+  private int peakScore = 1;
   private float initialisationTime;
   private float decayTimer = 0f; // used for tracking time
   private float decayDelta; // derived: time between unit score decays
@@ -51,9 +52,9 @@ public class IntelligentAgent : MonoBehaviour
       Destroy(other.gameObject);
       GameManager.RemoveFood(other.gameObject.GetInstanceID());
     }
-    else if (other.gameObject.tag == "Enemy")
+	else if (other.gameObject.tag == "Enemy")
     {
-      if (other.gameObject.GetComponent("Enemy") != null)
+      if (!other.gameObject.GetComponent<Enemy>().isInvincible() || !this.InvincibilityMode)
       {
         Enemy otherPlayer = other.gameObject.GetComponent<Enemy>();
         int scoreDifference = this.Score - otherPlayer.getScore();
@@ -74,6 +75,16 @@ public class IntelligentAgent : MonoBehaviour
         }
       }
     }
+	else if (other.gameObject.tag == "PowerUp")
+	{
+		
+	}
+  }
+  
+  // Function to check if agent is invincible
+  public bool isInvincible()
+  {
+	  return this.InvincibilityMode;
   }
 
   // Function to update radius

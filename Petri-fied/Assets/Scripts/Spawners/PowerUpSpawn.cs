@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FoodSpawn : MonoBehaviour
+public class PowerUpSpawn : MonoBehaviour
 {
-  // Food prefab
-  public GameObject Food;
+  // prefab
+  public GameObject PowerUp;
 
-  // Spawn rate of food
+  // Spawn rate of PowerUps
   public float spawnRate; // per second
   private float deltaSpawn; // delay between spawn generations
 
@@ -34,7 +34,7 @@ public class FoodSpawn : MonoBehaviour
       timer = deltaSpawn;
       int spawnCount = Random.Range(spawnMin, spawnMax);
 
-      // Loop to spawn one or more food objects per generation
+      // Loop to spawn one or more powerUp objects per generation
       for (int i = 0; i < spawnCount; i++)
       {
         Generate();
@@ -42,22 +42,22 @@ public class FoodSpawn : MonoBehaviour
     }
   }
 
-  // Function to instantiate new food objects into the world
+  // Function to instantiate new PowerUp objects into the world
   void Generate()
   {
     // Determine spawn position
-    float radius = 300f;
-    float height = 150f;
+    float radius = 150f;
+    float height = 100f;
 
     Vector2 coord = Random.insideUnitCircle * radius;
     float y = Random.Range(transform.position.z - height / 2f, transform.position.z + height / 2f);
 
     Vector3 Target = new Vector3(transform.position.x + coord.x, transform.position.y + y, transform.position.z + coord.y);
 
-    // Actually generates the food and sets as child of spawner
-    GameObject spawned = Instantiate(Food, Target, Random.rotation, transform);
+    // Actually generates the PowerUp and sets as child of spawner
+    GameObject spawned = Instantiate(PowerUp, Target, Random.rotation, transform);
 
-    // Track the food spawned.
-    GameManager.AddFood(spawned.GetInstanceID(), spawned);
+    // Track the PowerUp spawned.
+    GameManager.AddPowerUp(spawned.GetInstanceID(), spawned);
   }
 }

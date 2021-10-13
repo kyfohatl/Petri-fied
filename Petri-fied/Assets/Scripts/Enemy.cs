@@ -17,6 +17,7 @@ public class Enemy : IntelligentAgent
 	{
 		StartLife();
 		this.Name = GenerateRandomName();
+		this.name = "Enemy: " + this.Name;
 		this.Player = GameObject.FindGameObjectWithTag("Player");
 		Leaderboard.Instance.AddAgent((IntelligentAgent)this);
 	}
@@ -45,7 +46,7 @@ public class Enemy : IntelligentAgent
 		if (Target != null)
 		{
 			FaceTarget();
-			transform.position += 3f * base.getSpeedMultiplier() * base.getPowerUpSpeedMultiplier() * transform.forward * Time.deltaTime / transform.localScale.x;
+			transform.position += 2f * getSpeedMultiplier() * getPowerUpSpeedMultiplier() * transform.forward * Time.deltaTime / transform.localScale.x;
 		}
 	}
 
@@ -69,15 +70,19 @@ public class Enemy : IntelligentAgent
 	public void DetermineTarget()
 	{
 		GameObject closestEnemy = null;
-		float expectedEnemyScore;
+		float expectedEnemyScore = 0f;
 
 		GameObject closestFood = null;
-		float expectedFoodScore;
+		float expectedFoodScore = 0f;
 
 		GameObject newTarget = null;
 		float bestExpected = expectedTargetScore();
-
-		int playerScore = Player.GetComponent<Player>().getScore();
+		
+		int playerScore = 0;
+		if (Player != null)
+		{
+			playerScore = Player.GetComponent<IntelligentAgent>().getScore();
+		}
 		float playerDistance = Vector3.Distance(transform.position, Player.transform.position);
 		float expectedPlayerScore = (float)playerScore / playerDistance;
 
@@ -89,25 +94,26 @@ public class Enemy : IntelligentAgent
 			bestExpected = expectedPlayerScore;
 			newTarget = Player;
 		}
-
 		// Secondly, other enemies
-		closestEnemy = GetClosestObject(GameManager.get().getEnemies());
-		if (closestEnemy != null)
+		var possibleEnemies = GameManager.get().getEnemies();
+		if (possibleEnemies != null)
 		{
-			int enemyScore = closestEnemy.GetComponent<Enemy>().getScore();
-			float enemyDistance = Vector3.Distance(transform.position, closestEnemy.transform.position);
-			expectedEnemyScore = (float)enemyScore / enemyDistance;
-
-			if (enemyDistance <= this.getLockOnRadius()
-				&& enemyScore < this.getScore()
-				&& expectedEnemyScore > bestExpected)
+			foreach (KeyValuePair<int, GameObject> enemyClone in possibleEnemies)
 			{
-				// Another enemy has lower score and within 5 radius.
-				bestExpected = expectedEnemyScore;
-				newTarget = closestEnemy;
+				int enemyScore = enemyClone.Value.GetComponent<IntelligentAgent>().getScore();
+				float enemyDistance = Vector3.Distance(transform.position, enemyClone.Value.transform.position);
+				expectedEnemyScore = (float)enemyScore / enemyDistance;
+				
+				if (enemyDistance <= this.getLockOnRadius()
+					&& enemyScore < this.getScore()
+					&& expectedEnemyScore > bestExpected)
+				{
+					// Another enemy has lower score and within lock-on radius.
+					bestExpected = expectedEnemyScore;
+					newTarget = closestEnemy;
+				}
 			}
 		}
-
 		// Thirdly, food entities
 		closestFood = GetClosestObject(GameManager.get().getFood());
 		if (closestFood != null)
@@ -121,7 +127,6 @@ public class Enemy : IntelligentAgent
 				newTarget = closestFood;
 			}
 		}
-
 		// Lastly, update Target
 		if (newTarget != null)
 		{
@@ -142,14 +147,19 @@ public class Enemy : IntelligentAgent
 
 		if (this.Target.tag == "Enemy")
 		{
-			return Target.GetComponent<Enemy>().getScore() / dist;
+			return Target.GetComponent<IntelligentAgent>().getScore() / dist;
 		}
 		else if (this.Target.tag == "Player")
 		{
-			return Target.GetComponent<Player>().getScore() / dist;
+			return Target.GetComponent<IntelligentAgent>().getScore() / dist;
+		}
+		else if (this.Target.tag == "PowerUp")
+		{
+			// Return a magic value representing the value of a power-up (equal to agent's current score)
+			return getScore(); // i.e. expected to double it's score with one power up
 		}
 
-		// Assume target is food otherwise
+		// Target must be food otherwise
 		return this.getFoodGrowthMultiplier() / dist;
 	}
 }

@@ -6,10 +6,8 @@ using TMPro;
 
 public class Leaderboard : MonoBehaviour
 {
-
   // The number of positions to show in the leaderboard.
   public int PositionsVisible = 4;
-
   public static Leaderboard Instance { get; private set; }
 
   // List of agents in the game

@@ -7,6 +7,7 @@ TagManager:
   - Enemy
   - Food
   - Arena
+  - PowerUp
   layers:
   - Default
   - TransparentFX

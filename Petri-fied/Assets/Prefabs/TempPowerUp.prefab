@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7332348604345761600}
   m_Layer: 0
   m_Name: TempPowerUp
-  m_TagString: Untagged
+  m_TagString: PowerUp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 97cb8ba7a9e6d404883d678d8944dcc0, type: 2}
+  - {fileID: 2100000, guid: 6c08fb6e0b351dc45a122cad23553e35, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
