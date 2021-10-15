@@ -19,6 +19,10 @@ public class MicrobeCore : MonoBehaviour
   // All directions of each face
   private Vector3[] dirs = { Vector3.right, Vector3.left, Vector3.down, Vector3.up, Vector3.back, Vector3.forward };
 
+  // The scale of the perlin noise used for the generation of surface detail
+  [SerializeField]
+  private float scale = 15f;
+
   private void OnValidate()
   {
     // Set up the mesh objects
@@ -27,7 +31,7 @@ public class MicrobeCore : MonoBehaviour
     // Now create the mesh for each mesh object
     foreach (var face in microbeFaces)
     {
-      face.createMesh();
+      face.createMesh(scale);
     }
   }
 

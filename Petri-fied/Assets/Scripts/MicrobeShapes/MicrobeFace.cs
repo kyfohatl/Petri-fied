@@ -12,11 +12,14 @@ public class MicrobeFace
   Vector3 axisB;
   Vector3 axisC;
 
+  private SurfaceDetailGenerator detailGenerator;
+
   public MicrobeFace(Mesh mesh, int detailLevel, Vector3 upDir)
   {
     this.mesh = mesh;
     this.detailLevel = detailLevel;
     this.upDir = upDir;
+    this.detailGenerator = new SurfaceDetailGenerator();
 
     // The second axis is just the upDir axis but with the coordinates shuffled
     axisB = new Vector3(upDir.z, upDir.x, upDir.y);
@@ -25,7 +28,7 @@ public class MicrobeFace
   }
 
   // Creates a mesh for the face
-  public void createMesh()
+  public void createMesh(float scale)
   {
     // detailLevel is the number of vertices per side, so the total number of vertices on the quad face 
     // is detailLevel^2
@@ -60,7 +63,10 @@ public class MicrobeFace
         // To "inflate" the cube into a sphere, all we have to do is to ensure that all points are 
         // equidistant from the centre of the cube
         // To do this, we can normalize the resulting point
-        Vector3 pointOnSphereFace = pointOnCubeFace.normalized;
+        Vector3 pointOnBaseSphereFace = pointOnCubeFace.normalized;
+
+        // Add noise to make the microbe surface appear more natural
+        Vector3 pointOnSphereFace = pointOnBaseSphereFace * (1 + detailGenerator.getPerlinValue(pointOnBaseSphereFace, scale));
 
         // The index of the vertex
         // Every iteration of i has detailLevel indices, so we must add i * detailLevel
