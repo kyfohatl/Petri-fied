@@ -13,6 +13,8 @@ public class MicrobeCore : MonoBehaviour
   private MeshFilter[] filters;
   // Each face of the original cube
   private MicrobeFace[] microbeFaces;
+  // The player material
+  public Material playerMaterial;
 
   // A cube has 6 faces
   private const int numFaces = 6;
@@ -54,11 +56,23 @@ public class MicrobeCore : MonoBehaviour
         face.transform.parent = transform;
 
         // Add a material
-        face.AddComponent<MeshRenderer>().sharedMaterial = new Material(Shader.Find("Standard"));
+        face.AddComponent<MeshRenderer>().sharedMaterial = playerMaterial;
         // Add a mesh filter
         filters[i] = face.AddComponent<MeshFilter>();
         // Create the base empty mesh
         filters[i].sharedMesh = new Mesh();
+      }
+
+      if (filters[i] != null)
+      {
+        if (filters[i].sharedMesh == null)
+        {
+          filters[i].sharedMesh = new Mesh();
+        }
+        if (filters[i].GetComponent<MeshRenderer>().sharedMaterial == null)
+        {
+          filters[i].GetComponent<MeshRenderer>().sharedMaterial = playerMaterial;
+        }
       }
 
       // Now create the face itself
