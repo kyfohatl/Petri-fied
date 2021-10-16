@@ -14,7 +14,7 @@ public class MicrobeCore : MonoBehaviour
   // Each face of the original cube
   private MicrobeFace[] microbeFaces;
   // The player material
-  public Material playerMaterial;
+  public Material material;
 
   // A cube has 6 faces
   private const int numFaces = 6;
@@ -24,6 +24,13 @@ public class MicrobeCore : MonoBehaviour
   // The scale of the perlin noise used for the generation of surface detail
   [SerializeField]
   private float scale = 15f;
+
+  private void Start()
+  {
+    faceDetailLevel = Random.Range(6, 30);
+    scale = Random.Range(2f, 30f);
+    OnValidate();
+  }
 
   private void OnValidate()
   {
@@ -56,7 +63,7 @@ public class MicrobeCore : MonoBehaviour
         face.transform.parent = transform;
 
         // Add a material
-        face.AddComponent<MeshRenderer>().sharedMaterial = playerMaterial;
+        face.AddComponent<MeshRenderer>().sharedMaterial = material;
         // Add a mesh filter
         filters[i] = face.AddComponent<MeshFilter>();
         // Create the base empty mesh
@@ -71,12 +78,30 @@ public class MicrobeCore : MonoBehaviour
         }
         if (filters[i].GetComponent<MeshRenderer>().sharedMaterial == null)
         {
-          filters[i].GetComponent<MeshRenderer>().sharedMaterial = playerMaterial;
+          filters[i].GetComponent<MeshRenderer>().sharedMaterial = material;
         }
       }
 
       // Now create the face itself
       microbeFaces[i] = new MicrobeFace(filters[i].sharedMesh, faceDetailLevel, dirs[i]);
+    }
+  }
+
+  public void setMaterial(Material material)
+  {
+    this.material = material;
+
+    foreach (MeshFilter face in filters)
+    {
+      face.GetComponent<MeshRenderer>().sharedMaterial = material;
+    }
+  }
+
+  private void Update()
+  {
+    if (gameObject.GetComponent<MeshRenderer>().material.name != material.name)
+    {
+      setMaterial(gameObject.GetComponent<MeshRenderer>().material);
     }
   }
 }

@@ -66,7 +66,7 @@ public class MicrobeFace
         Vector3 pointOnBaseSphereFace = pointOnCubeFace.normalized;
 
         // Add noise to make the microbe surface appear more natural
-        Vector3 pointOnSphereFace = pointOnBaseSphereFace * (1 + detailGenerator.getPerlinValue(pointOnBaseSphereFace, scale));
+        Vector3 pointOnSphereFace = pointOnBaseSphereFace * (detailGenerator.getPerlinValue(pointOnBaseSphereFace, scale));
 
         // The index of the vertex
         // Every iteration of i has detailLevel indices, so we must add i * detailLevel
@@ -97,7 +97,7 @@ public class MicrobeFace
       }
     }
 
-    // Finally assing the vertices and triangles to the mesh
+    // Finally adding the vertices and triangles to the mesh
     mesh.Clear();
     mesh.vertices = vertices;
     mesh.triangles = triangles;
