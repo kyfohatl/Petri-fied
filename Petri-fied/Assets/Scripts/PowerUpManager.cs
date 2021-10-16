@@ -44,15 +44,18 @@ public class PowerUpManager : MonoBehaviour
             //Remove PowerUp object (visually)
             GetComponent<MeshRenderer>().enabled = false;
             GetComponent<Collider>().enabled = false;
+			
+			// Remove lock on target so agent no longer goes for same spot
+			other.gameObject.GetComponent<IntelligentAgent>().setTarget(null);
 
             //Run power Up code
             switch(PowerUpType)
             {
                 case 0:
-                    StartCoroutine( SpeedPowerUp(other));
+                    StartCoroutine(SpeedPowerUp(other));
                     break;
                 case 1:
-                    StartCoroutine( FoodMagnetPowerUp(other));
+                    StartCoroutine(FoodMagnetPowerUp(other));
                     break;
             }
         }else{
@@ -97,7 +100,7 @@ public class PowerUpManager : MonoBehaviour
          //create magnet
         var magnet = Instantiate(FoodMagnet);
         magnet.transform.localPosition = other.gameObject.transform.position;
-        magnet.transform.localScale = new Vector3(FoodMagnetScale,FoodMagnetScale,FoodMagnetScale);
+        magnet.transform.localScale = new Vector3(FoodMagnetScale, FoodMagnetScale, FoodMagnetScale);
         magnet.transform.parent = other.transform;
 
         magnet.GetComponent<FoodMagnetPowerUP>().MagnetStrength = FoodMagnetSpeed;
@@ -106,6 +109,7 @@ public class PowerUpManager : MonoBehaviour
 
 
         Destroy(magnet);
+		GameManager.RemovePowerUp(gameObject.GetInstanceID());
         Destroy(gameObject);
      }
 }

@@ -33,7 +33,6 @@ public class GameManager : MonoBehaviour
       Debug.Log("Duplicate registration attempted... " + id.ToString());
       return;
     }
-
     inst.Food.Add(id, obj);
     // Debug.Log(inst.Food.Count);
   }
@@ -46,7 +45,6 @@ public class GameManager : MonoBehaviour
       Debug.Log("Duplicate registration attempted... " + id.ToString());
       return;
     }
-
     inst.Enemies.Add(id, obj);
     // Debug.Log(inst.Enemies.Count);
   }
@@ -59,7 +57,6 @@ public class GameManager : MonoBehaviour
       Debug.Log("Duplicate registration attempted... " + id.ToString());
       return;
     }
-
     inst.PowerUps.Add(id, obj);
     // Debug.Log(inst.PowerUps.Count);
   }
@@ -72,7 +69,6 @@ public class GameManager : MonoBehaviour
       Debug.Log("No object with this ID... " + id.ToString());
       return;
     }
-
     inst.Food.Remove(id);
     // Debug.Log("Food was removed from game manager; remaining count: " + inst.Food.Count);
   }
@@ -85,9 +81,8 @@ public class GameManager : MonoBehaviour
       Debug.Log("No object with this ID... " + id.ToString());
       return;
     }
-
-    inst.Enemies.Remove(id);
     Leaderboard.Instance.RemoveAgent(inst.Enemies[id].GetComponent<IntelligentAgent>());
+	inst.Enemies.Remove(id);
     // Debug.Log("Enemy was removed from game manager; remaining count: " + inst.Enemies.Count);
   }
 
@@ -99,12 +94,11 @@ public class GameManager : MonoBehaviour
       Debug.Log("No object with this ID... " + id.ToString());
       return;
     }
-
     inst.PowerUps.Remove(id);
     // Debug.Log("PowerUp was removed from game manager; remaining count: " + inst.PowerUps.Count);
   }
 
-  // Function to determine enemy objects visible to screen (currently goes through walls)
+  // Function to determine enemy objects visible to screen
   public Dictionary<int, GameObject> getEnemiesVisible()
   {
     Dictionary<int, GameObject> visibleEnemies = new Dictionary<int, GameObject>();
@@ -119,9 +113,9 @@ public class GameManager : MonoBehaviour
 							 && screenPoint.y < 1;
       if (visibleToScreen)
       {
-		  if(!Physics.Linecast(enemyClone.Value.transform.position, Camera.main.transform.position))
+		if(!Physics.Linecast(enemyClone.Value.transform.position, Camera.main.transform.position))
 		{
-		  // Nothing obstructs the visible enemy
+		  // Nothing obstructs the visible enemy with the main camera
 		  visibleEnemies.Add(enemyClone.Key, enemyClone.Value);
 		}
       }
@@ -133,6 +127,68 @@ public class GameManager : MonoBehaviour
       return null;
     }
     return visibleEnemies;
+  }
+  
+  // Function to determine food objects visible to screen
+  public Dictionary<int, GameObject> getFoodVisible()
+  {
+	  Dictionary<int, GameObject> visibleFood = new Dictionary<int, GameObject>();
+	  
+	  foreach (KeyValuePair<int, GameObject> foodClone in Food)
+	  {
+		  Vector3 screenPoint = Camera.main.WorldToViewportPoint(foodClone.Value.transform.position);
+		  bool visibleToScreen = screenPoint.z > 0
+								 && screenPoint.x > 0
+								 && screenPoint.x < 1
+								 && screenPoint.y > 0
+								 && screenPoint.y < 1;
+		  if (visibleToScreen)
+		  {
+			  if(!Physics.Linecast(foodClone.Value.transform.position, Camera.main.transform.position))
+			  {
+				  // Nothing obstructs the visible food with the main camera
+				  visibleFood.Add(foodClone.Key, foodClone.Value);
+			  }
+		  }
+	  }
+	  
+	  if (visibleFood.Count == 0)
+	  {
+		  // No food capsules are visible to screen
+		  return null;
+	  }
+	  return visibleFood;
+  }
+  
+  // Function to determine power up objects visible to screen
+  public Dictionary<int, GameObject> getPowerUpsVisible()
+  {
+	  Dictionary<int, GameObject> visiblePowerUps = new Dictionary<int, GameObject>();
+	  
+	  foreach (KeyValuePair<int, GameObject> powerUpClone in PowerUps)
+	  {
+		  Vector3 screenPoint = Camera.main.WorldToViewportPoint(powerUpClone.Value.transform.position);
+		  bool visibleToScreen = screenPoint.z > 0
+								 && screenPoint.x > 0
+								 && screenPoint.x < 1
+								 && screenPoint.y > 0
+								 && screenPoint.y < 1;
+		  if (visibleToScreen)
+		  {
+			  if(!Physics.Linecast(powerUpClone.Value.transform.position, Camera.main.transform.position))
+			  {
+				  // Nothing obstructs the visible power up with the main camera
+				  visiblePowerUps.Add(powerUpClone.Key, powerUpClone.Value);
+			  }
+		  }
+	  }
+	  
+	  if (visiblePowerUps.Count == 0)
+	  {
+		  // No power ups are visible to screen
+		  return null;
+	  }
+	  return visiblePowerUps;
   }
   
   // Get all food in the world
@@ -152,7 +208,6 @@ public class GameManager : MonoBehaviour
   {
     return this.PowerUps;
   }
-
 
   // Get instance of this GameManager
   public static GameManager get()
