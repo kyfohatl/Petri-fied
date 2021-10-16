@@ -9,8 +9,7 @@ public class FoodMagnetPowerUP : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        var particleSystem = Instantiate(MagnetEffect, this.transform.position , 
-        this.transform.rotation, this.transform);
+        var particleSystem = Instantiate(MagnetEffect, this.transform.position, this.transform.rotation, this.transform);
         particleSystem.transform.localScale = this.transform.localScale;    
     }
 

@@ -57,13 +57,14 @@ public class CameraController : MonoBehaviour
       curOrbitDistance * Mathf.Sin(curHorizontalRotation) * Mathf.Sin(curVerticalRotation)
     );
 
-    cam.transform.position = playerPos.position + newPosOffset;
+	cam.transform.position = Vector3.Lerp(cam.transform.position, playerPos.position + newPosOffset, 0.1f);
 
     // Camera scaling
     // If the camera is not at the goal orbit distance, interpolate orbit distance till it gets there
-    if (Mathf.Abs(goalOrbitDistance - curOrbitDistance) > 0.1f)
+	float orbitChangeThreshold = 0.1f;
+	if (Mathf.Abs(goalOrbitDistance - curOrbitDistance)/goalOrbitDistance > orbitChangeThreshold)
     {
-      curOrbitDistance = Mathf.Lerp(curOrbitDistance, goalOrbitDistance, 0.01f);
+		curOrbitDistance = Mathf.Lerp(curOrbitDistance, goalOrbitDistance, 0.01f);
     }
   }
 

@@ -20,6 +20,7 @@ public class Player : IntelligentAgent
     StartLife();
     this.nameLabel.text = Name;
     UpdateGUI();
+	
   }
 
   // Update is called once per frame
@@ -43,9 +44,17 @@ public class Player : IntelligentAgent
     this.timeLabel.text = hours.ToString() + ":" + minutes.ToString("D2") + ":" + seconds.ToString("D2");
   }
 
+  // Override function to update the player radius and notify the game event handler
   public override void UpdateRadius()
   {
     base.UpdateRadius();
     GameEvents.instance.PlayerRadiusChange(Radius);
+  }
+  
+  // Override function to set the player's target and change target's material properties
+  public override void setTarget(GameObject obj)
+  {
+	  GetComponent<LockOnController>().UpdateTargetMaterial(obj);
+	  this.Target = obj;
   }
 }
