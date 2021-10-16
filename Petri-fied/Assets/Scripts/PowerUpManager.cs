@@ -14,20 +14,26 @@ public class PowerUpManager : MonoBehaviour
     public GameObject SpeedEffect2;
     public GameObject FoodMagnet;
     private int PowerUpType;
+    private ParticleSystem ps;
     // Start is called before the first frame update
     void Start()
     {  
         //pick random effect for the powerup
         // 0 is Speed PowerUP
         // 1 is Food Magnet
-        PowerUpType = Random.Range(0,2);
+        // 2 is Invincible
+        PowerUpType = Random.Range(0,3);
+        ps = GetComponent<ParticleSystem>();
         //Change the visual of the PowerUp pick-up
         switch(PowerUpType){
             case 0:
-                GetComponent<Renderer>().material.color = Color.red; //Temp Color
+                setColor(Color.red); //Temp Color
                 break;
             case 1:
-                GetComponent<Renderer>().material.color = Color.green; //Temp Color
+                setColor(Color.green); //Temp Color
+                break;
+            case 2:
+                setColor(Color.blue); //Temp Color
                 break;
         }
     }
@@ -44,23 +50,32 @@ public class PowerUpManager : MonoBehaviour
             //Remove PowerUp object (visually)
             GetComponent<MeshRenderer>().enabled = false;
             GetComponent<Collider>().enabled = false;
-			
-			// Remove lock on target so agent no longer goes for same spot
-			other.gameObject.GetComponent<IntelligentAgent>().setTarget(null);
+            Destroy(ps);
 
             //Run power Up code
             switch(PowerUpType)
             {
                 case 0:
-                    StartCoroutine(SpeedPowerUp(other));
+                    StartCoroutine( SpeedPowerUp(other));
                     break;
                 case 1:
-                    StartCoroutine(FoodMagnetPowerUp(other));
+                    StartCoroutine( FoodMagnetPowerUp(other));
+                    break;
+                case 2:
+                    StartCoroutine( InvinciblePowerUP(other));
                     break;
             }
         }else{
             return;
         }
+    }
+
+    private void setColor(Color setTo){
+        //
+        //GetComponent<Renderer>().material.color = setTo;
+        var main = ps.main;
+        main.startColor = setTo;
+
     }
 
 
@@ -84,10 +99,14 @@ public class PowerUpManager : MonoBehaviour
         effect1.transform.localPosition  =  effect1.transform.localPosition + new Vector3(0,0,5);
         
         //wait
+        
         yield return new WaitForSeconds(duration);
 
         //Remove PowerUp Effects
-        actor.setPowerUpSpeedMultiplier(BaseSpeedMult);
+        if (actor != null){
+            actor.setPowerUpSpeedMultiplier(BaseSpeedMult);
+        }
+        
         Destroy(effect1);
         Destroy(effect2);
         GameManager.RemovePowerUp(gameObject.GetInstanceID());
@@ -100,7 +119,7 @@ public class PowerUpManager : MonoBehaviour
          //create magnet
         var magnet = Instantiate(FoodMagnet);
         magnet.transform.localPosition = other.gameObject.transform.position;
-        magnet.transform.localScale = new Vector3(FoodMagnetScale, FoodMagnetScale, FoodMagnetScale);
+        magnet.transform.localScale = new Vector3(FoodMagnetScale,FoodMagnetScale,FoodMagnetScale);
         magnet.transform.parent = other.transform;
 
         magnet.GetComponent<FoodMagnetPowerUP>().MagnetStrength = FoodMagnetSpeed;
@@ -109,7 +128,51 @@ public class PowerUpManager : MonoBehaviour
 
 
         Destroy(magnet);
-		GameManager.RemovePowerUp(gameObject.GetInstanceID());
         Destroy(gameObject);
      }
+
+    IEnumerator InvinciblePowerUP(Collider other){
+        //
+        Renderer r;
+        if(other.gameObject.tag == "Player"){
+            r = other.gameObject.transform.GetChild (0).gameObject.GetComponent<Renderer>();
+        }else{
+            r = other.gameObject.GetComponent<Renderer>();
+        }
+
+        IntelligentAgent actor = other.gameObject.GetComponent<IntelligentAgent>();
+
+        //Color objectColor;
+        //Color originalColor = r.material.color;
+        //objectColor = new Color(originalColor.r, originalColor.g, originalColor.b, 0.5f);
+
+        actor.setInvincible(true);
+
+        r.material.EnableKeyword("_EMISSION");
+        yield return new WaitForSeconds(duration);
+        r.material.DisableKeyword("_EMISSION");
+        yield return new WaitForSeconds(0.1f);
+        r.material.EnableKeyword("_EMISSION");
+        yield return new WaitForSeconds(0.2f);
+        r.material.DisableKeyword("_EMISSION");
+        yield return new WaitForSeconds(0.1f);
+        r.material.EnableKeyword("_EMISSION");
+        yield return new WaitForSeconds(0.15f);
+        r.material.DisableKeyword("_EMISSION");
+        yield return new WaitForSeconds(0.1f);
+        r.material.EnableKeyword("_EMISSION");
+        yield return new WaitForSeconds(0.1f);
+        r.material.DisableKeyword("_EMISSION");
+        yield return new WaitForSeconds(0.05f);
+        r.material.EnableKeyword("_EMISSION");
+        yield return new WaitForSeconds(0.1f);
+        r.material.DisableKeyword("_EMISSION");
+        yield return new WaitForSeconds(0.05f);
+        r.material.EnableKeyword("_EMISSION");
+        yield return new WaitForSeconds(0.05f);
+        actor.setInvincible(false);
+        r.material.DisableKeyword("_EMISSION");
+        Destroy(gameObject);
+    }
+
 }

@@ -54,12 +54,12 @@ public class IntelligentAgent : MonoBehaviour
     }
 	else if (other.gameObject.tag == "Enemy")
     {
-      if (!other.gameObject.GetComponent<Enemy>().isInvincible() || !this.InvincibilityMode)
+      if (other.gameObject.GetComponent("Enemy") != null) 
       {
         Enemy otherPlayer = other.gameObject.GetComponent<Enemy>();
         int scoreDifference = this.Score - otherPlayer.getScore();
 
-        if (scoreDifference > 0)
+        if (scoreDifference > 0 && !otherPlayer.isInvincible())
         {
           UpdateScore(otherPlayer.getScore());
           AssimilateGenetics(otherPlayer);
@@ -67,7 +67,7 @@ public class IntelligentAgent : MonoBehaviour
 		  GameManager.RemoveEnemy(other.gameObject.GetInstanceID());
 		  Destroy(other.gameObject);
         }
-        else if (scoreDifference < 0)
+        else if (scoreDifference < 0 && !this.InvincibilityMode)
         {
           otherPlayer.AssimilateGenetics(this);
 		  GameManager.RemoveEnemy(gameObject.GetInstanceID());
@@ -81,6 +81,12 @@ public class IntelligentAgent : MonoBehaviour
   public bool isInvincible()
   {
 	  return this.InvincibilityMode;
+  }
+
+  // to update if agent is invincible
+  public void setInvincible(bool setThis)
+  {
+	  this.InvincibilityMode = setThis;
   }
 
   // Function to update radius
