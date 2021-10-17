@@ -131,6 +131,7 @@ public class PowerUpManager : MonoBehaviour
 
 
         Destroy(magnet);
+		GameManager.RemovePowerUp(gameObject.GetInstanceID());
         Destroy(gameObject);
      }
 
@@ -175,6 +176,8 @@ public class PowerUpManager : MonoBehaviour
         yield return new WaitForSeconds(0.05f);
         actor.setInvincible(false);
         r.material.DisableKeyword("_EMISSION");
+		
+		GameManager.RemovePowerUp(gameObject.GetInstanceID());
         Destroy(gameObject);
     }
 
