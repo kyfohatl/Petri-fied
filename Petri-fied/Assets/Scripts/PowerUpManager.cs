@@ -51,6 +51,9 @@ public class PowerUpManager : MonoBehaviour
             GetComponent<MeshRenderer>().enabled = false;
             GetComponent<Collider>().enabled = false;
             Destroy(ps);
+			
+			// Remove lock on target so agent no longer goes for same spot
+			other.gameObject.GetComponent<IntelligentAgent>().setTarget(null);
 
             //Run power Up code
             switch(PowerUpType)
