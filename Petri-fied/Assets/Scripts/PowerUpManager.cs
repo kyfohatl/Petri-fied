@@ -36,6 +36,7 @@ public class PowerUpManager : MonoBehaviour
                 setColor(Color.blue); //Temp Color
                 break;
         }
+
     }
 
     // Update is called once per frame

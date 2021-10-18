@@ -11,6 +11,9 @@ public class FoodMagnetPowerUP : MonoBehaviour
     {
         var particleSystem = Instantiate(MagnetEffect, this.transform.position, this.transform.rotation, this.transform);
         particleSystem.transform.localScale = this.transform.localScale;    
+        var sh = particleSystem.GetComponent<ParticleSystem>().shape;
+        sh.shapeType = ParticleSystemShapeType.Mesh;
+        sh.mesh =  createNewMesh();
     }
 
     // Update is called once per frame
@@ -31,5 +34,31 @@ public class FoodMagnetPowerUP : MonoBehaviour
 		{
             return;
         }
+    }
+
+    private Mesh createNewMesh(){
+
+        Mesh meshOld = GetComponent<MeshFilter>().mesh;
+        Mesh mesh = GetComponent<MeshFilter>().mesh;
+        Vector3[] normals = mesh.normals;
+        for(int i = 0; i < normals.Length; i++)
+        {
+            normals[i] = -normals[i];
+        }
+        mesh.normals = normals;
+        
+        for (int i =0; i < mesh.subMeshCount; i++){
+            int[] tris = mesh.GetTriangles(i);
+            for (int j = 0; j < tris.Length; j+= 3){
+                int temp = tris[j];
+                tris[j] = tris[j + 1];
+                tris[j + 1] = temp;
+            }
+            mesh.SetTriangles(tris,i);
+        }
+
+
+        GetComponent<MeshFilter>().mesh = meshOld;
+        return mesh;
     }
 }

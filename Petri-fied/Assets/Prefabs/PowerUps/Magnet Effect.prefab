@@ -671,7 +671,7 @@ ParticleSystem:
     m_Scale: {x: 0.6, y: 0.6, z: 0.6}
     placementMode: 0
     m_MeshMaterialIndex: 0
-    m_MeshNormalOffset: 0
+    m_MeshNormalOffset: -1
     m_MeshSpawn:
       mode: 0
       spread: 0
@@ -728,7 +728,7 @@ ParticleSystem:
           m_PreInfinity: 2
           m_PostInfinity: 2
           m_RotationOrder: 4
-    m_Mesh: {fileID: 4711208715938537054, guid: 894b0f4d0d08c67418abbb5b3613415f, type: 3}
+    m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
     m_MeshRenderer: {fileID: 0}
     m_SkinnedMeshRenderer: {fileID: 0}
     m_Sprite: {fileID: 0}
