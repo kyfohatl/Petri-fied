@@ -111,7 +111,7 @@ public class CameraController : MonoBehaviour
 		{
 			this.goalOrbitDistance = this.orbitDistanceMult * this.playerPos.localScale.x;
 		}
-		cam.transform.position = Vector3.Slerp(cam.transform.position, newCameraPos, 0.5f);
+		cam.transform.position = Vector3.Slerp(cam.transform.position, newCameraPos, 0.1f);
 		
 		// Camera scaling
 		float orbitRatio = Mathf.Abs(this.goalOrbitDistance - this.curOrbitDistance) / this.goalOrbitDistance;

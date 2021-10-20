@@ -201,7 +201,7 @@ public class Enemy : IntelligentAgent
 		else
 		{
 			// If here, there is an issue
-			Debug.Log("Issue with targeting, unknown tag encountered");
+			Debug.Log(this.name + "Has an issue with targeting, unknown tag encountered.");
 			Debug.Break();
 			return 0f;
 		}
