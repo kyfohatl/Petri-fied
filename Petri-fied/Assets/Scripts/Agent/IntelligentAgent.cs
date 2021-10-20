@@ -49,7 +49,8 @@ public class IntelligentAgent : MonoBehaviour
     {
       int increase = (int)Mathf.Round(this.FoodGrowthMultiplier);
       UpdateScore(increase);
-	  GameManager.RemoveFood(other.gameObject.GetInstanceID());
+	    GameManager.RemoveFood(other.gameObject.GetInstanceID());
+      FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject,"FoodEaten");
       Destroy(other.gameObject);
     }
 	else if (other.gameObject.tag == "SuperFood")
@@ -57,6 +58,7 @@ public class IntelligentAgent : MonoBehaviour
 		int increase = Mathf.Max(this.Score / 6, 10); // approx 16.67% of current score or at minimum 10
 		UpdateScore(increase);
 		GameManager.RemoveFood(other.gameObject.GetInstanceID());
+    FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject,"FoodEaten");
 		Destroy(other.gameObject);
 	}
 	else if (other.gameObject.tag == "Enemy")
@@ -72,12 +74,14 @@ public class IntelligentAgent : MonoBehaviour
 				AssimilateGenetics(otherPlayer);
 				Debug.Log(this.Name + " has eaten: " + otherPlayer.getName());
 				GameManager.RemoveEnemy(other.gameObject.GetInstanceID());
+        FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject,"EnemyEaten");
 				Destroy(other.gameObject);
 			}
 			else if (scoreDifference < 0 && !this.InvincibilityMode)
 			{
 				otherPlayer.AssimilateGenetics(this);
 				GameManager.RemoveEnemy(gameObject.GetInstanceID());
+        FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"EnemyEaten");
 				Destroy(gameObject);
 			}
 		}
