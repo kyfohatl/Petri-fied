@@ -27,7 +27,7 @@ public class InvertNormals : MonoBehaviour
         }
         GetComponent<MeshFilter>().mesh = mesh;
         gameObject.AddComponent<MeshCollider>();
-        //GetComponent<ParticleSystem>().GetComponent<ParticleSystemRenderer>().mesh = mesh;
+        GetComponent<ParticleSystem>().GetComponent<ParticleSystemRenderer>().mesh = mesh;
 
         
     }
