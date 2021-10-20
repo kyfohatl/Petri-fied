@@ -97,51 +97,67 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 	
-	// Function to lock-onto enemy target using key press
-	private void enemyLockOn()
+	// Function to lock-onto next nearest object from input dictionary
+	private bool LockOn(Dictionary<int, GameObject> inObjects)
 	{
-		Dictionary<int, GameObject> visibleEnemies = GameManager.getEnemiesVisible();
-		
-		if (visibleEnemies != null)
+		if (inObjects == null)
+		{
+			return false;
+		}
+		else
 		{
 			GameObject currentTarget = this.gameObject.GetComponent<Player>().getTarget();
+			GameObject nextClosest = null;
 			float lockOnDist = this.gameObject.GetComponent<Player>().getLockOnRadius();
 			
 			if (currentTarget == null)
 			{
 				// No current target, set as the closest
-				GameObject closestObj = this.gameObject.GetComponent<Player>().GetClosestObject(visibleEnemies);
-				float closestDist = Vector3.Distance(closestObj.transform.position, this.transform.position);
+				nextClosest = this.gameObject.GetComponent<Player>().GetClosestObject(inObjects);
+				float closestDist = Vector3.Distance(nextClosest.transform.position, this.transform.position);
 				if (closestDist <= lockOnDist)
 				{
-					this.gameObject.GetComponent<Player>().setTarget(closestObj);
+					this.gameObject.GetComponent<Player>().setTarget(nextClosest);
 				}
 			}
 			else
 			{
 				// Find next closest after current target
-				GameObject nextClosest = null;
+				nextClosest = null;
 				float targetDist = Vector3.Distance(currentTarget.transform.position, this.transform.position);
 				float minDist = Mathf.Infinity;
 				
-				foreach (var enemyClone in visibleEnemies)
+				foreach (var objClone in inObjects)
 				{
-					float dist = Vector3.Distance(enemyClone.Value.transform.position, this.transform.position);
+					float dist = Vector3.Distance(objClone.Value.transform.position, this.transform.position);
 					if (dist < minDist && dist > targetDist && dist <= lockOnDist)
 					{
-						nextClosest = enemyClone.Value;
+						nextClosest = objClone.Value;
 						minDist = dist;
 					}
 				}
-				if (nextClosest == null)
-				{
-					Debug.Log ("No longer locked-on!");
-				}
-				// Finally set the target as the next closest enemy visible (will be null if visible is exhausted)
+			}
+			// Return boolean on successful target set
+			if (nextClosest == null)
+			{
+				Debug.Log("No longer locked-on!");
+				return false;
+			}
+			else
+			{
+				// Finally set the target as the next closest object visible
 				this.gameObject.GetComponent<Player>().setTarget(nextClosest);
+				return true;
 			}
 		}
-		else
+	}
+	
+	// Function to lock-onto enemy target using key press
+	private void enemyLockOn()
+	{
+		Dictionary<int, GameObject> visibleEnemies = GameManager.getEnemiesVisible();
+		
+		if (!LockOn(visibleEnemies))
 		{
 			// Visible enemies dictionary is null
 			Debug.Log("No enemies are visible to screen");
@@ -152,7 +168,7 @@ public class PlayerController : MonoBehaviour
 		{
 			GameObject target = this.gameObject.GetComponent<Player>().getTarget();
 			string targetName = target.gameObject.GetComponent<Enemy>().getName();
-			Debug.Log ("Locked-onto enemy player: " + targetName);
+			Debug.Log("Locked-onto enemy player: " + targetName);
 		}
 	}
 	
@@ -161,46 +177,7 @@ public class PlayerController : MonoBehaviour
 	{
 		Dictionary<int, GameObject> visiblePowerUps = GameManager.getPowerUpsVisible();
 		
-		if (visiblePowerUps != null)
-		{
-			GameObject currentTarget = this.gameObject.GetComponent<Player>().getTarget();
-			float lockOnDist = this.gameObject.GetComponent<Player>().getLockOnRadius();
-			
-			if (currentTarget == null)
-			{
-				// No current target, set as the closest
-				GameObject closestObj = this.gameObject.GetComponent<Player>().GetClosestObject(visiblePowerUps);
-				float closestDist = Vector3.Distance(closestObj.transform.position, this.transform.position);
-				if (closestDist <= lockOnDist)
-				{
-					this.gameObject.GetComponent<Player>().setTarget(closestObj);
-				}
-			}
-			else
-			{
-				// Find next closest after current target
-				GameObject nextClosest = null;
-				float targetDist = Vector3.Distance(currentTarget.transform.position, this.transform.position);
-				float minDist = Mathf.Infinity;
-				
-				foreach (var powerUpClone in visiblePowerUps)
-				{
-					float dist = Vector3.Distance(powerUpClone.Value.transform.position, this.transform.position);
-					if (dist < minDist && dist > targetDist && dist <= lockOnDist)
-					{
-						nextClosest = powerUpClone.Value;
-						minDist = dist;
-					}
-				}
-				if (nextClosest == null)
-				{
-					Debug.Log ("No longer locked-on!");
-				}
-				// Finally set the target as the next closest power up visible (will be null if visible is exhausted)
-				this.gameObject.GetComponent<Player>().setTarget(nextClosest);
-			}
-		}
-		else
+		if (!LockOn(visiblePowerUps))
 		{
 			// Visible power up dictionary is null
 			Debug.Log("No power ups are visible to screen");
@@ -209,7 +186,7 @@ public class PlayerController : MonoBehaviour
 		
 		if (this.gameObject.GetComponent<Player>().getTarget() != null)
 		{
-			Debug.Log ("Locked-onto Power-Up");
+			Debug.Log("Locked-onto Power-Up");
 		}
 	}
 	
@@ -218,55 +195,16 @@ public class PlayerController : MonoBehaviour
 	{
 		Dictionary<int, GameObject> visibleFood = GameManager.getFoodVisible();
 		
-		if (visibleFood != null)
+		if (!LockOn(visibleFood))
 		{
-			GameObject currentTarget = this.gameObject.GetComponent<Player>().getTarget();
-			float lockOnDist = this.gameObject.GetComponent<Player>().getLockOnRadius();
-			
-			if (currentTarget == null)
-			{
-				// No current target, set as the closest
-				GameObject closestObj = this.gameObject.GetComponent<Player>().GetClosestObject(visibleFood);
-				float closestDist = Vector3.Distance(closestObj.transform.position, this.transform.position);
-				if (closestDist <= lockOnDist)
-				{
-					this.gameObject.GetComponent<Player>().setTarget(closestObj);
-				}
-			}
-			else
-			{
-				// Find next closest after current target
-				GameObject nextClosest = null;
-				float targetDist = Vector3.Distance(currentTarget.transform.position, this.transform.position);
-				float minDist = Mathf.Infinity;
-				
-				foreach (var foodClone in visibleFood)
-				{
-					float dist = Vector3.Distance(foodClone.Value.transform.position, this.transform.position);
-					if (dist < minDist && dist > targetDist && dist <= lockOnDist)
-					{
-						nextClosest = foodClone.Value;
-						minDist = dist;
-					}
-				}
-				if (nextClosest == null)
-				{
-					Debug.Log ("No longer locked-on!");
-				}
-				// Finally set the target as the next closest enemy visible (will be null if visible is exhausted)
-				this.gameObject.GetComponent<Player>().setTarget(nextClosest);
-			}
-		}
-		else
-		{
-			// Visible power up dictionary is null
+			// Visible food dictionary is null
 			Debug.Log("No food capsules are visible to screen");
 			this.gameObject.GetComponent<Player>().setTarget(null);
 		}
 		
 		if (this.gameObject.GetComponent<Player>().getTarget() != null)
 		{
-			Debug.Log ("Locked-onto food");
+			Debug.Log("Locked-onto food");
 		}
 	}
 	
@@ -281,23 +219,28 @@ public class PlayerController : MonoBehaviour
 			string targetTag = hitInfo.transform.gameObject.tag;
 			if (targetTag == "Enemy")
 			{
-				Debug.Log ("Locked-onto enemy player: " + hitInfo.transform.gameObject.GetComponent<Enemy>().getName());
+				Debug.Log("Locked-onto enemy player: " + hitInfo.transform.gameObject.GetComponent<Enemy>().getName());
 				this.gameObject.GetComponent<Player>().setTarget(hitInfo.transform.gameObject);
 			}
 			else if (targetTag == "Food")
 			{
-				Debug.Log ("Locked-onto food");
+				Debug.Log("Locked-onto food");
+				this.gameObject.GetComponent<Player>().setTarget(hitInfo.transform.gameObject);
+			}
+			else if (targetTag == "SuperFood")
+			{
+				Debug.Log("Locked-onto super food");
 				this.gameObject.GetComponent<Player>().setTarget(hitInfo.transform.gameObject);
 			}
 			else if (targetTag == "PowerUp")
 			{
 				Debug.Log("Locked-onto Power-Up");
-				// Debug.Log ("Locked-onto Power-Up: " + hitInfo.transform.gameObject.GetComponent<PowerUp>().getName());
+				// Debug.Log("Locked-onto Power-Up: " + hitInfo.transform.gameObject.GetComponent<PowerUp>().getName());
 				this.gameObject.GetComponent<Player>().setTarget(hitInfo.transform.gameObject);
 			}
 			else if (this.gameObject.GetComponent<Player>().getTarget() != null) // remove lock-on
 			{
-				Debug.Log ("No longer locked-on!");
+				Debug.Log("No longer locked-on!");
 				this.gameObject.GetComponent<Player>().setTarget(null);
 			}
 		}

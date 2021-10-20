@@ -42,7 +42,6 @@ public class Enemy : IntelligentAgent
 			DetermineTarget();
 		}
 		
-
 		// Move towards active target (needs definitte work: currently doesn't re-target until it's target has been consumed, you can imagine why that's bad)
 		if (this.Target != null)
 		{
@@ -50,7 +49,7 @@ public class Enemy : IntelligentAgent
 			gameObject.GetComponent<IsMoving>().isMoving = true;
 			
 			FaceTarget();
-			transform.position += 2.5f * getSpeedMultiplier() * getPowerUpSpeedMultiplier() * transform.forward * Time.deltaTime / transform.localScale.x;
+			transform.position += 3f * getSpeedMultiplier() * getPowerUpSpeedMultiplier() * transform.forward * Time.deltaTime / transform.localScale.x;
 		}
 	}
 
@@ -167,6 +166,7 @@ public class Enemy : IntelligentAgent
 	// Function to calculate expected score by going for target
 	public float expectedTargetScore(GameObject target)
 	{
+		// Exit early if target has been eaten already
 		if (target == null)
 		{
 			return 0f;
@@ -187,10 +187,23 @@ public class Enemy : IntelligentAgent
 		}
 		else if (target.tag == "PowerUp")
 		{
-			// Return a magic value representing the 'value' of a power-up
+			// Return a magic value representing the 'value' of a power-up (score^2 / dist^2 rewards close power ups)
 			return this.Score * this.Score / (dist * dist);
 		}
-		// Target must be food otherwise
-		return this.getFoodGrowthMultiplier() / dist;
+		else if (target.tag == "SuperFood")
+		{
+			return Mathf.Max(this.Score / 6, 10) / dist; // refer to intelligent agent OnTriggerEnter with superfood tag
+		}
+		else if (target.tag == "Food")
+		{
+			return this.getFoodGrowthMultiplier() / dist;
+		}
+		else
+		{
+			// If here, there is an issue
+			Debug.Log("Issue with targeting, unknown tag encountered");
+			Debug.Break();
+			return 0f;
+		}
 	}
 }

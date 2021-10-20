@@ -52,29 +52,36 @@ public class IntelligentAgent : MonoBehaviour
 	  GameManager.RemoveFood(other.gameObject.GetInstanceID());
       Destroy(other.gameObject);
     }
+	else if (other.gameObject.tag == "SuperFood")
+	{
+		int increase = Mathf.Max(this.Score / 6, 10); // approx 16.67% of current score or at minimum 10
+		UpdateScore(increase);
+		GameManager.RemoveFood(other.gameObject.GetInstanceID());
+		Destroy(other.gameObject);
+	}
 	else if (other.gameObject.tag == "Enemy")
-    {
-      if (other.gameObject.GetComponent("Enemy") != null) 
-      {
-        Enemy otherPlayer = other.gameObject.GetComponent<Enemy>();
-        int scoreDifference = this.Score - otherPlayer.getScore();
-
-        if (scoreDifference > 0 && !otherPlayer.isInvincible())
-        {
-          UpdateScore(otherPlayer.getScore());
-          AssimilateGenetics(otherPlayer);
-          Debug.Log(this.Name + " has eaten: " + otherPlayer.getName());
-		  GameManager.RemoveEnemy(other.gameObject.GetInstanceID());
-		  Destroy(other.gameObject);
-        }
-        else if (scoreDifference < 0 && !this.InvincibilityMode)
-        {
-          otherPlayer.AssimilateGenetics(this);
-		  GameManager.RemoveEnemy(gameObject.GetInstanceID());
-		  Destroy(gameObject);
-        }
-      }
-    }
+	{
+		if (other.gameObject.GetComponent("Enemy") != null)
+		{
+			Enemy otherPlayer = other.gameObject.GetComponent<Enemy>();
+			int scoreDifference = this.Score - otherPlayer.getScore();
+			
+			if (scoreDifference > 0 && !otherPlayer.isInvincible())
+			{
+				UpdateScore(otherPlayer.getScore());
+				AssimilateGenetics(otherPlayer);
+				Debug.Log(this.Name + " has eaten: " + otherPlayer.getName());
+				GameManager.RemoveEnemy(other.gameObject.GetInstanceID());
+				Destroy(other.gameObject);
+			}
+			else if (scoreDifference < 0 && !this.InvincibilityMode)
+			{
+				otherPlayer.AssimilateGenetics(this);
+				GameManager.RemoveEnemy(gameObject.GetInstanceID());
+				Destroy(gameObject);
+			}
+		}
+	}
   }
   
   // Function to check if agent is invincible
@@ -82,8 +89,8 @@ public class IntelligentAgent : MonoBehaviour
   {
 	  return this.InvincibilityMode;
   }
-
-  // to update if agent is invincible
+  
+  // Function to update if agent invincible status
   public void setInvincible(bool setThis)
   {
 	  this.InvincibilityMode = setThis;
@@ -123,7 +130,7 @@ public class IntelligentAgent : MonoBehaviour
       float Z = transform.localScale.z + sizeDifference;
       Vector3 newScale = new Vector3(X, Y, Z);
 
-      transform.localScale = Vector3.Lerp(transform.localScale, newScale, sizeChangeSpeed * Time.deltaTime);
+      transform.localScale = Vector3.Slerp(transform.localScale, newScale, sizeChangeSpeed * Time.deltaTime);
     }
   }
 
@@ -162,31 +169,51 @@ public class IntelligentAgent : MonoBehaviour
     float speedMultMin = 1f;
     this.SpeedMultiplier = Mathf.Max(speedMultMin, Mathf.Abs(normalRandom(1f, 1f))); // mean: 1, std: 1
 
-    float scoreDecayMax = 5f;
+    float scoreDecayMax = 3f;
     this.ScoreDecayMultiplier = Mathf.Min(scoreDecayMax, Mathf.Abs(normalRandom(1f, 0.2f))); // mean: 1, std: 0.2
 
-    float lockOnRadiusMin = 5f;
+    float lockOnRadiusMin = 10f;
     this.LockOnRadiusMultiplier = Mathf.Max(lockOnRadiusMin, Mathf.Abs(normalRandom(25f, 10f))); // mean: 25, std: 10
   }
 
   // Function to take on superior genetics of eaten agent
   public void AssimilateGenetics(IntelligentAgent prey)
   {
+	// Food growth multiplier
     if (prey.getFoodGrowthMultiplier() > this.FoodGrowthMultiplier) // higher = better
     {
       this.FoodGrowthMultiplier = prey.getFoodGrowthMultiplier();
     }
+	else
+	{
+		this.FoodGrowthMultiplier += 0.02f;
+	}
+	// Score decay multiplier
     if (prey.getScoreDecayMultiplier() < this.ScoreDecayMultiplier) // lower = better
     {
       this.ScoreDecayMultiplier = prey.getScoreDecayMultiplier();
-    }
+	}
+	else
+	{
+		this.ScoreDecayMultiplier *= 0.98f;
+	}
+	// Speed multiplier
     if (prey.getSpeedMultiplier() > this.SpeedMultiplier) // higher = better, unless you suck at flying like I do
     {
       this.SpeedMultiplier = prey.getSpeedMultiplier();
     }
+	else
+	{
+		this.SpeedMultiplier += 0.05f;
+	}
+	// Lock-on radius multiplier
 	if (prey.getLockOnRadiusMultiplier() > this.LockOnRadiusMultiplier) // higher = better
 	{
 		this.LockOnRadiusMultiplier = prey.getLockOnRadiusMultiplier();
+	}
+	else
+	{
+		this.LockOnRadiusMultiplier += 0.25f;
 	}
   }
 
@@ -206,7 +233,7 @@ public class IntelligentAgent : MonoBehaviour
   {
     Vector3 direction = (Target.transform.position - transform.position).normalized;
     Quaternion lookRotation = Quaternion.LookRotation(direction);
-	transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 2.5f);
+	transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * this.SpeedMultiplier * this.PowerUpSpeedMultiplier);
   }
 
   // Find nearest object in a dictionary

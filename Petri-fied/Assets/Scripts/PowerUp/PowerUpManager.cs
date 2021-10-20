@@ -123,7 +123,7 @@ public class PowerUpManager : MonoBehaviour
          //create magnet
         var magnet = Instantiate(FoodMagnet);
         magnet.transform.localPosition = other.gameObject.transform.position;
-        magnet.transform.localScale = new Vector3(FoodMagnetScale,FoodMagnetScale,FoodMagnetScale);
+        magnet.transform.localScale = new Vector3(FoodMagnetScale, FoodMagnetScale, FoodMagnetScale);
         magnet.transform.parent = other.transform;
 
         magnet.GetComponent<FoodMagnetPowerUP>().MagnetStrength = FoodMagnetSpeed;
