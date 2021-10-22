@@ -85,6 +85,7 @@ public class PowerUpManager : MonoBehaviour
 
     //Code for Speed Power UP
     IEnumerator SpeedPowerUp(Collider other){
+        FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"SpeedPowerUP");
 
 
         
@@ -119,6 +120,7 @@ public class PowerUpManager : MonoBehaviour
 
 
      IEnumerator FoodMagnetPowerUp(Collider other){
+        FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"MagnetPowerUP");
 
          //create magnet
         var magnet = Instantiate(FoodMagnet);
@@ -137,6 +139,7 @@ public class PowerUpManager : MonoBehaviour
      }
 
     IEnumerator InvinciblePowerUP(Collider other){
+        FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"InvinPowerUP");
         //
         Renderer r;
         if(other.gameObject.tag == "Player"){
