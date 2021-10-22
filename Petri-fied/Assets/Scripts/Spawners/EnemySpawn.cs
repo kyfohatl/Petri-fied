@@ -12,7 +12,7 @@ public class EnemySpawn :  SpawnerController
 		if (this.timer > this.timeBetweenSpawns && transform.childCount < this.spawnLimit)
 		{
 			this.timer = 0f;
-			int spawnCount = Random.Range(spawnMin, spawnMax);
+			int spawnCount = Random.Range(spawnMin, spawnMax + 1);
 			
 			// Loop to spawn one or more powerUp objects per generation
 			for (int i = 0; i < spawnCount; i++)

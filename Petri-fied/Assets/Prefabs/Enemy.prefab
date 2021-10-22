@@ -4984,6 +4984,7 @@ MonoBehaviour:
   SpeedMultiplier: 1
   LockOnRadiusMultiplier: 5
   Player: {fileID: 0}
+  AggressionMultiplier: 1
 --- !u!114 &5040404685274814240
 MonoBehaviour:
   m_ObjectHideFlags: 0

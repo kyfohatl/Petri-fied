@@ -155,7 +155,7 @@ public class PlayerController : MonoBehaviour
 	// Function to lock-onto enemy target using key press
 	private void enemyLockOn()
 	{
-		Dictionary<int, GameObject> visibleEnemies = GameManager.getEnemiesVisible();
+		Dictionary<int, GameObject> visibleEnemies = GameManager.getObjectsVisible(GameManager.getEnemies());
 		
 		if (!LockOn(visibleEnemies))
 		{
@@ -175,7 +175,7 @@ public class PlayerController : MonoBehaviour
 	// Function to lock-onto power up target using key press
 	private void powerUpLockOn()
 	{
-		Dictionary<int, GameObject> visiblePowerUps = GameManager.getPowerUpsVisible();
+		Dictionary<int, GameObject> visiblePowerUps = GameManager.getObjectsVisible(GameManager.getPowerUps());
 		
 		if (!LockOn(visiblePowerUps))
 		{
@@ -193,18 +193,42 @@ public class PlayerController : MonoBehaviour
 	// Function to lock-onto food target using key press
 	private void foodLockOn()
 	{
-		Dictionary<int, GameObject> visibleFood = GameManager.getFoodVisible();
+		Dictionary<int, GameObject> visibleFood = GameManager.getObjectsVisible(GameManager.getFood());
+		Dictionary<int, GameObject> visibleSuperFood = GameManager.getObjectsVisible(GameManager.getSuperFood());
+		Dictionary<int, GameObject> merged;
 		
-		if (!LockOn(visibleFood))
+		// Merge dictionaries and make the super food the override value in case of duplicate keys (shoudn't be any)
+		if (visibleSuperFood != null && visibleSuperFood.Count > 0)
 		{
-			// Visible food dictionary is null
+			merged = new Dictionary<int, GameObject>(visibleFood.Count + visibleSuperFood.Count);
+			foreach (var clone in visibleSuperFood)
+			{
+				merged.Add(clone.Key, clone.Value);
+			}
+			foreach (var clone in visibleFood)
+			{
+				if (!visibleSuperFood.ContainsKey(clone.Key))
+				{
+					merged.Add(clone.Key, clone.Value);
+				}
+			}
+		}
+		else
+		{
+			merged = visibleFood;
+		}
+		
+		if (!LockOn(merged))
+		{
+			// Visible food/super-food dictionary is null
 			Debug.Log("No food capsules are visible to screen");
 			this.gameObject.GetComponent<Player>().setTarget(null);
 		}
 		
 		if (this.gameObject.GetComponent<Player>().getTarget() != null)
 		{
-			Debug.Log("Locked-onto food");
+			string targetTag = this.gameObject.GetComponent<Player>().getTarget().tag;
+			Debug.Log("Locked-onto " + targetTag);
 		}
 	}
 	
@@ -222,14 +246,9 @@ public class PlayerController : MonoBehaviour
 				Debug.Log("Locked-onto enemy player: " + hitInfo.transform.gameObject.GetComponent<Enemy>().getName());
 				this.gameObject.GetComponent<Player>().setTarget(hitInfo.transform.gameObject);
 			}
-			else if (targetTag == "Food")
+			else if (targetTag == "Food" || targetTag == "SuperFood")
 			{
-				Debug.Log("Locked-onto food");
-				this.gameObject.GetComponent<Player>().setTarget(hitInfo.transform.gameObject);
-			}
-			else if (targetTag == "SuperFood")
-			{
-				Debug.Log("Locked-onto super food");
+				Debug.Log("Locked-onto " + targetTag);
 				this.gameObject.GetComponent<Player>().setTarget(hitInfo.transform.gameObject);
 			}
 			else if (targetTag == "PowerUp")

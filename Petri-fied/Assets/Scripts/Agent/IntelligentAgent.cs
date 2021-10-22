@@ -24,7 +24,7 @@ public class IntelligentAgent : MonoBehaviour
   [SerializeField] private float FoodGrowthMultiplier = 1f;
   [SerializeField] private float ScoreDecayMultiplier = 1f;
   [SerializeField] private float SpeedMultiplier = 1f;
-  [SerializeField] private float LockOnRadiusMultiplier = 5f;
+  [SerializeField] private float LockOnRadiusMultiplier = 10f;
 
   // Agent statistics
   private int peakScore = 1;
@@ -261,11 +261,10 @@ public class IntelligentAgent : MonoBehaviour
   }
 
   // Setter method for Power Up speed multiplier
-  public void setPowerUpSpeedMultiplier(float NewMult)
+  public void setPowerUpSpeedMultiplier(float newMult)
   {
-    this.PowerUpSpeedMultiplier = NewMult;
+    this.PowerUpSpeedMultiplier = newMult;
   }
-  
 
   // Function to set the target of the agent
   public virtual void setTarget(GameObject obj)
@@ -308,6 +307,12 @@ public class IntelligentAgent : MonoBehaviour
   {
 	  return this.LockOnRadiusMultiplier;
   }
+  
+  // Setter method for lock-on rafius multipler
+  public void setLockOnRadiusMultiplier(float newMult)
+  {
+	  this.LockOnRadiusMultiplier = newMult;
+  }
 
   // Getter method for Power Up speed multiplier
   public float getPowerUpSpeedMultiplier()
@@ -320,11 +325,23 @@ public class IntelligentAgent : MonoBehaviour
   {
     return this.SpeedMultiplier;
   }
+  
+  // Setter method for speed multiplier
+  public void setSpeedMultiplier(float newMult)
+  {
+	  this.SpeedMultiplier = newMult;
+  }
 
   // Getter method for food growth multiplier
   public float getFoodGrowthMultiplier()
   {
     return this.FoodGrowthMultiplier;
+  }
+  
+  // Setter method for food growth multiplier
+  public void setFoodGrowthMultiplier(float newMult)
+  {
+	this.FoodGrowthMultiplier = newMult;
   }
 
   // Getter method for score decay multiplier

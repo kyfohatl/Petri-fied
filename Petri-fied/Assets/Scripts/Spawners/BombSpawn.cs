@@ -47,12 +47,12 @@ public class BombSpawn : SpawnerController
 														   midPoles,
 														   outerPoles};
 		// Position and restriction of bomb origin spawn location
-		float radius = this.spawnRadius - this.outerRadius + 3 * offset;
-		float height = this.spawnHeight - this.outerRadius + 3 * offset;
-		Vector3 origin = getRandomPosition(radius, height);
+		float spawnRadius = this.spawnRadius - this.outerRadius + 3 * offset;
+		float spawnHeight = this.spawnHeight - this.outerRadius + 3 * offset;
+		Vector3 spawnOrigin = getRandomPosition(spawnRadius, spawnHeight);
 		
 		// Instantiates the core object in the sphere
-		GameObject newlyCreated = Instantiate(this.prefabAtCore, origin, Random.rotation, transform);
+		GameObject newlyCreated = Instantiate(this.prefabAtCore, spawnOrigin, Random.rotation, transform);
 		GameManager.AddFood(newlyCreated.GetInstanceID(), newlyCreated);
 		
 		foreach (var subArray in allArrays)
@@ -60,7 +60,7 @@ public class BombSpawn : SpawnerController
 			foreach (var point in subArray)
 			{
 				// Instantiates the newly spawned object and sets as child of spawner
-				newlyCreated = Instantiate(this.prefabToSpawn, origin + point, Random.rotation, transform);
+				newlyCreated = Instantiate(this.prefabToSpawn, spawnOrigin + point, Random.rotation, transform);
 				GameManager.AddFood(newlyCreated.GetInstanceID(), newlyCreated);
 			}
 		}

@@ -11,16 +11,23 @@ public class GameManager : MonoBehaviour
   // Variety of game entities
   public GameObject Player;
   private Dictionary<int, GameObject> Food;
+  private Dictionary<int, GameObject> SuperFood;
   private Dictionary<int, GameObject> Enemies;
   private Dictionary<int, GameObject> PowerUps;
+  
+  // Difficulty sliders (all multipliers)
+  public float enemySpeedBoost = 1f;
+  public float enemyGrowthBoost = 1f;
+  public float enemyAggressionMultiplier = 1f;
   
 
   // Call on start-up of game
   void Awake()
   {
     inst = this;
-    Player = GameObject.FindGameObjectWithTag("Player");
+	Player = GameObject.FindGameObjectWithTag("Player");
     Food = new Dictionary<int, GameObject>();
+	SuperFood = new Dictionary<int, GameObject>();
     Enemies = new Dictionary<int, GameObject>();
     PowerUps = new Dictionary<int, GameObject>();
   }
@@ -35,6 +42,18 @@ public class GameManager : MonoBehaviour
     }
     inst.Food.Add(id, obj);
     // Debug.Log(inst.Food.Count);
+  }
+  
+  // Function for adding super food to manager dictionary
+  public static void AddSuperFood(int id, GameObject obj)
+  {
+	  if (inst.SuperFood.ContainsKey(id))
+	  {
+		  Debug.Log("Duplicate registration attempted... " + id.ToString());
+		  return;
+	  }
+	  inst.SuperFood.Add(id, obj);
+	  // Debug.Log(inst.Food.Count);
   }
 
   // Function for adding an enemy to manager dictionary
@@ -72,6 +91,18 @@ public class GameManager : MonoBehaviour
     inst.Food.Remove(id);
     // Debug.Log("Food was removed from game manager; remaining count: " + inst.Food.Count);
   }
+  
+  // Function for removing super food from manager dictionary
+  public static void RemoveSuperFood(int id)
+  {
+	  if (!inst.SuperFood.ContainsKey(id))
+	  {
+		  Debug.Log("No object with this ID... " + id.ToString());
+		  return;
+	  }
+	  inst.SuperFood.Remove(id);
+	  // Debug.Log("SuperFood was removed from game manager; remaining count: " + inst.SuperFood.Count);
+  }
 
   // Function for removing an enemy from manager dictionary
   public static void RemoveEnemy(int id)
@@ -97,46 +128,21 @@ public class GameManager : MonoBehaviour
     inst.PowerUps.Remove(id);
     // Debug.Log("PowerUp was removed from game manager; remaining count: " + inst.PowerUps.Count);
   }
-
-  // Function to determine enemy objects visible to screen
-  public Dictionary<int, GameObject> getEnemiesVisible()
-  {
-    Dictionary<int, GameObject> visibleEnemies = new Dictionary<int, GameObject>();
-
-    foreach (KeyValuePair<int, GameObject> enemyClone in Enemies)
-    {
-      Vector3 screenPoint = Camera.main.WorldToViewportPoint(enemyClone.Value.transform.position);
-      bool visibleToScreen = screenPoint.z > 0
-							 && screenPoint.x > 0
-							 && screenPoint.x < 1
-							 && screenPoint.y > 0
-							 && screenPoint.y < 1;
-      if (visibleToScreen)
-      {
-		if(!Physics.Linecast(enemyClone.Value.transform.position, Camera.main.transform.position))
-		{
-		  // Nothing obstructs the visible enemy with the main camera
-		  visibleEnemies.Add(enemyClone.Key, enemyClone.Value);
-		}
-      }
-    }
-
-    if (visibleEnemies.Count == 0)
-    {
-      // No enemies are visible to screen
-      return null;
-    }
-    return visibleEnemies;
-  }
   
-  // Function to determine food objects visible to screen
-  public Dictionary<int, GameObject> getFoodVisible()
+  // Function to determine game objects visible to screen from provided dictionary
+  public Dictionary<int, GameObject> getObjectsVisible(Dictionary<int, GameObject> objs)
   {
-	  Dictionary<int, GameObject> visibleFood = new Dictionary<int, GameObject>();
-	  
-	  foreach (KeyValuePair<int, GameObject> foodClone in Food)
+	  if (objs.Count == 0)
 	  {
-		  Vector3 screenPoint = Camera.main.WorldToViewportPoint(foodClone.Value.transform.position);
+		  // Provided dictionary is empty
+		  return null;
+	  }
+	  
+	  Dictionary<int, GameObject> visibleObjs = new Dictionary<int, GameObject>();
+	  
+	  foreach (KeyValuePair<int, GameObject> objClone in objs)
+	  {
+		  Vector3 screenPoint = Camera.main.WorldToViewportPoint(objClone.Value.transform.position);
 		  bool visibleToScreen = screenPoint.z > 0
 								 && screenPoint.x > 0
 								 && screenPoint.x < 1
@@ -144,57 +150,32 @@ public class GameManager : MonoBehaviour
 								 && screenPoint.y < 1;
 		  if (visibleToScreen)
 		  {
-			  if(!Physics.Linecast(foodClone.Value.transform.position, Camera.main.transform.position))
+			  if(!Physics.Linecast(objClone.Value.transform.position, Camera.main.transform.position))
 			  {
-				  // Nothing obstructs the visible food with the main camera
-				  visibleFood.Add(foodClone.Key, foodClone.Value);
+				  // Nothing obstructs the visible enemy with the main camera
+				  visibleObjs.Add(objClone.Key, objClone.Value);
 			  }
 		  }
 	  }
 	  
-	  if (visibleFood.Count == 0)
+	  if (visibleObjs.Count == 0)
 	  {
-		  // No food capsules are visible to screen
+		  // No objects from the specified dictionary are visible to screen
 		  return null;
 	  }
-	  return visibleFood;
-  }
-  
-  // Function to determine power up objects visible to screen
-  public Dictionary<int, GameObject> getPowerUpsVisible()
-  {
-	  Dictionary<int, GameObject> visiblePowerUps = new Dictionary<int, GameObject>();
-	  
-	  foreach (KeyValuePair<int, GameObject> powerUpClone in PowerUps)
-	  {
-		  Vector3 screenPoint = Camera.main.WorldToViewportPoint(powerUpClone.Value.transform.position);
-		  bool visibleToScreen = screenPoint.z > 0
-								 && screenPoint.x > 0
-								 && screenPoint.x < 1
-								 && screenPoint.y > 0
-								 && screenPoint.y < 1;
-		  if (visibleToScreen)
-		  {
-			  if(!Physics.Linecast(powerUpClone.Value.transform.position, Camera.main.transform.position))
-			  {
-				  // Nothing obstructs the visible power up with the main camera
-				  visiblePowerUps.Add(powerUpClone.Key, powerUpClone.Value);
-			  }
-		  }
-	  }
-	  
-	  if (visiblePowerUps.Count == 0)
-	  {
-		  // No power ups are visible to screen
-		  return null;
-	  }
-	  return visiblePowerUps;
+	  return visibleObjs;
   }
   
   // Get all food in the world
   public Dictionary<int, GameObject> getFood()
   {
     return this.Food;
+  }
+  
+  // Get all super food in the world
+  public Dictionary<int, GameObject> getSuperFood()
+  {
+	  return this.SuperFood;
   }
 
   // Get all enemies in the world
@@ -203,7 +184,7 @@ public class GameManager : MonoBehaviour
     return this.Enemies;
   }
  
-  // Get all PowerUps in the world
+  // Get all power ups in the world
   public Dictionary<int, GameObject> getPowerUps()
   {
     return this.PowerUps;

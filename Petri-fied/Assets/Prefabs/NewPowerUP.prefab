@@ -112,8 +112,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06e82a79d8dd5304ab79b6358e370e4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpeedPowerUpMult: 2
-  duration: 5
+  SpeedPowerUpMult: 3
+  duration: 30
   FoodMagnetScale: 5
   FoodMagnetSpeed: 2
   SpeedEffect1: {fileID: 7703314129621319122, guid: 2cad1d93884f8444aba16bdaf992c6b4, type: 3}
