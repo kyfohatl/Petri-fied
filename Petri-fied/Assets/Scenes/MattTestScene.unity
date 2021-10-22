@@ -850,7 +850,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefabToSpawn: {fileID: 888029972118381692, guid: 657b1c4688f5348f6a7f41f8bee8a7af, type: 3}
-  timeBetweenSpawns: 5
+  timeBetweenSpawns: 1
   spawnMin: 4
   spawnMax: 20
   spawnLimit: 200
@@ -2656,7 +2656,7 @@ MonoBehaviour:
   timeBetweenSpawns: 10
   spawnMin: 0
   spawnMax: 3
-  spawnLimit: 12
+  spawnLimit: 15
   spawnRadius: 149
   spawnHeight: 99
 --- !u!1 &2069053653
@@ -2712,8 +2712,8 @@ MonoBehaviour:
   prefabAtCore: {fileID: 4956642686990887864, guid: 524199bc157294d228d4fc5b7912df97, type: 3}
   innerSphereCount: 15
   outerSphereCount: 35
-  innerRadius: 2
-  outerRadius: 4
+  innerRadius: 3
+  outerRadius: 6
 --- !u!1 &2088685770
 GameObject:
   m_ObjectHideFlags: 0
@@ -2824,7 +2824,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabToSpawn: {fileID: 4038944329464481080, guid: 6d8e0d4e8cf63154dad256aa823d97f8, type: 3}
   timeBetweenSpawns: 30
-  spawnMin: 0
+  spawnMin: 1
   spawnMax: 2
   spawnLimit: 15
   spawnRadius: 149
