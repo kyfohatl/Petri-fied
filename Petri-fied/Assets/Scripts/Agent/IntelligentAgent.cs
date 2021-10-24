@@ -113,7 +113,7 @@ public class IntelligentAgent : MonoBehaviour
 	// Function to update radius
 	public virtual void UpdateRadius()
 	{
-		this.Radius = (float)Mathf.Pow(this.Score, 1f / 3f);
+		this.Radius = (float)Mathf.Pow(this.Score, 1f / 4f);
 		this.LockOnRadius = this.LockOnRadiusMultiplier * this.Radius;
 	}
 	
@@ -193,7 +193,7 @@ public class IntelligentAgent : MonoBehaviour
 		this.ScoreDecayMultiplier = Mathf.Min(scoreDecayMax, Mathf.Abs(normalRandom(1f, 0.2f))); // mean: 1, std: 0.2
 		
 		float lockOnRadiusMin = 10f;
-		this.LockOnRadiusMultiplier = Mathf.Max(lockOnRadiusMin, Mathf.Abs(normalRandom(25f, 10f))); // mean: 25, std: 10
+		this.LockOnRadiusMultiplier = Mathf.Max(lockOnRadiusMin, Mathf.Abs(normalRandom(20f, 10f))); // mean: 20, std: 10
 	}
 	
 	// Function to take on superior genetics of eaten agent

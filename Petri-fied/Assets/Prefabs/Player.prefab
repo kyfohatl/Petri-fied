@@ -614,11 +614,11 @@ MonoBehaviour:
   Name: Protagonist
   Score: 1
   Radius: 1
-  LockOnRadius: 5
+  LockOnRadius: 1
   FoodGrowthMultiplier: 1
-  ScoreDecayMultiplier: 0
+  ScoreDecayMultiplier: 1
   SpeedMultiplier: 1
-  LockOnRadiusMultiplier: 0
+  LockOnRadiusMultiplier: 10
   nameLabel: {fileID: 2862551559114638893}
   timeLabel: {fileID: 4408414659671718017}
 --- !u!114 &-7738235378393031498
@@ -647,7 +647,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CurrentTarget: {fileID: 0}
-  lockOnPrefab: {fileID: 2100000, guid: 6c08fb6e0b351dc45a122cad23553e35, type: 2}
+  lockOnPrefab: {fileID: 2100000, guid: 3688fdb65dfd94f76839703ad268ff4f, type: 2}
 --- !u!1 &8850037745246912971
 GameObject:
   m_ObjectHideFlags: 0

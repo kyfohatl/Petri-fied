@@ -11,18 +11,19 @@ public class ArenaSize : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+		float diameter = 2f * this.ArenaRadius;
+        transform.localScale = new Vector3(diameter, this.ArenaHeight * this.HeightRefactor, diameter) / this.basicScale;
+		
+		var mesh = this.gameObject.GetComponent<MeshFilter>().mesh;
+		if (mesh.name == "Cylinder Instance")
+		{
+			// do something, I don't know
+		}
     }
 
     // Update is called once per frame
     void Update()
     {
-		// Temp code to deal with pro builder still existing in some scenes causing error. Can be removed after pro builder stuff is removed
-		var mesh = this.GetComponent<MeshFilter>().mesh;
 		
-		if (mesh.name == "Cylinder")
-		{
-			transform.localScale = new Vector3(this.ArenaRadius, this.ArenaRadius, this.ArenaHeight * this.HeightRefactor) / this.basicScale;
-		}
     }
 }
