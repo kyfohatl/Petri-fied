@@ -20,7 +20,7 @@ public class Enemy : IntelligentAgent
 		this.Name = GenerateRandomName();
 		this.name = "Enemy: " + this.Name;
 		this.Player = GameObject.FindGameObjectWithTag("Player");
-		this.AggressionMultiplier = Mathf.Max(1f, normalRandom(1f, 1f));
+		this.AggressionMultiplier = Mathf.Abs(normalRandom(0f, 1f));
 		ApplyDifficultySliders();
 		Leaderboard.Instance.AddAgent((IntelligentAgent)this);
 	}
@@ -99,7 +99,7 @@ public class Enemy : IntelligentAgent
 			}
 		}
 		// Other enemies
-		var possibleEnemies = GameManager.get().getEnemies();
+		Dictionary<int, GameObject> possibleEnemies = GameManager.get().getEnemies();
 		float expectedEnemyScore = 0f;
 		
 		if (possibleEnemies != null)
@@ -138,7 +138,7 @@ public class Enemy : IntelligentAgent
 		}
 		// Closest super food entity
 		GameObject closestSuperFood = null;
-		closestFood = GetClosestObject(GameManager.get().getSuperFood());
+		closestSuperFood = GetClosestObject(GameManager.get().getSuperFood());
 		float expectedSuperFoodScore = 0f;
 		
 		if (closestSuperFood != null)
@@ -194,6 +194,8 @@ public class Enemy : IntelligentAgent
 
 		// Calculate distance to the current target
 		float dist = Vector3.Distance(transform.position, target.transform.position);
+		float mySpeed = getSpeedMultiplier() * getPowerUpSpeedMultiplier() / transform.localScale.x;
+		float expectedTravelTime = dist / mySpeed;
 
 		if (target.tag == "Enemy" || target.tag == "Player")
 		{
@@ -202,7 +204,20 @@ public class Enemy : IntelligentAgent
 			{
 				return 0f; // current target cannot be eaten
 			}
-			return targetScore * this.AggressionMultiplier / dist;
+			
+			float targetSpeed = target.GetComponent<IntelligentAgent>().getSpeedMultiplier() * target.GetComponent<IntelligentAgent>().getPowerUpSpeedMultiplier() / target.transform.localScale.x;
+			
+			if (targetSpeed > mySpeed)
+			{
+				targetScore = Mathf.FloorToInt((targetScore / 2) * (mySpeed / targetSpeed));
+				expectedTravelTime = (dist * 2f) / (mySpeed / targetSpeed);
+			}
+			else
+			{
+				expectedTravelTime = dist / (mySpeed - targetSpeed);
+			}
+			
+			return this.AggressionMultiplier * targetScore / expectedTravelTime;
 		}
 		else if (target.tag == "PowerUp")
 		{
@@ -210,16 +225,16 @@ public class Enemy : IntelligentAgent
 			{
 				return 0f; // power up is no longer visible
 			}
-			// Return a magic value representing the 'value' of a power-up (score^2 / dist^2 rewards close power ups)
-			return this.AggressionMultiplier * this.Score * this.Score / (dist * dist);
+			// Return a magic value representing the 'value' of a power-up, prioritises close power ups
+			return this.AggressionMultiplier * this.Score / (expectedTravelTime * expectedTravelTime);
 		}
 		else if (target.tag == "SuperFood")
 		{
-			return Mathf.Max(this.Score / 6, 10) / dist; // refer to IntAgent OnTriggerEnter with superfood tag
+			return Mathf.Max((float)this.Score / 10f, 10f) / expectedTravelTime; // refer to IntAgent OnTriggerEnter with superfood tag
 		}
 		else if (target.tag == "Food")
 		{
-			return this.getFoodGrowthMultiplier() / dist;
+			return this.transform.localScale.x * this.getFoodGrowthMultiplier() / expectedTravelTime; // is meant to get easier the bigger you are
 		}
 		else
 		{

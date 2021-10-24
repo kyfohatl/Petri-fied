@@ -53,8 +53,22 @@ public class BombSpawn : SpawnerController
 		
 		// Instantiates the core object in the sphere
 		GameObject newlyCreated = Instantiate(this.prefabAtCore, spawnOrigin, Random.rotation, transform);
-		GameManager.AddFood(newlyCreated.GetInstanceID(), newlyCreated);
 		
+		if (newlyCreated.tag == "SuperFood")
+		{
+			GameManager.AddFood(newlyCreated.GetInstanceID(), newlyCreated);
+			GameManager.AddSuperFood(newlyCreated.GetInstanceID(), newlyCreated);
+		}
+		else if (newlyCreated.tag == "Food")
+		{
+			GameManager.AddFood(newlyCreated.GetInstanceID(), newlyCreated);
+		}
+		else if (newlyCreated.tag == "PowerUp")
+		{
+			GameManager.AddPowerUp(newlyCreated.GetInstanceID(), newlyCreated);
+		}
+		
+		// Now loop through each orbital food pellet around the core
 		foreach (var subArray in allArrays)
 		{
 			foreach (var point in subArray)

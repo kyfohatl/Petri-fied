@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PowerUpMovement : MonoBehaviour
 {
-	public float orbitSpeed = 1f;
+	public float orbitSpeed = 2f; // X degrees
 	private Vector3 arenaOrigin;
 	
     // Start is called before the first frame update
@@ -17,7 +17,7 @@ public class PowerUpMovement : MonoBehaviour
     // Update is called once per frame
 	private void Update()
 	{
-		// Spin the object around the target at 20 degrees/second.
+		// Spin the object around the target at X degrees/second.
 		transform.RotateAround(arenaOrigin, Vector3.up, this.orbitSpeed * Time.deltaTime);
 	}
 }

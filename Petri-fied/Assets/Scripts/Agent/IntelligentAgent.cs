@@ -23,6 +23,7 @@ public class IntelligentAgent : MonoBehaviour
 	private bool InvincibilityMode = false;
 	
 	// Agent genetic modifiers
+	[SerializeField] private float GeneticGrowthMultiplier = 0.5f;
 	[SerializeField] private float FoodGrowthMultiplier = 1f;
 	[SerializeField] private float ScoreDecayMultiplier = 1f;
 	[SerializeField] private float SpeedMultiplier = 1f;
@@ -65,10 +66,11 @@ public class IntelligentAgent : MonoBehaviour
 		}
 		else if (other.gameObject.tag == "SuperFood")
 		{
-			int increase = Mathf.Max(this.Score / 6, 10); // approx 16.67% of current score or at minimum 10
-			UpdateScore(increase);
+			float increase = Mathf.Max((float)this.Score / 10f, 10f); // approx 10% of current score or at minimum 10
+			UpdateScore(Mathf.FloorToInt(increase));
 			GameManager.RemoveFood(other.gameObject.GetInstanceID());
-			FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject,"FoodEaten");
+			GameManager.RemoveSuperFood(other.gameObject.GetInstanceID());
+			FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject,"SuperFoodEaten");
 			Destroy(other.gameObject);
 		}
 		else if (other.gameObject.tag == "Enemy")
@@ -158,8 +160,9 @@ public class IntelligentAgent : MonoBehaviour
 	public void DecayScore()
 	{
 		this.decayTimer += Time.deltaTime; // increase timer
-		int ratePerSecondAt100 = 5;
-		this.decayDelta = ratePerSecondAt100 * 100f / (this.ScoreDecayMultiplier * this.Score); // time between decays
+		float X = 1000f;
+		float decayPerSecondAtX = 1f;
+		this.decayDelta = X / (decayPerSecondAtX * this.ScoreDecayMultiplier * this.Score); // time between unit decay
 		int reductionAmount = -1;
 		
 		if (this.decayDelta <= Time.deltaTime) // only called when score decay outpaces fps
@@ -183,6 +186,10 @@ public class IntelligentAgent : MonoBehaviour
 	// Function to generate random starting genetics
 	public void GenerateRandomGenetics()
 	{
+		float geneticGrowthMin = 0.01f;
+		float geneticGrowth = Mathf.Abs(normalRandom(0.5f, 0.1f)); // mean: 0.5, std: 0.1
+		this.GeneticGrowthMultiplier = Mathf.Clamp(geneticGrowth, geneticGrowthMin, 1f);
+		
 		float foodGrowthMin = 1f;
 		this.FoodGrowthMultiplier = Mathf.Max(foodGrowthMin, Mathf.Abs(normalRandom(1f, 1f))); // mean: 1, std: 1
 		
@@ -199,10 +206,17 @@ public class IntelligentAgent : MonoBehaviour
 	// Function to take on superior genetics of eaten agent
 	public void AssimilateGenetics(IntelligentAgent prey)
 	{
+		// Genetic growth multiplier, always first
+		if (prey.getGeneticGrowthMultiplier() > this.GeneticGrowthMultiplier)
+		{
+			// Lerp to the new genetic growth multiplier based on the current
+			this.GeneticGrowthMultiplier = Mathf.Lerp(this.GeneticGrowthMultiplier, prey.getGeneticGrowthMultiplier(), this.GeneticGrowthMultiplier);
+		}
+		
 		// Food growth multiplier
 		if (prey.getFoodGrowthMultiplier() > this.FoodGrowthMultiplier) // higher = better
 		{
-			this.FoodGrowthMultiplier = prey.getFoodGrowthMultiplier();
+			this.FoodGrowthMultiplier = Mathf.Lerp(this.FoodGrowthMultiplier, prey.getFoodGrowthMultiplier(), this.GeneticGrowthMultiplier);
 		}
 		else
 		{
@@ -211,7 +225,7 @@ public class IntelligentAgent : MonoBehaviour
 		// Score decay multiplier
 		if (prey.getScoreDecayMultiplier() < this.ScoreDecayMultiplier) // lower = better
 		{
-			this.ScoreDecayMultiplier = prey.getScoreDecayMultiplier();
+			this.ScoreDecayMultiplier = Mathf.Lerp(this.ScoreDecayMultiplier, prey.getScoreDecayMultiplier(), this.GeneticGrowthMultiplier);
 		}
 		else
 		{
@@ -220,20 +234,20 @@ public class IntelligentAgent : MonoBehaviour
 		// Speed multiplier
 		if (prey.getSpeedMultiplier() > this.SpeedMultiplier) // higher = better, unless you suck at flying like I do
 		{
-			this.SpeedMultiplier = prey.getSpeedMultiplier();
+			this.SpeedMultiplier = Mathf.Lerp(this.SpeedMultiplier, prey.getSpeedMultiplier(), this.GeneticGrowthMultiplier);
 		}
 		else
 		{
-			this.SpeedMultiplier += 0.05f;
+			this.SpeedMultiplier += 0.01f;
 		}
 		// Lock-on radius multiplier
 		if (prey.getLockOnRadiusMultiplier() > this.LockOnRadiusMultiplier) // higher = better
 		{
-			this.LockOnRadiusMultiplier = prey.getLockOnRadiusMultiplier();
+			this.LockOnRadiusMultiplier = Mathf.Lerp(this.LockOnRadiusMultiplier, prey.getLockOnRadiusMultiplier(), this.GeneticGrowthMultiplier);
 		}
 		else
 		{
-			this.LockOnRadiusMultiplier += 0.25f;
+			this.LockOnRadiusMultiplier += 0.1f;
 		}
 	}
 	
@@ -253,7 +267,8 @@ public class IntelligentAgent : MonoBehaviour
 	{
 		Vector3 direction = (Target.transform.position - transform.position).normalized;
 		Quaternion lookRotation = Quaternion.LookRotation(direction);
-		transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 2f * this.SpeedMultiplier * this.PowerUpSpeedMultiplier);
+		float mySpeed = this.SpeedMultiplier * this.PowerUpSpeedMultiplier / transform.localScale.x;
+		transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 2f * mySpeed);
 	}
 	
 	// Find nearest object in a dictionary
@@ -351,6 +366,12 @@ public class IntelligentAgent : MonoBehaviour
 	public void setSpeedMultiplier(float newMult)
 	{
 		this.SpeedMultiplier = newMult;
+	}
+	
+	// Getter method for genetic growth multiplier
+	public float getGeneticGrowthMultiplier()
+	{
+		return this.GeneticGrowthMultiplier;
 	}
 	
 	// Getter method for food growth multiplier

@@ -53,7 +53,7 @@ public class SpawnerController : MonoBehaviour
 		return spawned;
 	}
 	
-	// Function to generate a random position somewhere inside the spawner dimensions
+	// Function to generate a random position somewhere inside the arena cylinder dimensions
 	public Vector3 getRandomPosition()
 	{
 		Vector2 xz = Random.insideUnitCircle * this.spawnRadius;

@@ -147,6 +147,11 @@ public class CameraController : MonoBehaviour
 			RaycastHit hit;
 			if (Physics.Linecast(this.Player.transform.position, newCameraPos, out hit))
 			{
+				if (hit.collider.tag == "Enemy")
+				{
+					return;
+				}
+				
 				this.boundaryCollision = true;
 				Vector3 directionToPlayer = (this.Player.transform.position - hit.point).normalized;
 				finalPosition = hit.point + directionToPlayer * 0.25f; // move camera slightly ahead of boundary hit

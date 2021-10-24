@@ -14,12 +14,17 @@ public class FoodSpawn : SpawnerController
 			this.timer = 0f;
 			int spawnCount = Random.Range(spawnMin, spawnMax + 1);
 			
-			// Loop to spawn one or more powerUp objects per generation
+			// Loop to spawn one or more food objects per generation
 			for (int i = 0; i < spawnCount; i++)
 			{
-				// Track the PowerUp spawned.
+				// Track the object spawned.
 				GameObject newlyCreated = Generate();
 				GameManager.AddFood(newlyCreated.GetInstanceID(), newlyCreated);
+				
+				if (newlyCreated.tag == "SuperFood")
+				{
+					GameManager.AddSuperFood(newlyCreated.GetInstanceID(), newlyCreated);
+				}
 			}
 		}
 	}
