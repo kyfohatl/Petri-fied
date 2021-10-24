@@ -20,6 +20,7 @@ public class Enemy : IntelligentAgent
 		this.Name = GenerateRandomName();
 		this.name = "Enemy: " + this.Name;
 		this.Player = GameObject.FindGameObjectWithTag("Player");
+		this.AggressionMultiplier = Mathf.Max(1f, normalRandom(1f, 1f));
 		ApplyDifficultySliders();
 		Leaderboard.Instance.AddAgent((IntelligentAgent)this);
 	}
@@ -161,7 +162,7 @@ public class Enemy : IntelligentAgent
 			float powerUpDistance = Vector3.Distance(transform.position, closestPowerUp.transform.position);
 			expectedPowerUpScore = ExpectedTargetScore(closestPowerUp);
 			
-			if (expectedPowerUpScore > bestExpected)
+			if (powerUpDistance <= this.getLockOnRadius() && expectedPowerUpScore > bestExpected)
 			{
 				bestExpected = expectedPowerUpScore;
 				newTarget = closestPowerUp;
@@ -197,15 +198,18 @@ public class Enemy : IntelligentAgent
 		if (target.tag == "Enemy" || target.tag == "Player")
 		{
 			int targetScore = target.GetComponent<IntelligentAgent>().getScore();
-			if (targetScore >= this.Score)
+			if (targetScore >= this.Score || target.GetComponent<IntelligentAgent>().isInvincible())
 			{
-				// current target cannot be eaten
-				return 0f;
+				return 0f; // current target cannot be eaten
 			}
 			return targetScore * this.AggressionMultiplier / dist;
 		}
 		else if (target.tag == "PowerUp")
 		{
+			if (!target.GetComponent<MeshRenderer>().enabled)
+			{
+				return 0f; // power up is no longer visible
+			}
 			// Return a magic value representing the 'value' of a power-up (score^2 / dist^2 rewards close power ups)
 			return this.AggressionMultiplier * this.Score * this.Score / (dist * dist);
 		}
@@ -231,6 +235,6 @@ public class Enemy : IntelligentAgent
 	{
 		setSpeedMultiplier(getSpeedMultiplier() * GameManager.enemySpeedBoost);
 		setFoodGrowthMultiplier(getFoodGrowthMultiplier() * GameManager.enemyGrowthBoost);
-		this.AggressionMultiplier = GameManager.enemyAggressionMultiplier;
+		this.AggressionMultiplier *= GameManager.enemyAggressionMultiplier;
 	}
 }

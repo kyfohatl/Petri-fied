@@ -548,6 +548,7 @@ MonoBehaviour:
   speedMultiplier: 10
   acceleration: 2
   turnSmooth: 0.1
+  AlwaysFollowTarget: 0
   cam: {fileID: 0}
   GameManager: {fileID: 0}
 --- !u!143 &8850037745045172405

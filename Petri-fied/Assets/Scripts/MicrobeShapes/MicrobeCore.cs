@@ -89,7 +89,7 @@ public class MicrobeCore : MonoBehaviour
 
   public void setMaterial(Material material)
   {
-    this.material = material;
+    this.material = new Material(material);
 
     foreach (MeshFilter face in filters)
     {

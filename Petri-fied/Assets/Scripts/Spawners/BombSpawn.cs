@@ -9,9 +9,9 @@ public class BombSpawn : SpawnerController
 	
 	// Class parameters for food bombs
 	public int innerSphereCount = 15;
-	public int outerSphereCount = 10;
+	public int outerSphereCount = 35;
 	public float innerRadius = 3f;
-	public float outerRadius = 4f;
+	public float outerRadius = 6f;
 
     // Update is called once per frame
     void Update()
@@ -47,8 +47,8 @@ public class BombSpawn : SpawnerController
 														   midPoles,
 														   outerPoles};
 		// Position and restriction of bomb origin spawn location
-		float spawnRadius = this.spawnRadius - this.outerRadius + 3 * offset;
-		float spawnHeight = this.spawnHeight - this.outerRadius + 3 * offset;
+		float spawnRadius = this.spawnRadius - (this.outerRadius + 3 * offset);
+		float spawnHeight = this.spawnHeight - (this.outerRadius + 3 * offset);
 		Vector3 spawnOrigin = getRandomPosition(spawnRadius, spawnHeight);
 		
 		// Instantiates the core object in the sphere

@@ -20,7 +20,6 @@ public class Player : IntelligentAgent
     StartLife();
     this.nameLabel.text = Name;
     UpdateGUI();
-	
   }
 
   // Update is called once per frame

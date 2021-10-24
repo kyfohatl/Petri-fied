@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private float speedMultiplier = 10f;
 	[SerializeField] private float acceleration = 2f;
 	[SerializeField] private float turnSmooth = 0.05f;
+	public bool AlwaysFollowTarget;
 	
 	private Vector3 curDir = new Vector3(0f, 0f, 0f);
 	
@@ -34,26 +35,25 @@ public class PlayerController : MonoBehaviour
 		Vector3 verticalMoveDir = this.cam.forward * Input.GetAxisRaw("Vertical");
 		Vector3 hoverMoveDir = this.cam.up * Input.GetAxisRaw("Hover");
 		Vector3 targetDir = (horizontalMoveDir + verticalMoveDir + hoverMoveDir).normalized;
+		GameObject curTarget = GetComponent<Player>().getTarget();
 		
-		if (targetDir.magnitude >= 0.1f)
+		if (targetDir.magnitude >= 0.1f || (this.AlwaysFollowTarget && curTarget != null))
 		{
 			// Player is moving
-			gameObject.GetComponent<IsMoving>().isMoving = true;
+			GetComponent<IsMoving>().isMoving = true;
 			
 			// Check for lock-on target and calculate direction based on acceleration
-			GameObject curTarget = this.gameObject.GetComponent<Player>().getTarget();
 			if (curTarget == null)
 			{
-				this.curDir = Vector3.Lerp(curDir, targetDir, acceleration * Time.deltaTime);
+				this.curDir = Vector3.Slerp(curDir, targetDir, acceleration * Time.deltaTime);
+				// Rotate the model to face the direction of travel
+				transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(targetDir), turnSmooth);
 			}
 			else
 			{
 				targetDir = (curTarget.transform.position - this.transform.position).normalized;
-				this.curDir = Vector3.Lerp(curDir, targetDir, acceleration * Time.deltaTime);
+				this.curDir = Vector3.Slerp(curDir, targetDir, 5f * acceleration * Time.deltaTime);
 			}
-			
-			// Rotate the model to face the direction of travel
-			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(targetDir), turnSmooth);
 			
 			// Move towards the current direction
 			float geneticSpeedMultiplier = GetComponent<Player>().getSpeedMultiplier() * GetComponent<Player>().getPowerUpSpeedMultiplier();
@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
 		else
 		{
 			// Player is not moving
-			this.gameObject.GetComponent<IsMoving>().isMoving = false;
+			GetComponent<IsMoving>().isMoving = false;
 		}
 		
 		// Lock-on feature using X to change to next closest visible enemy, locks-onto closest if no current target
@@ -91,9 +91,9 @@ public class PlayerController : MonoBehaviour
 		}
 		
 		// Rotate player to face target
-		if (this.gameObject.GetComponent<Player>().getTarget() != null)
+		if (GetComponent<Player>().getTarget() != null)
 		{
-			this.gameObject.GetComponent<Player>().FaceTarget();
+			GetComponent<Player>().FaceTarget();
 		}
 	}
 	
@@ -106,18 +106,18 @@ public class PlayerController : MonoBehaviour
 		}
 		else
 		{
-			GameObject currentTarget = this.gameObject.GetComponent<Player>().getTarget();
+			GameObject currentTarget = GetComponent<Player>().getTarget();
 			GameObject nextClosest = null;
-			float lockOnDist = this.gameObject.GetComponent<Player>().getLockOnRadius();
+			float lockOnDist = GetComponent<Player>().getLockOnRadius();
 			
 			if (currentTarget == null)
 			{
 				// No current target, set as the closest
-				nextClosest = this.gameObject.GetComponent<Player>().GetClosestObject(inObjects);
+				nextClosest = GetComponent<Player>().GetClosestObject(inObjects);
 				float closestDist = Vector3.Distance(nextClosest.transform.position, this.transform.position);
 				if (closestDist <= lockOnDist)
 				{
-					this.gameObject.GetComponent<Player>().setTarget(nextClosest);
+					GetComponent<Player>().setTarget(nextClosest);
 				}
 			}
 			else
@@ -146,7 +146,7 @@ public class PlayerController : MonoBehaviour
 			else
 			{
 				// Finally set the target as the next closest object visible
-				this.gameObject.GetComponent<Player>().setTarget(nextClosest);
+				GetComponent<Player>().setTarget(nextClosest);
 				return true;
 			}
 		}
@@ -161,12 +161,12 @@ public class PlayerController : MonoBehaviour
 		{
 			// Visible enemies dictionary is null
 			Debug.Log("No enemies are visible to screen");
-			this.gameObject.GetComponent<Player>().setTarget(null);
+			GetComponent<Player>().setTarget(null);
 		}
 		
-		if (this.gameObject.GetComponent<Player>().getTarget() != null)
+		if (GetComponent<Player>().getTarget() != null)
 		{
-			GameObject target = this.gameObject.GetComponent<Player>().getTarget();
+			GameObject target = GetComponent<Player>().getTarget();
 			string targetName = target.gameObject.GetComponent<Enemy>().getName();
 			Debug.Log("Locked-onto enemy player: " + targetName);
 		}
@@ -181,10 +181,10 @@ public class PlayerController : MonoBehaviour
 		{
 			// Visible power up dictionary is null
 			Debug.Log("No power ups are visible to screen");
-			this.gameObject.GetComponent<Player>().setTarget(null);
+			GetComponent<Player>().setTarget(null);
 		}
 		
-		if (this.gameObject.GetComponent<Player>().getTarget() != null)
+		if (GetComponent<Player>().getTarget() != null)
 		{
 			Debug.Log("Locked-onto Power-Up");
 		}
@@ -222,12 +222,12 @@ public class PlayerController : MonoBehaviour
 		{
 			// Visible food/super-food dictionary is null
 			Debug.Log("No food capsules are visible to screen");
-			this.gameObject.GetComponent<Player>().setTarget(null);
+			GetComponent<Player>().setTarget(null);
 		}
 		
-		if (this.gameObject.GetComponent<Player>().getTarget() != null)
+		if (GetComponent<Player>().getTarget() != null)
 		{
-			string targetTag = this.gameObject.GetComponent<Player>().getTarget().tag;
+			string targetTag = GetComponent<Player>().getTarget().tag;
 			Debug.Log("Locked-onto " + targetTag);
 		}
 	}
@@ -244,23 +244,23 @@ public class PlayerController : MonoBehaviour
 			if (targetTag == "Enemy")
 			{
 				Debug.Log("Locked-onto enemy player: " + hitInfo.transform.gameObject.GetComponent<Enemy>().getName());
-				this.gameObject.GetComponent<Player>().setTarget(hitInfo.transform.gameObject);
+				GetComponent<Player>().setTarget(hitInfo.transform.gameObject);
 			}
 			else if (targetTag == "Food" || targetTag == "SuperFood")
 			{
 				Debug.Log("Locked-onto " + targetTag);
-				this.gameObject.GetComponent<Player>().setTarget(hitInfo.transform.gameObject);
+				GetComponent<Player>().setTarget(hitInfo.transform.gameObject);
 			}
 			else if (targetTag == "PowerUp")
 			{
 				Debug.Log("Locked-onto Power-Up");
 				// Debug.Log("Locked-onto Power-Up: " + hitInfo.transform.gameObject.GetComponent<PowerUp>().getName());
-				this.gameObject.GetComponent<Player>().setTarget(hitInfo.transform.gameObject);
+				GetComponent<Player>().setTarget(hitInfo.transform.gameObject);
 			}
-			else if (this.gameObject.GetComponent<Player>().getTarget() != null) // remove lock-on
+			else if (GetComponent<Player>().getTarget() != null) // remove lock-on
 			{
 				Debug.Log("No longer locked-on!");
-				this.gameObject.GetComponent<Player>().setTarget(null);
+				GetComponent<Player>().setTarget(null);
 			}
 		}
 		else
