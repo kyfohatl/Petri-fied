@@ -12,7 +12,7 @@ public class ArenaSize : MonoBehaviour
     void Start()
     {
 		float diameter = 2f * this.ArenaRadius;
-        transform.localScale = new Vector3(diameter, this.ArenaHeight * this.HeightRefactor, diameter) / this.basicScale;
+        transform.localScale = new Vector3(diameter, this.ArenaHeight * this.HeightRefactor, diameter) * this.basicScale;
 		
 		var mesh = this.gameObject.GetComponent<MeshFilter>().mesh;
 		if (mesh.name == "Cylinder Instance")

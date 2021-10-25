@@ -7,7 +7,7 @@ using System;
 public class Enemy : IntelligentAgent
 {
 	// Track player
-	public GameObject Player;
+	private GameObject Player;
 
 	// Determination timer
 	private float determineTimer = 0f;

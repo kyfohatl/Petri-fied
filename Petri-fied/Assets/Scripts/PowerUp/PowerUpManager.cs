@@ -123,7 +123,7 @@ public class PowerUpManager : MonoBehaviour
         FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"MagnetPowerUP");
 
          //create magnet
-        var magnet = Instantiate(FoodMagnet);
+        var magnet = Instantiate(FoodMagnet, other.gameObject.transform);
         magnet.transform.localPosition = other.gameObject.transform.position;
         magnet.transform.localScale = new Vector3(FoodMagnetScale, FoodMagnetScale, FoodMagnetScale);
         magnet.transform.parent = other.transform;
@@ -142,8 +142,8 @@ public class PowerUpManager : MonoBehaviour
         FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"InvinPowerUP");
         //
         Renderer r;
-        if(other.gameObject.tag == "Player"){
-            r = other.gameObject.transform.GetChild (0).gameObject.GetComponent<Renderer>();
+        if (other.gameObject.tag == "Player"){
+            r = other.gameObject.transform.GetChild(0).gameObject.GetComponent<Renderer>();
         }else{
             r = other.gameObject.GetComponent<Renderer>();
         }

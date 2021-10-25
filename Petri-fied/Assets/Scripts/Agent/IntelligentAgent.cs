@@ -18,9 +18,9 @@ public class IntelligentAgent : MonoBehaviour
 	private int peakScore = 1;
 	private float initialisationTime;
 	
-	//Power up trackers
+	// Power up trackers
 	private float PowerUpSpeedMultiplier = 1f;
-	private bool InvincibilityMode = false;
+	[SerializeField] private bool InvincibilityMode = false;
 	
 	// Agent genetic modifiers
 	[SerializeField] private float GeneticGrowthMultiplier = 0.5f;
@@ -73,11 +73,11 @@ public class IntelligentAgent : MonoBehaviour
 			FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject,"SuperFoodEaten");
 			Destroy(other.gameObject);
 		}
-		else if (other.gameObject.tag == "Enemy")
+		else if (other.gameObject.tag == "Enemy" || other.gameObject.tag == "Player")
 		{
-			if (other.gameObject.GetComponent("Enemy") != null)
+			if (other.gameObject.GetComponent<IntelligentAgent>() != null)
 			{
-				Enemy otherPlayer = other.gameObject.GetComponent<Enemy>();
+				IntelligentAgent otherPlayer = other.gameObject.GetComponent<IntelligentAgent>();
 				int scoreDifference = this.Score - otherPlayer.getScore();
 				
 				if (scoreDifference > 0 && !otherPlayer.isInvincible())
@@ -85,16 +85,12 @@ public class IntelligentAgent : MonoBehaviour
 					UpdateScore(otherPlayer.getScore());
 					AssimilateGenetics(otherPlayer);
 					Debug.Log(this.Name + " has eaten: " + otherPlayer.getName());
-					GameManager.RemoveEnemy(other.gameObject.GetInstanceID());
+					if (other.gameObject.tag == "Enemy")
+					{
+						GameManager.RemoveEnemy(other.gameObject.GetInstanceID());
+					}
 					FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject,"EnemyEaten");
 					Destroy(other.gameObject);
-				}
-				else if (scoreDifference < 0 && !this.InvincibilityMode)
-				{
-					otherPlayer.AssimilateGenetics(this);
-					GameManager.RemoveEnemy(gameObject.GetInstanceID());
-					FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"EnemyEaten");
-					Destroy(gameObject);
 				}
 			}
 		}
