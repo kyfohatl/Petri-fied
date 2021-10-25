@@ -64,7 +64,9 @@ public class GameManager : MonoBehaviour
       Debug.Log("Duplicate registration attempted... " + id.ToString());
       return;
     }
+	// Add agent to the dictionary and leaderboard
     inst.Enemies.Add(id, obj);
+	Leaderboard.Instance.AddAgent(obj.GetComponent<IntelligentAgent>());
     // Debug.Log(inst.Enemies.Count);
   }
 
@@ -112,6 +114,8 @@ public class GameManager : MonoBehaviour
       Debug.Log("No object with this ID... " + id.ToString());
       return;
     }
+	
+	// Remove agent from the leaderboard and dictionary
     Leaderboard.Instance.RemoveAgent(inst.Enemies[id].GetComponent<IntelligentAgent>());
 	inst.Enemies.Remove(id);
     // Debug.Log("Enemy was removed from game manager; remaining count: " + inst.Enemies.Count);

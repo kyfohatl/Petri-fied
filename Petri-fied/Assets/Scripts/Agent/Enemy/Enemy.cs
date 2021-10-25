@@ -20,9 +20,10 @@ public class Enemy : IntelligentAgent
 		this.Name = GenerateRandomName();
 		this.name = "Enemy: " + this.Name;
 		this.Player = GameObject.FindGameObjectWithTag("Player");
-		this.AggressionMultiplier = Mathf.Abs(normalRandom(0f, 1f));
+		
+		// Determine aggresion of this enemy and apply initial difficulty sliders
+		this.AggressionMultiplier = Mathf.Abs(normalRandom(0f, 1.4826f)); // this stddev produces 50% of agents above/below aggresion mult of 1f
 		ApplyDifficultySliders();
-		Leaderboard.Instance.AddAgent((IntelligentAgent)this);
 	}
 
 	// Update is called once per frame
@@ -60,14 +61,29 @@ public class Enemy : IntelligentAgent
 	private string GenerateRandomName()
 	{
 		string randomString = "";
-		int digitCount = 3;
+		int prefixAlphaCount = UnityEngine.Random.Range(1,5); // [1-4]
+		int digitCount = UnityEngine.Random.Range(1,7); // [1-6]
+		int suffixAlphaCount = UnityEngine.Random.Range(1,4); // [1-3]
+		// e.g. A1-X or ABC123456-XYZ etc
 
-		randomString += (char)UnityEngine.Random.Range('A', 'Z');
+		// Prefix characters
+		for (int i = 0; i < prefixAlphaCount; i++)
+		{
+			randomString += (char)UnityEngine.Random.Range('A', 'Z');
+		}
+		
+		// Digit characters
 		for (int i = 0; i < digitCount; i++)
 		{
 			randomString += (char)UnityEngine.Random.Range('0', '9');
 		}
-		randomString += "-" + (char)UnityEngine.Random.Range('A', 'Z');
+		randomString += "-"; // add dash between digits and suffix
+		
+		// Suffix characters
+		for (int i = 0; i < suffixAlphaCount; i++)
+		{
+			randomString += (char)UnityEngine.Random.Range('A', 'z'); // includes set {[,\,],^,_,'}
+		}
 
 		return randomString;
 	}
@@ -225,7 +241,7 @@ public class Enemy : IntelligentAgent
 			{
 				return 0f; // power up is no longer visible
 			}
-			// Return a magic value representing the 'value' of a power-up, prioritises close power ups
+			// Return a magic value representing the 'value' of a power-up, equal to player's score and rewards smaller travel times
 			return this.AggressionMultiplier * this.Score / (expectedTravelTime * expectedTravelTime);
 		}
 		else if (target.tag == "SuperFood")

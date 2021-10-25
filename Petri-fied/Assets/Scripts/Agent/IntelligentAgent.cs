@@ -146,6 +146,7 @@ public class IntelligentAgent : MonoBehaviour
 			
 			if (t >= 1f)
 			{
+				GetComponent<MovingObjectBubbles>().UpdateScaleSize(this.Radius);
 				this.sizeUpdateTriggered = false;
 				this.previousLocalScale = new Vector3(1f, 1f, 1f) * this.Radius;
 			}
@@ -187,16 +188,16 @@ public class IntelligentAgent : MonoBehaviour
 		this.GeneticGrowthMultiplier = Mathf.Clamp(geneticGrowth, geneticGrowthMin, 1f);
 		
 		float foodGrowthMin = 1f;
-		this.FoodGrowthMultiplier = Mathf.Max(foodGrowthMin, Mathf.Abs(normalRandom(1f, 1f))); // mean: 1, std: 1
+		this.FoodGrowthMultiplier = Mathf.Max(foodGrowthMin, Mathf.Abs(normalRandom(0f, 1f))); // mean: 0, std: 1
 		
 		float speedMultMin = 1f;
-		this.SpeedMultiplier = Mathf.Max(speedMultMin, Mathf.Abs(normalRandom(1f, 1f))); // mean: 1, std: 1
+		this.SpeedMultiplier = Mathf.Max(speedMultMin, Mathf.Abs(normalRandom(0f, 1f))); // mean: 1, std: 1
 		
 		float scoreDecayMax = 3f;
 		this.ScoreDecayMultiplier = Mathf.Min(scoreDecayMax, Mathf.Abs(normalRandom(1f, 0.2f))); // mean: 1, std: 0.2
 		
 		float lockOnRadiusMin = 10f;
-		this.LockOnRadiusMultiplier = Mathf.Max(lockOnRadiusMin, Mathf.Abs(normalRandom(20f, 10f))); // mean: 20, std: 10
+		this.LockOnRadiusMultiplier = Mathf.Max(lockOnRadiusMin, Mathf.Abs(normalRandom(20f, 2f))); // mean: 20, std: 2
 	}
 	
 	// Function to take on superior genetics of eaten agent
