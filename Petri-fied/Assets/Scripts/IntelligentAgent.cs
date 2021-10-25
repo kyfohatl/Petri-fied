@@ -11,11 +11,11 @@ public class IntelligentAgent : MonoBehaviour
   public GameObject Target;
 
   // Agent data elements
-  public string Name = "JoeMama-420";
+  private string Name = "";
   public int Score = 1;
   public float Radius = 1f;
   public float LockOnRadius = 5f;
-  
+
   //Power up trackers
   private float PowerUpSpeedMultiplier = 1f;
   private bool InvincibilityMode = false;
@@ -49,12 +49,12 @@ public class IntelligentAgent : MonoBehaviour
     {
       int increase = (int)Mathf.Round(this.FoodGrowthMultiplier);
       UpdateScore(increase);
-	  GameManager.RemoveFood(other.gameObject.GetInstanceID());
+      GameManager.RemoveFood(other.gameObject.GetInstanceID());
       Destroy(other.gameObject);
     }
-	else if (other.gameObject.tag == "Enemy")
+    else if (other.gameObject.tag == "Enemy")
     {
-      if (other.gameObject.GetComponent("Enemy") != null) 
+      if (other.gameObject.GetComponent("Enemy") != null)
       {
         Enemy otherPlayer = other.gameObject.GetComponent<Enemy>();
         int scoreDifference = this.Score - otherPlayer.getScore();
@@ -64,29 +64,36 @@ public class IntelligentAgent : MonoBehaviour
           UpdateScore(otherPlayer.getScore());
           AssimilateGenetics(otherPlayer);
           Debug.Log(this.Name + " has eaten: " + otherPlayer.getName());
-		  GameManager.RemoveEnemy(other.gameObject.GetInstanceID());
-		  Destroy(other.gameObject);
+          GameManager.RemoveEnemy(other.gameObject.GetInstanceID());
+          Destroy(other.gameObject);
         }
         else if (scoreDifference < 0 && !this.InvincibilityMode)
         {
           otherPlayer.AssimilateGenetics(this);
-		  GameManager.RemoveEnemy(gameObject.GetInstanceID());
-		  Destroy(gameObject);
+          GameManager.RemoveEnemy(gameObject.GetInstanceID());
+          if (gameObject.GetComponent("Player"))
+          {
+            GameManager.EndGameForPlayer();
+          }
+          else
+          {
+            Destroy(gameObject);
+          }
         }
       }
     }
   }
-  
+
   // Function to check if agent is invincible
   public bool isInvincible()
   {
-	  return this.InvincibilityMode;
+    return this.InvincibilityMode;
   }
 
   // to update if agent is invincible
   public void setInvincible(bool setThis)
   {
-	  this.InvincibilityMode = setThis;
+    this.InvincibilityMode = setThis;
   }
 
   // Function to update radius
@@ -184,10 +191,10 @@ public class IntelligentAgent : MonoBehaviour
     {
       this.SpeedMultiplier = prey.getSpeedMultiplier();
     }
-	if (prey.getLockOnRadiusMultiplier() > this.LockOnRadiusMultiplier) // higher = better
-	{
-		this.LockOnRadiusMultiplier = prey.getLockOnRadiusMultiplier();
-	}
+    if (prey.getLockOnRadiusMultiplier() > this.LockOnRadiusMultiplier) // higher = better
+    {
+      this.LockOnRadiusMultiplier = prey.getLockOnRadiusMultiplier();
+    }
   }
 
   // Function to generate normally distributed random number
@@ -206,31 +213,31 @@ public class IntelligentAgent : MonoBehaviour
   {
     Vector3 direction = (Target.transform.position - transform.position).normalized;
     Quaternion lookRotation = Quaternion.LookRotation(direction);
-	transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 2.5f);
+    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 2.5f);
   }
 
   // Find nearest object in a dictionary
   public GameObject GetClosestObject(Dictionary<int, GameObject> objs)
   {
-	  GameObject closest = null;
-	  float minDist = Mathf.Infinity;
-	  Vector3 currentPos = this.transform.position;
-	  float epsilon = 1e-4f;
-	  
-	  foreach (KeyValuePair<int, GameObject> clone in objs)
-	  {
-		  Vector3 directionToObject = clone.Value.transform.position - currentPos;
-		  float distSqrToTarget = directionToObject.sqrMagnitude;
-		  
-		  if (distSqrToTarget < minDist
-			  && distSqrToTarget > epsilon
-			  && clone.Value.GetComponent<MeshRenderer>().enabled) // only rendered objects will be considered
-		  {
-			  closest = clone.Value;
-			  minDist = distSqrToTarget;
-		  }
-	  }
-	  return closest;
+    GameObject closest = null;
+    float minDist = Mathf.Infinity;
+    Vector3 currentPos = this.transform.position;
+    float epsilon = 1e-4f;
+
+    foreach (KeyValuePair<int, GameObject> clone in objs)
+    {
+      Vector3 directionToObject = clone.Value.transform.position - currentPos;
+      float distSqrToTarget = directionToObject.sqrMagnitude;
+
+      if (distSqrToTarget < minDist
+        && distSqrToTarget > epsilon
+        && clone.Value.GetComponent<MeshRenderer>().enabled) // only rendered objects will be considered
+      {
+        closest = clone.Value;
+        minDist = distSqrToTarget;
+      }
+    }
+    return closest;
   }
 
   // Setter method for Power Up speed multiplier
@@ -238,12 +245,18 @@ public class IntelligentAgent : MonoBehaviour
   {
     this.PowerUpSpeedMultiplier = NewMult;
   }
-  
+
+
+  // Setter method for position
+  public void setPosition(Vector3 pos)
+  {
+    transform.position = pos;
+  }
 
   // Function to set the target of the agent
   public virtual void setTarget(GameObject obj)
   {
-	this.Target = obj;
+    this.Target = obj;
   }
 
   //Function to get the target of the agent
@@ -252,6 +265,11 @@ public class IntelligentAgent : MonoBehaviour
     return this.Target;
   }
 
+  // Setter method for name
+  public void setName(string name)
+  {
+    this.Name = name;
+  }
   // Getter method for name
   public string getName()
   {
@@ -275,11 +293,11 @@ public class IntelligentAgent : MonoBehaviour
   {
     return this.LockOnRadius;
   }
-  
+
   // Getter method for lock-on radius multiplier
   public float getLockOnRadiusMultiplier()
   {
-	  return this.LockOnRadiusMultiplier;
+    return this.LockOnRadiusMultiplier;
   }
 
   // Getter method for Power Up speed multiplier

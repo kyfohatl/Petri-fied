@@ -6,6 +6,9 @@ using TMPro;
 
 public class Leaderboard : MonoBehaviour
 {
+  // Whether leaderboard should update.
+  public bool ShouldUpdate = true;
+
   // The number of positions to show in the leaderboard.
   public int PositionsVisible = 4;
   public static Leaderboard Instance { get; private set; }
@@ -18,6 +21,8 @@ public class Leaderboard : MonoBehaviour
 
   // List of agents in the game
   private List<GameObject> renderedRows;
+
+  public int playerRank = 0;
 
   private void Awake()
   {
@@ -53,6 +58,7 @@ public class Leaderboard : MonoBehaviour
     IntelligentAgent topScoreAgent = null;
     IntelligentAgent playerAgent = null;
     bool playerIsInTopShown = false;
+    int j = 1;
     foreach (IntelligentAgent agent in leaderboardAgents)
     {
       if (agent.getScore() > topScore)
@@ -63,7 +69,9 @@ public class Leaderboard : MonoBehaviour
       if (agent.GetType().ToString().Equals("Player"))
       {
         playerAgent = agent;
+        playerRank = j;
       }
+      j++;
     }
 
     // Render UI
@@ -116,7 +124,7 @@ public class Leaderboard : MonoBehaviour
     }
 
     // Conditional to show player agent at the bottom if they weren't in the top x positions.
-    if (i > PositionsVisible && !playerIsInTopShown)
+    if (i >= PositionsVisible && !playerIsInTopShown)
     {
       foreach (IntelligentAgent agent in leaderboardAgents)
       {
@@ -130,7 +138,7 @@ public class Leaderboard : MonoBehaviour
           row.GetComponent<LeaderboardUIRow>().SetIsPlayer(true);
 
           // Set UIRow data.
-          row.GetComponent<LeaderboardUIRow>().SetRank(i.ToString());
+          row.GetComponent<LeaderboardUIRow>().SetRank(playerRank.ToString());
           row.GetComponent<LeaderboardUIRow>().SetName(agent.getName());
           row.GetComponent<LeaderboardUIRow>().SetScore(agent.getScore().ToString());
 
@@ -165,6 +173,10 @@ public class Leaderboard : MonoBehaviour
   */
   public void SortLeaderboard()
   {
+    if (!ShouldUpdate)
+    {
+      return;
+    }
     // Map through local leaderboard state.
     for (int i = leaderboardAgents.Count - 1; i > 0; i--)
     {
@@ -186,14 +198,14 @@ public class Leaderboard : MonoBehaviour
   /**
   Function to initiate, load and sort/rerender the leaderboard data from the GameManager.
   */
-  void LoadLeaderboard()
+  public void LoadLeaderboard()
   {
     // Reset the stored prefs state.
     ClearLeaderboard();
 
     // Add enemies and player together and then populate the leaderboard agents.
-    Dictionary<int, GameObject> allAgentsDict = GameManager.get().getEnemies();
-    allAgentsDict.Add(GameManager.get().Player.GetInstanceID(), GameManager.get().Player);
+    Dictionary<int, GameObject> allAgentsDict = GameManager.inst.getEnemies();
+    allAgentsDict.Add(GameManager.inst.Player.GetInstanceID(), GameManager.inst.Player);
     foreach (KeyValuePair<int, GameObject> t in allAgentsDict)
     {
       IntelligentAgent agent = t.Value.GetComponent<IntelligentAgent>();
@@ -203,14 +215,14 @@ public class Leaderboard : MonoBehaviour
     // Clear the temp dictionary.
     allAgentsDict.Clear();
 
-    // Resort the leaderboard.
+    // Re-sort the leaderboard.
     SortLeaderboard();
   }
 
   /**
   Function to clear the leaderboard local data.
   */
-  void ClearLeaderboard()
+  public void ClearLeaderboard()
   {
     leaderboardAgents.Clear();
   }

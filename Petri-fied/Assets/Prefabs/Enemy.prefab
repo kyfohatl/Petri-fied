@@ -4975,7 +4975,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GameManager: {fileID: 0}
   Target: {fileID: 0}
-  Name: Tango
   Score: 1
   Radius: 1
   LockOnRadius: 5

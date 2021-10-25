@@ -25,6 +25,11 @@ public class CameraController : MonoBehaviour
   // The orbit distance the camera is aiming to get to
   private float goalOrbitDistance;
 
+  void Awake()
+  {
+    DontDestroyOnLoad(this.gameObject);
+  }
+
   // Start is called before the first frame update
   void Start()
   {
@@ -38,6 +43,11 @@ public class CameraController : MonoBehaviour
   // Update is called once per frame
   void Update()
   {
+    if (GameManager.get().gameOver)
+    {
+      return;
+    }
+
     // Get movement input
     float hMouseInput = Input.GetAxisRaw("Mouse X");
     float vMouseInput = Input.GetAxisRaw("Mouse Y");
@@ -57,19 +67,23 @@ public class CameraController : MonoBehaviour
       curOrbitDistance * Mathf.Sin(curHorizontalRotation) * Mathf.Sin(curVerticalRotation)
     );
 
-	cam.transform.position = Vector3.Lerp(cam.transform.position, playerPos.position + newPosOffset, 0.1f);
+    cam.transform.position = Vector3.Lerp(cam.transform.position, playerPos.position + newPosOffset, 0.1f);
 
     // Camera scaling
     // If the camera is not at the goal orbit distance, interpolate orbit distance till it gets there
-	float orbitChangeThreshold = 0.1f;
-	if (Mathf.Abs(goalOrbitDistance - curOrbitDistance)/goalOrbitDistance > orbitChangeThreshold)
+    float orbitChangeThreshold = 0.1f;
+    if (Mathf.Abs(goalOrbitDistance - curOrbitDistance) / goalOrbitDistance > orbitChangeThreshold)
     {
-		curOrbitDistance = Mathf.Lerp(curOrbitDistance, goalOrbitDistance, 0.01f);
+      curOrbitDistance = Mathf.Lerp(curOrbitDistance, goalOrbitDistance, 0.01f);
     }
   }
 
   private void LateUpdate()
   {
+    if (GameManager.get().gameOver)
+    {
+      return;
+    }
     // Always make sure the camera is looking at the player
     cam.transform.LookAt(playerPos);
   }
