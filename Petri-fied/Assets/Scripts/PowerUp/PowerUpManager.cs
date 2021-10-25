@@ -85,6 +85,7 @@ public class PowerUpManager : MonoBehaviour
 
     //Code for Speed Power UP
     IEnumerator SpeedPowerUp(Collider other){
+        FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"SpeedPowerUP");
 
 
         
@@ -119,11 +120,12 @@ public class PowerUpManager : MonoBehaviour
 
 
      IEnumerator FoodMagnetPowerUp(Collider other){
+        FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"MagnetPowerUP");
 
          //create magnet
-        var magnet = Instantiate(FoodMagnet);
+        var magnet = Instantiate(FoodMagnet, other.gameObject.transform);
         magnet.transform.localPosition = other.gameObject.transform.position;
-        magnet.transform.localScale = new Vector3(FoodMagnetScale,FoodMagnetScale,FoodMagnetScale);
+        magnet.transform.localScale = new Vector3(FoodMagnetScale, FoodMagnetScale, FoodMagnetScale);
         magnet.transform.parent = other.transform;
 
         magnet.GetComponent<FoodMagnetPowerUP>().MagnetStrength = FoodMagnetSpeed;
@@ -137,10 +139,11 @@ public class PowerUpManager : MonoBehaviour
      }
 
     IEnumerator InvinciblePowerUP(Collider other){
+        FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"InvinPowerUP");
         //
         Renderer r;
-        if(other.gameObject.tag == "Player"){
-            r = other.gameObject.transform.GetChild (0).gameObject.GetComponent<Renderer>();
+        if (other.gameObject.tag == "Player"){
+            r = other.gameObject.transform.GetChild(0).gameObject.GetComponent<Renderer>();
         }else{
             r = other.gameObject.GetComponent<Renderer>();
         }

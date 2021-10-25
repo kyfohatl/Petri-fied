@@ -63,7 +63,7 @@ public class MicrobeCore : MonoBehaviour
         face.transform.parent = transform;
 
         // Add a material
-        face.AddComponent<MeshRenderer>().sharedMaterial = material;
+        face.AddComponent<MeshRenderer>().sharedMaterial = new Material(material);
         // Add a mesh filter
         filters[i] = face.AddComponent<MeshFilter>();
         // Create the base empty mesh
@@ -78,7 +78,7 @@ public class MicrobeCore : MonoBehaviour
         }
         if (filters[i].GetComponent<MeshRenderer>().sharedMaterial == null)
         {
-          filters[i].GetComponent<MeshRenderer>().sharedMaterial = material;
+          filters[i].GetComponent<MeshRenderer>().sharedMaterial = new Material(material);
         }
       }
 
@@ -89,11 +89,11 @@ public class MicrobeCore : MonoBehaviour
 
   public void setMaterial(Material material)
   {
-    this.material = material;
+    this.material = new Material(material);
 
     foreach (MeshFilter face in filters)
     {
-      face.GetComponent<MeshRenderer>().sharedMaterial = material;
+      face.GetComponent<MeshRenderer>().sharedMaterial = new Material(material);
     }
   }
 

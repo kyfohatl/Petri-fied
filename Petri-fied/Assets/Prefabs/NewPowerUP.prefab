@@ -15,9 +15,10 @@ GameObject:
   - component: {fileID: 4038944329464481081}
   - component: {fileID: 7681953876547958485}
   - component: {fileID: 7681953876547958482}
+  - component: {fileID: -3328643443480449416}
   m_Layer: 0
   m_Name: NewPowerUP
-  m_TagString: Untagged
+  m_TagString: PowerUp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -111,8 +112,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06e82a79d8dd5304ab79b6358e370e4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpeedPowerUpMult: 2
-  duration: 5
+  SpeedPowerUpMult: 3
+  duration: 30
   FoodMagnetScale: 5
   FoodMagnetSpeed: 2
   SpeedEffect1: {fileID: 7703314129621319122, guid: 2cad1d93884f8444aba16bdaf992c6b4, type: 3}
@@ -4893,3 +4894,16 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &-3328643443480449416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4038944329464481080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ed1dfd0667614f10819a4d892205739, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orbitSpeed: 2

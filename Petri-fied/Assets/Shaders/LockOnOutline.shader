@@ -1,4 +1,4 @@
-Shader "Unlit/Outline"
+Shader "Unlit/LockOnOutline"
 {
     Properties
     {
@@ -24,7 +24,7 @@ Shader "Unlit/Outline"
             // This will be overwritten by the next pass where the actual object is rendered over the 
             // outline. But, when the actual object is obstrcuted, it will not be rendered while the 
             // outline will be
-            // ZTest always
+            ZTest always
 
             CGPROGRAM
             #pragma vertex vert
@@ -76,7 +76,7 @@ Shader "Unlit/Outline"
                 // Set the color to be the outline color
                 fixed4 col = _OutlineColor * 10;
                 // apply fog
-                UNITY_APPLY_FOG(i.fogCoord, col);
+                // UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;
             }
             ENDCG
@@ -90,8 +90,8 @@ Shader "Unlit/Outline"
             // Similar to the outline pass, we do not want to store depth info so that we can render the 
             // main object over this effect
             ZWrite off
-            // Ensure the center is always drawn, excpet when overriden by the object itself
-            // ZTest always
+            // Ensure it is always drawn, excpet when overriden by the object itself
+            ZTest always
 
             CGPROGRAM
             #pragma vertex vert
