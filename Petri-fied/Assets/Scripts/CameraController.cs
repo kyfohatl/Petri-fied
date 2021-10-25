@@ -63,7 +63,10 @@ public class CameraController : MonoBehaviour
     this.previousOrbitDistance = this.curOrbitDistance;
     this.goalOrbitDistance = this.orbitDistanceMult * this.playerRadius;
     this.orbitUpdateStartTime = Time.time;
-    UpdateCameraPosition(newCameraPosition(this.goalOrbitDistance));
+    if (!GameManager.inst.gameOver)
+    {
+      InitialiseCameraPosition();
+    }
 
     // Reset fog end distance to lock-on radius distance
     if (RenderSettings.fog) // is fog enabled
@@ -72,6 +75,12 @@ public class CameraController : MonoBehaviour
       RenderSettings.fogStartDistance = this.goalOrbitDistance;
       RenderSettings.fogEndDistance = Mathf.Min(this.goalOrbitDistance + fogRadius, this.arenaHeight);
     }
+  }
+
+  // Set the camera to the player.
+  public void InitialiseCameraPosition()
+  {
+    UpdateCameraPosition(newCameraPosition(this.goalOrbitDistance));
   }
 
   // Update is called once per frame

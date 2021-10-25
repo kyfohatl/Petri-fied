@@ -45,8 +45,8 @@ public class GameManager : MonoBehaviour
 
     GameManager.inst.SetGameOver(true);
     FindObjectOfType<Player>().setPosition(new Vector3(-249.52f, 486, FindObjectOfType<Player>().Radius / 1.5f));
-    Camera.main.transform.rotation = Quaternion.Euler(2, 8, 0);
-    Camera.main.transform.position = new Vector3(-18.2f, 8.1f, -100);
+    Camera.main.transform.rotation = Quaternion.Euler(20, -4, 0);
+    Camera.main.transform.position = new Vector3(-20, 8f, -10);
   }
 
   // Function for adding food to manager dictionary

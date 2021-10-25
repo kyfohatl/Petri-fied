@@ -4978,11 +4978,12 @@ MonoBehaviour:
   Score: 1
   Radius: 1
   LockOnRadius: 5
+  InvincibilityMode: 0
+  GeneticGrowthMultiplier: 0.5
   FoodGrowthMultiplier: 1
   ScoreDecayMultiplier: 1
   SpeedMultiplier: 1
   LockOnRadiusMultiplier: 5
-  Player: {fileID: 0}
   AggressionMultiplier: 1
 --- !u!114 &5040404685274814240
 MonoBehaviour:
@@ -5012,6 +5013,7 @@ MonoBehaviour:
   bubbleEffectObject: {fileID: 5109625974032645616}
   movingEmissionRate: 5
   stationaryEmissionRate: 0.5
+  bubbleSizeScale: 1
 --- !u!114 &5344458707451822501
 MonoBehaviour:
   m_ObjectHideFlags: 0

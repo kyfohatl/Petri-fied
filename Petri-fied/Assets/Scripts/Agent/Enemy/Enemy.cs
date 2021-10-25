@@ -7,7 +7,7 @@ using System;
 public class Enemy : IntelligentAgent
 {
 	// Track player
-	private GameObject Player;
+	private GameObject Player = null;
 
 	// Determination timer
 	private float determineTimer = 0f;
@@ -17,10 +17,10 @@ public class Enemy : IntelligentAgent
 	void Start()
 	{
 		StartLife();
-		this.Name = GenerateRandomName();
-		this.name = "Enemy: " + this.Name;
+		this.setName(GenerateRandomName());
+		this.name = "Enemy: " + this.getName();
 		this.Player = GameObject.FindGameObjectWithTag("Player");
-		
+
 		// Determine aggresion of this enemy and apply initial difficulty sliders
 		this.AggressionMultiplier = Mathf.Abs(normalRandom(0f, 1.4826f)); // this stddev produces 50% of agents above/below aggresion mult of 1f
 		ApplyDifficultySliders();
@@ -45,13 +45,13 @@ public class Enemy : IntelligentAgent
 		{
 			DetermineTarget();
 		}
-		
+
 		// Move towards active target (needs definitte work: currently doesn't re-target until it's target has been consumed, you can imagine why that's bad)
 		if (this.Target != null)
 		{
 			// Enemy is moving
 			gameObject.GetComponent<IsMoving>().isMoving = true;
-			
+
 			FaceTarget();
 			transform.position += 3f * getSpeedMultiplier() * getPowerUpSpeedMultiplier() * transform.forward * Time.deltaTime / transform.localScale.x;
 		}
@@ -71,14 +71,14 @@ public class Enemy : IntelligentAgent
 		{
 			randomString += (char)UnityEngine.Random.Range('A', 'Z');
 		}
-		
+
 		// Digit characters
 		for (int i = 0; i < digitCount; i++)
 		{
 			randomString += (char)UnityEngine.Random.Range('0', '9');
 		}
 		randomString += "-"; // add dash between digits and suffix
-		
+
 		// Suffix characters
 		for (int i = 0; i < suffixAlphaCount; i++)
 		{
@@ -99,13 +99,13 @@ public class Enemy : IntelligentAgent
 		int playerScore = 0;
 		float playerDistance = 0f;
 		float expectedPlayerScore = 0f;
-		
+
 		if (this.Player != null)
 		{
 			playerScore = Player.GetComponent<IntelligentAgent>().getScore();
 			playerDistance = Vector3.Distance(transform.position, this.Player.transform.position);
 			expectedPlayerScore = ExpectedTargetScore(this.Player);
-			
+
 			if (playerDistance <= this.getLockOnRadius()
 				&& playerScore < this.getScore()
 				&& expectedPlayerScore > bestExpected)
@@ -117,7 +117,7 @@ public class Enemy : IntelligentAgent
 		// Other enemies
 		Dictionary<int, GameObject> possibleEnemies = GameManager.get().getEnemies();
 		float expectedEnemyScore = 0f;
-		
+
 		if (possibleEnemies != null)
 		{
 			foreach (KeyValuePair<int, GameObject> enemyClone in possibleEnemies)
@@ -125,7 +125,7 @@ public class Enemy : IntelligentAgent
 				int enemyScore = enemyClone.Value.GetComponent<IntelligentAgent>().getScore();
 				float enemyDistance = Vector3.Distance(transform.position, enemyClone.Value.transform.position);
 				expectedEnemyScore = ExpectedTargetScore(enemyClone.Value);
-				
+
 				if (enemyDistance <= this.getLockOnRadius()
 					&& enemyScore < this.Score
 					&& expectedEnemyScore > bestExpected)
@@ -140,7 +140,7 @@ public class Enemy : IntelligentAgent
 		GameObject closestFood = null;
 		closestFood = GetClosestObject(GameManager.get().getFood());
 		float expectedFoodScore = 0f;
-		
+
 		if (closestFood != null)
 		{
 			float foodDistance = Vector3.Distance(transform.position, closestFood.transform.position);
@@ -156,12 +156,12 @@ public class Enemy : IntelligentAgent
 		GameObject closestSuperFood = null;
 		closestSuperFood = GetClosestObject(GameManager.get().getSuperFood());
 		float expectedSuperFoodScore = 0f;
-		
+
 		if (closestSuperFood != null)
 		{
 			float superFoodDistance = Vector3.Distance(transform.position, closestSuperFood.transform.position);
 			expectedSuperFoodScore = ExpectedTargetScore(closestSuperFood);
-			
+
 			if (expectedSuperFoodScore > bestExpected)
 			{
 				bestExpected = expectedSuperFoodScore;
@@ -172,25 +172,25 @@ public class Enemy : IntelligentAgent
 		GameObject closestPowerUp = null;
 		closestPowerUp = GetClosestObject(GameManager.get().getPowerUps());
 		float expectedPowerUpScore = 0f;
-		
+
 		if (closestPowerUp != null)
 		{
 			float powerUpDistance = Vector3.Distance(transform.position, closestPowerUp.transform.position);
 			expectedPowerUpScore = ExpectedTargetScore(closestPowerUp);
-			
+
 			if (powerUpDistance <= this.getLockOnRadius() && expectedPowerUpScore > bestExpected)
 			{
 				bestExpected = expectedPowerUpScore;
 				newTarget = closestPowerUp;
 			}
 		}
-		
+
 		// Finally, update Target
 		if (newTarget != null)
 		{
 			this.Target = newTarget;
 		}
-		
+
 		//// debugging lines
 		if (this.Target == null && closestFood != null)
 		{
@@ -220,9 +220,9 @@ public class Enemy : IntelligentAgent
 			{
 				return 0f; // current target cannot be eaten
 			}
-			
+
 			float targetSpeed = target.GetComponent<IntelligentAgent>().getSpeedMultiplier() * target.GetComponent<IntelligentAgent>().getPowerUpSpeedMultiplier() / target.transform.localScale.x;
-			
+
 			if (targetSpeed > mySpeed)
 			{
 				targetScore = Mathf.FloorToInt((targetScore / 2) * (mySpeed / targetSpeed));
@@ -232,7 +232,7 @@ public class Enemy : IntelligentAgent
 			{
 				expectedTravelTime = dist / (mySpeed - targetSpeed);
 			}
-			
+
 			return this.AggressionMultiplier * targetScore / expectedTravelTime;
 		}
 		else if (target.tag == "PowerUp")
@@ -260,7 +260,7 @@ public class Enemy : IntelligentAgent
 			return 0f;
 		}
 	}
-	
+
 	// Function to apply modified game difficulty sliders
 	public void ApplyDifficultySliders()
 	{

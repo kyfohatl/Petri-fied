@@ -11,37 +11,43 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private float acceleration = 2f;
 	[SerializeField] private float turnSmooth = 0.05f;
 	public bool AlwaysFollowTarget;
-	
+
 	private Vector3 curDir = new Vector3(0f, 0f, 0f);
-	
+
 	// Third-per Camera
 	public Transform cam;
-	
+
 	// Entity Manager (contains info of relevant entities)
 	public GameManager GameManager;
 
-	
+
 	// Start is called before the first frame update
 	void Start()
 	{
 		this.GameManager = FindObjectOfType<GameManager>();
 	}
-	
+
 	// Update is called once per frame
 	void Update()
 	{
+		// Disable updates if maingame isn't running.
+		if (GameManager.gameOver)
+		{
+				return;
+		}
+
 		// Calculate the target direction of movement
 		Vector3 horizontalMoveDir = this.cam.right * Input.GetAxisRaw("Horizontal");
 		Vector3 verticalMoveDir = this.cam.forward * Input.GetAxisRaw("Vertical");
 		Vector3 hoverMoveDir = this.cam.up * Input.GetAxisRaw("Hover");
 		Vector3 targetDir = (horizontalMoveDir + verticalMoveDir + hoverMoveDir).normalized;
 		GameObject curTarget = GetComponent<Player>().getTarget();
-		
+
 		if (targetDir.magnitude >= 0.1f || (this.AlwaysFollowTarget && curTarget != null))
 		{
 			// Player is moving
 			GetComponent<IsMoving>().isMoving = true;
-			
+
 			// Check for lock-on target and calculate direction based on acceleration
 			if (curTarget == null)
 			{
@@ -54,7 +60,7 @@ public class PlayerController : MonoBehaviour
 				targetDir = (curTarget.transform.position - this.transform.position).normalized;
 				this.curDir = Vector3.Slerp(curDir, targetDir, 5f * acceleration * Time.deltaTime);
 			}
-			
+
 			// Move towards the current direction
 			float geneticSpeedMultiplier = GetComponent<Player>().getSpeedMultiplier() * GetComponent<Player>().getPowerUpSpeedMultiplier();
 			float finalSpeedMultiplier = this.speedMultiplier * geneticSpeedMultiplier; // this.speedMultiplier is an artifact from the character controller == 10f
@@ -65,38 +71,38 @@ public class PlayerController : MonoBehaviour
 			// Player is not moving
 			GetComponent<IsMoving>().isMoving = false;
 		}
-		
+
 		// Lock-on feature using X to change to next closest visible enemy, locks-onto closest if no current target
 		if (Input.GetKeyDown(KeyCode.X))
 		{
 			enemyLockOn();
 		}
-		
+
 		// Lock-on feature using C to change to next closest visible power up, locks-onto closest if no current target
 		if (Input.GetKeyDown(KeyCode.C))
 		{
 			powerUpLockOn();
 		}
-		
+
 		// Lock-on feature using F to change to next closest visible food capsule, locks-onto closest if no current target
 		if (Input.GetKeyDown(KeyCode.F))
 		{
 			foodLockOn();
 		}
-		
+
 		// Lock-on feature using left mouse click
 		if (Input.GetMouseButtonDown(0))
 		{
 			mouseLockOn();
 		}
-		
+
 		// Rotate player to face target
 		if (GetComponent<Player>().getTarget() != null)
 		{
 			GetComponent<Player>().FaceTarget();
 		}
 	}
-	
+
 	// Function to lock-onto next nearest object from input dictionary
 	private bool LockOn(Dictionary<int, GameObject> inObjects)
 	{
@@ -109,7 +115,7 @@ public class PlayerController : MonoBehaviour
 			GameObject currentTarget = GetComponent<Player>().getTarget();
 			GameObject nextClosest = null;
 			float lockOnDist = GetComponent<Player>().getLockOnRadius();
-			
+
 			if (currentTarget == null)
 			{
 				// No current target, set as the closest
@@ -117,7 +123,7 @@ public class PlayerController : MonoBehaviour
 				float closestDist = Vector3.Distance(nextClosest.transform.position, this.transform.position);
 				if (closestDist <= lockOnDist)
 				{
-					GetComponent<Player>().setTarget(nextClosest);
+						GetComponent<Player>().setTarget(nextClosest);
 				}
 			}
 			else
@@ -126,7 +132,7 @@ public class PlayerController : MonoBehaviour
 				nextClosest = null;
 				float targetDist = Vector3.Distance(currentTarget.transform.position, this.transform.position);
 				float minDist = Mathf.Infinity;
-				
+
 				foreach (var objClone in inObjects)
 				{
 					float dist = Vector3.Distance(objClone.Value.transform.position, this.transform.position);
@@ -149,21 +155,21 @@ public class PlayerController : MonoBehaviour
 				GetComponent<Player>().setTarget(nextClosest);
 				return true;
 			}
-		}
 	}
-	
+	}
+
 	// Function to lock-onto enemy target using key press
 	private void enemyLockOn()
 	{
 		Dictionary<int, GameObject> visibleEnemies = GameManager.getObjectsVisible(GameManager.getEnemies());
-		
+
 		if (!LockOn(visibleEnemies))
 		{
 			// Visible enemies dictionary is null
 			Debug.Log("No enemies are visible to screen");
 			GetComponent<Player>().setTarget(null);
 		}
-		
+
 		if (GetComponent<Player>().getTarget() != null)
 		{
 			GameObject target = GetComponent<Player>().getTarget();
@@ -176,14 +182,14 @@ public class PlayerController : MonoBehaviour
 	private void powerUpLockOn()
 	{
 		Dictionary<int, GameObject> visiblePowerUps = GameManager.getObjectsVisible(GameManager.getPowerUps());
-		
+
 		if (!LockOn(visiblePowerUps))
 		{
 			// Visible power up dictionary is null
 			Debug.Log("No power ups are visible to screen");
 			GetComponent<Player>().setTarget(null);
 		}
-		
+
 		if (GetComponent<Player>().getTarget() != null)
 		{
 			Debug.Log("Locked-onto Power-Up");
@@ -196,7 +202,7 @@ public class PlayerController : MonoBehaviour
 		Dictionary<int, GameObject> visibleFood = GameManager.getObjectsVisible(GameManager.getFood());
 		Dictionary<int, GameObject> visibleSuperFood = GameManager.getObjectsVisible(GameManager.getSuperFood());
 		Dictionary<int, GameObject> merged;
-		
+
 		// Merge dictionaries and make the super food the override value in case of duplicate keys (shoudn't be any)
 		if (visibleSuperFood != null && visibleSuperFood.Count > 0)
 		{
@@ -217,14 +223,14 @@ public class PlayerController : MonoBehaviour
 		{
 			merged = visibleFood;
 		}
-		
+
 		if (!LockOn(merged))
 		{
 			// Visible food/super-food dictionary is null
 			Debug.Log("No food capsules are visible to screen");
 			GetComponent<Player>().setTarget(null);
 		}
-		
+
 		if (GetComponent<Player>().getTarget() != null)
 		{
 			string targetTag = GetComponent<Player>().getTarget().tag;
@@ -237,7 +243,7 @@ public class PlayerController : MonoBehaviour
 	{
 		RaycastHit hitInfo = new RaycastHit();
 		bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo);
-		
+
 		if (hit) // ray cast intersects something not null
 		{
 			string targetTag = hitInfo.transform.gameObject.tag;
