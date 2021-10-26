@@ -46,11 +46,20 @@ MonoBehaviour:
   sounds:
   - name: FoodEaten
     clip: {fileID: 8300000, guid: f8add6057501e284ca23e2a984aa8042, type: 3}
-    volume: 0.52
-    pitch: 1
+    volume: 0.42
+    pitch: 0.6
     spatialBlend: 1
     minDistance: 0.5
-    maxDistance: 500
+    maxDistance: 200
+    loop: 0
+    source: {fileID: 0}
+  - name: SuperFoodEaten
+    clip: {fileID: 0}
+    volume: 0.1
+    pitch: 0.45
+    spatialBlend: 0
+    minDistance: 0.1
+    maxDistance: 50
     loop: 0
     source: {fileID: 0}
   - name: BackgroundMusic
@@ -64,8 +73,8 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: EnemyEaten
     clip: {fileID: 8300000, guid: f47c8136d5bd7eb4b8ef9c0415951fc0, type: 3}
-    volume: 0.7
-    pitch: 1
+    volume: 0.69
+    pitch: 0.69
     spatialBlend: 1
     minDistance: 0.8
     maxDistance: 50
@@ -128,7 +137,7 @@ MonoBehaviour:
   - name: LockOn
     clip: {fileID: 8300000, guid: 87d72817deffd440a97628a270599a5a, type: 3}
     volume: 0.1
-    pitch: 0.4
+    pitch: 0.45
     spatialBlend: 0
     minDistance: 0.1
     maxDistance: 50
