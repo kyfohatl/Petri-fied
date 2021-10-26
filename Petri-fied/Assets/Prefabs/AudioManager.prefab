@@ -100,8 +100,8 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: StartGame
     clip: {fileID: 8300000, guid: 6981d67a034b5384482683658cee26f1, type: 3}
-    volume: 1
-    pitch: 1
+    volume: 0.5
+    pitch: 0.2
     spatialBlend: 0
     minDistance: 0.1
     maxDistance: 50
@@ -111,6 +111,24 @@ MonoBehaviour:
     clip: {fileID: 0}
     volume: 1
     pitch: 1
+    spatialBlend: 0
+    minDistance: 0.1
+    maxDistance: 50
+    loop: 0
+    source: {fileID: 0}
+  - name: FailedLockOn
+    clip: {fileID: 8300000, guid: d4599783fae854b038e579f2184b6795, type: 3}
+    volume: 1
+    pitch: 1
+    spatialBlend: 0
+    minDistance: 0.1
+    maxDistance: 50
+    loop: 0
+    source: {fileID: 0}
+  - name: LockOn
+    clip: {fileID: 8300000, guid: 87d72817deffd440a97628a270599a5a, type: 3}
+    volume: 0.1
+    pitch: 0.6
     spatialBlend: 0
     minDistance: 0.1
     maxDistance: 50

@@ -28,6 +28,8 @@ public class CameraController : MonoBehaviour
   private float orbitUpdateDuration = 2f; // time to update to new orbit, default: 2 seconds
   private float orbitUpdateStartTime;
   private float previousOrbitDistance;
+  private float previousFogStartDistance;
+  private float previousFogEndDistance;
   private bool orbitUpdateTriggered = false;
 
   // The arena dimensions and boundary collision trackers
@@ -35,6 +37,7 @@ public class CameraController : MonoBehaviour
   private float arenaHeight;
   private Vector3 arenaOrigin;
   private bool boundaryCollision = false;
+  
 
   void Awake()
   {
@@ -127,7 +130,14 @@ public class CameraController : MonoBehaviour
       // If the camera is not at the goal orbit distance, interpolate orbit distance to desired
       float t = (Time.time - this.orbitUpdateStartTime) / this.orbitUpdateDuration;
       this.curOrbitDistance = Mathf.Lerp(this.previousOrbitDistance, this.goalOrbitDistance, t);
-
+	  
+	  float newFogStartDistance = this.curOrbitDistance;
+	  float orbitRatio = this.curOrbitDistance / this.goalOrbitDistance;
+	  float newFogEndDistance = orbitRatio * this.Player.GetComponent<IntelligentAgent>().getLockOnRadius();
+	  
+	  RenderSettings.fogStartDistance = Mathf.Lerp(this.previousFogStartDistance, newFogStartDistance, t);
+	  RenderSettings.fogEndDistance = Mathf.Lerp(this.previousFogEndDistance, newFogEndDistance, t);
+	  
       if (t >= 1f)
       {
         this.orbitUpdateTriggered = false;
@@ -261,7 +271,8 @@ public class CameraController : MonoBehaviour
     this.orbitUpdateStartTime = Time.time;
 
     // Reset fog parameters to match lock-on radius distance
-	updateFog();
+	this.previousFogStartDistance = RenderSettings.fogStartDistance;
+	this.previousFogEndDistance = RenderSettings.fogEndDistance;
   }
 
   // Increments the given angle by the given amount, taking into account framerate, and returns the result
@@ -293,7 +304,7 @@ public class CameraController : MonoBehaviour
   }
   
   // Function to update the fog render distance
-  void updateFog()
+  public void updateFog()
   {
 	  if (RenderSettings.fog) // is fog enabled
 	  {

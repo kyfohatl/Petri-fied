@@ -4,14 +4,20 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-
-    //Sound Manager
+	// Instantiate this Sound Manager object
+	public static AudioManager instance;
 
     //to play a sound run following line
     // Where Test1 is name of sound in AudioManager
     //FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject,"Test1");
-
     public Sound[] sounds;
+	
+	// Call on start-up of game
+	private void Awake()
+	{
+		instance = this;
+		DontDestroyOnLoad(this.gameObject);
+	}
     
     // Start is called before the first frame update
     void Start()

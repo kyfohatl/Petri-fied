@@ -69,6 +69,7 @@ public class Player : IntelligentAgent
   {
 	  if (obj != null)
 	  {
+		  FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "LockOn");
 		  float dist = Vector3.Distance(obj.gameObject.transform.position, transform.position);
 		  float travelTime = dist / (getSpeedMultiplier() * getPowerUpSpeedMultiplier() / transform.localScale.x);
 		  Debug.Log("Distance to target: " + dist + ", expected travel time: " + travelTime + " seconds");

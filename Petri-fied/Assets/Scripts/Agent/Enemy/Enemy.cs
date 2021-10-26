@@ -242,7 +242,7 @@ public class Enemy : IntelligentAgent
 				return 0f; // power up is no longer visible
 			}
 			// Return a magic value representing the 'value' of a power-up, equal to player's score and rewards smaller travel times
-			return this.AggressionMultiplier * this.Score / (expectedTravelTime * expectedTravelTime);
+			return this.AggressionMultiplier * 2f * Mathf.Max((float)this.Score, 10f) / (expectedTravelTime * expectedTravelTime);
 		}
 		else if (target.tag == "SuperFood")
 		{

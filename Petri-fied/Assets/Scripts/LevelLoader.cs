@@ -37,5 +37,6 @@ public class LevelLoader : MonoBehaviour
 
     // Run callback (things to do after scene is loaded).
     onResult();
+	SceneManager.SetActiveScene(SceneManager.GetSceneByName("MainScene"));
   }
 }
