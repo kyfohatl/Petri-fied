@@ -20,13 +20,6 @@ public class LeaderboardUIRow : MonoBehaviour
 
   private bool isTopScore;
 
-  void Start()
-  {
-  }
-  void Update()
-  {
-  }
-
   private void ApplyStyles()
   {
     if (isPlayer)

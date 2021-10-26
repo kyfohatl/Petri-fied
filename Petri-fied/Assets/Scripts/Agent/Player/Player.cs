@@ -7,6 +7,9 @@ using TMPro;
 
 public class Player : IntelligentAgent
 {
+
+  public static Player instance;
+
   // Player statistics tracking
   private float survivalTime = 0.0f;
 
@@ -14,17 +17,29 @@ public class Player : IntelligentAgent
   public TMP_Text nameLabel;
   public TMP_Text timeLabel;
 
+  private void Awake()
+  {
+    instance = this;
+    DontDestroyOnLoad(this.gameObject);
+    this.nameLabel.text = getName();
+  }
+
   // Start is called before the first frame update
   void Start()
   {
     StartLife();
-    this.nameLabel.text = Name;
+    this.nameLabel.text = getName();
     UpdateGUI();
   }
 
   // Update is called once per frame
   void Update()
   {
+    if (GameManager.gameOver)
+    {
+      return;
+    }
+    this.nameLabel.text = getName();
     this.survivalTime += Time.deltaTime;
     DecayScore();
     UpdateSize();
@@ -49,11 +64,16 @@ public class Player : IntelligentAgent
     base.UpdateRadius();
     GameEvents.instance.PlayerRadiusChange(Radius);
   }
-  
+
   // Override function to set the player's target and change target's material properties
   public override void setTarget(GameObject obj)
   {
-	  GetComponent<LockOnController>().UpdateTargetMaterial(obj);
-	  this.Target = obj;
+    GetComponent<LockOnController>().UpdateTargetMaterial(obj);
+    this.Target = obj;
+  }
+
+  public float getSurvivalTime()
+  {
+    return this.survivalTime;
   }
 }

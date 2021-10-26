@@ -597,6 +597,7 @@ MonoBehaviour:
   bubbleEffectObject: {fileID: 8850037746083683451}
   movingEmissionRate: 5
   stationaryEmissionRate: 0.5
+  bubbleSizeScale: 1
 --- !u!114 &8951172823056146455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -611,10 +612,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GameManager: {fileID: 0}
   Target: {fileID: 0}
-  Name: Protagonist
   Score: 1
   Radius: 1
   LockOnRadius: 1
+  InvincibilityMode: 0
+  GeneticGrowthMultiplier: 0.5
   FoodGrowthMultiplier: 1
   ScoreDecayMultiplier: 1
   SpeedMultiplier: 1
