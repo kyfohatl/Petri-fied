@@ -2359,6 +2359,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1305210858}
     - target: {fileID: 1159218976800108518, guid: 8d4766e5df4b5cd4ba780ea0ebebc254, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 1711837943}
+    - target: {fileID: 1159218976800108518, guid: 8d4766e5df4b5cd4ba780ea0ebebc254, type: 3}
       propertyPath: compass
       value: 
       objectReference: {fileID: 1305210860}
@@ -3734,7 +3738,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ae617a4964abdb4e8e575cd552ca020, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Camera: {fileID: 1711837944}
   Player: {fileID: 1305210861}
   orbitDistanceMult: 10
   cameraSensitivityMultiplier: 1
