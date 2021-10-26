@@ -6,12 +6,13 @@ public class FoodMagnetPowerUP : MonoBehaviour
 {
     public float MagnetStrength;
     public GameObject MagnetEffect;
+    private GameObject pSystem;
     // Start is called before the first frame update
     void Start()
     {
-        var particleSystem = Instantiate(MagnetEffect, this.transform.position, this.transform.rotation, this.transform);
-        particleSystem.transform.localScale = this.transform.localScale;    
-        var sh = particleSystem.GetComponent<ParticleSystem>().shape;
+        pSystem = Instantiate(MagnetEffect, this.transform.position, this.transform.rotation, this.transform);
+        pSystem.transform.localScale = this.transform.localScale;    
+        var sh = pSystem.GetComponent<ParticleSystem>().shape;
         sh.shapeType = ParticleSystemShapeType.Mesh;
         sh.mesh =  createNewMesh();
     }
@@ -19,7 +20,8 @@ public class FoodMagnetPowerUP : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        float effectScale = transform.localScale.x*transform.parent.localScale.y;
+        pSystem.transform.localScale = new Vector3(effectScale, effectScale, effectScale); 
     }
 
     //If hits food, pull food to centre
@@ -27,8 +29,8 @@ public class FoodMagnetPowerUP : MonoBehaviour
 	{
         if (FoodHit.gameObject.tag == "Food")
 		{
-            Vector3 direction = (transform.position - FoodHit.gameObject.transform.position).normalized;
-            FoodHit.gameObject.transform.Translate(direction * MagnetStrength * Time.deltaTime);
+            Vector3 direction = (transform.parent.transform.position - FoodHit.gameObject.transform.position).normalized;
+            FoodHit.gameObject.transform.Translate(direction * MagnetStrength * Time.deltaTime, Space.World);
         }
 		else
 		{

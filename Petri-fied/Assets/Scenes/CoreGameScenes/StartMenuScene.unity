@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.17893663, g: 0.22405607, b: 0.30590117, a: 1}
+  m_IndirectSpecularColor: {r: 0.17893663, g: 0.2240561, b: 0.30590117, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2974,6 +2974,14 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8850037745045172400, guid: 8d4766e5df4b5cd4ba780ea0ebebc254, type: 3}
   m_PrefabInstance: {fileID: 1305210856}
   m_PrefabAsset: {fileID: 0}
+--- !u!81 &1305210862
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1305210861}
+  m_Enabled: 1
 --- !u!114 &1305210876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3659,7 +3667,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1711837943}
   - component: {fileID: 1711837944}
-  - component: {fileID: 1711837947}
   - component: {fileID: 1711837946}
   - component: {fileID: 1711837945}
   m_Layer: 0
@@ -3804,14 +3811,6 @@ MonoBehaviour:
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
   m_AfterStackBundles: []
---- !u!81 &1711837947
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1711837942}
-  m_Enabled: 1
 --- !u!1 &1768881618
 GameObject:
   m_ObjectHideFlags: 0

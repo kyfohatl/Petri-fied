@@ -45,11 +45,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sounds:
   - name: FoodEaten
-    clip: {fileID: 0}
-    volume: 1
+    clip: {fileID: 8300000, guid: f8add6057501e284ca23e2a984aa8042, type: 3}
+    volume: 0.52
     pitch: 1
     spatialBlend: 1
-    minDistance: 0.1
+    minDistance: 0.5
     maxDistance: 500
     loop: 0
     source: {fileID: 0}
@@ -63,11 +63,11 @@ MonoBehaviour:
     loop: 1
     source: {fileID: 0}
   - name: EnemyEaten
-    clip: {fileID: 0}
-    volume: 1
+    clip: {fileID: 8300000, guid: f47c8136d5bd7eb4b8ef9c0415951fc0, type: 3}
+    volume: 0.7
     pitch: 1
     spatialBlend: 1
-    minDistance: 0.1
+    minDistance: 0.8
     maxDistance: 50
     loop: 0
     source: {fileID: 0}
@@ -94,6 +94,24 @@ MonoBehaviour:
     volume: 1
     pitch: 1
     spatialBlend: 1
+    minDistance: 0.1
+    maxDistance: 50
+    loop: 0
+    source: {fileID: 0}
+  - name: StartGame
+    clip: {fileID: 8300000, guid: 6981d67a034b5384482683658cee26f1, type: 3}
+    volume: 1
+    pitch: 1
+    spatialBlend: 0
+    minDistance: 0.1
+    maxDistance: 50
+    loop: 0
+    source: {fileID: 0}
+  - name: InvalidName
+    clip: {fileID: 0}
+    volume: 1
+    pitch: 1
+    spatialBlend: 0
     minDistance: 0.1
     maxDistance: 50
     loop: 0

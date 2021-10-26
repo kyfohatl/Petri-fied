@@ -671,7 +671,7 @@ ParticleSystem:
     m_Scale: {x: 0.6, y: 0.6, z: 0.6}
     placementMode: 0
     m_MeshMaterialIndex: 0
-    m_MeshNormalOffset: -1
+    m_MeshNormalOffset: -0.4
     m_MeshSpawn:
       mode: 0
       spread: 0

@@ -113,12 +113,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SpeedPowerUpMult: 3
-  duration: 30
-  FoodMagnetScale: 5
+  duration: 10
+  FoodMagnetScale: 3
   FoodMagnetSpeed: 2
   SpeedEffect1: {fileID: 7703314129621319122, guid: 2cad1d93884f8444aba16bdaf992c6b4, type: 3}
   SpeedEffect2: {fileID: 5200362872464816308, guid: 7bc80832640ea0c458519e76df24b052, type: 3}
   FoodMagnet: {fileID: 3375488646298033171, guid: 01cc00d56e536a840a549900d84a816d, type: 3}
+  SpeedMat: {fileID: 2100000, guid: a925a071234f64a9d94df40544c5abe8, type: 2}
+  MagnetMat: {fileID: 2100000, guid: e933ff54de0a243df89e775a41256953, type: 2}
+  InvincibleMat: {fileID: 2100000, guid: 32c309c798eb14ff2b5de6c0f4248048, type: 2}
 --- !u!198 &7681953876547958485
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -4906,4 +4909,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ed1dfd0667614f10819a4d892205739, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  orbitSpeed: 1.3
+  OrbitSpeed: 1
+  OrbitClockwise: 1
+  RandomPath: 0

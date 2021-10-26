@@ -27,8 +27,10 @@ public class InvertNormals : MonoBehaviour
         }
         GetComponent<MeshFilter>().mesh = mesh;
         gameObject.AddComponent<MeshCollider>();
-		// You need to comment the line below if using MattTestScene because I removed the particle effect due to lag
-        GetComponent<ParticleSystem>().GetComponent<ParticleSystemRenderer>().mesh = mesh;
+
+		if(GetComponent<ParticleSystem>() != null){
+            GetComponent<ParticleSystem>().GetComponent<ParticleSystemRenderer>().mesh = mesh;
+        }
     }
 
     // Update is called once per frame

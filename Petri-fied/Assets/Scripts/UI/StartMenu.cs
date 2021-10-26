@@ -29,8 +29,10 @@ public class StartMenu : MonoBehaviour
   {
     if (PlayerPrefs.GetString("Name", "") == "")
     {
+      FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject,"InvalidName");
       return;
     }
+    FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject,"StartGame");
     LevelLoader.Instance.LoadNextLevel(1, () =>
     {
       GameManager.get().SetGameOver(false);

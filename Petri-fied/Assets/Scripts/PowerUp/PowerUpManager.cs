@@ -15,6 +15,9 @@ public class PowerUpManager : MonoBehaviour
     public GameObject FoodMagnet;
     private int PowerUpType;
     private ParticleSystem ps;
+    public Material SpeedMat;
+    public Material MagnetMat;
+    public Material InvincibleMat;
     // Start is called before the first frame update
     void Start()
     {  
@@ -82,12 +85,51 @@ public class PowerUpManager : MonoBehaviour
 
     }
 
+    //Changes the player's material and return the old material 
+    private Material SetMat(GameObject player, Material newMat){
+        
+        Renderer objRender;
+        if(player.gameObject.tag == "Player"){
+            objRender = player.gameObject.GetComponentInChildren(typeof(Renderer)) as Renderer;
+        }else{
+            objRender = player.gameObject.GetComponent<Renderer>();
+        }
+
+        Material originalMat = new Material(objRender.material);
+
+    	Material adaptedMaterial = new Material(newMat);
+        Color newMainColour;
+		if (originalMat.HasProperty("_MainColor"))
+		{
+			newMainColour = originalMat.GetColor("_MainColor");
+		}
+		else
+		{
+			newMainColour = originalMat.color;
+		}
+		adaptedMaterial.SetColor("_MainColor", newMainColour);
+        objRender.material = adaptedMaterial;
+        return originalMat;
+    }
+
+    private void RevertMaterial(GameObject player, Material oldMat)
+	{
+		// Reset the target's material
+        if(player.gameObject.tag == "Player"){
+            player.transform.Find("Avatar").gameObject.GetComponent<Renderer>().material = oldMat;
+        }else{
+            player.gameObject.GetComponent<Renderer>().material = oldMat;
+        }
+		
+	}
+
 
     //Code for Speed Power UP
     IEnumerator SpeedPowerUp(Collider other){
         FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"SpeedPowerUP");
 
-
+        //change material
+        Material originalMat = SetMat(other.gameObject, SpeedMat);
         
         IntelligentAgent actor = other.gameObject.GetComponent<IntelligentAgent>();
 
@@ -112,6 +154,7 @@ public class PowerUpManager : MonoBehaviour
             actor.setPowerUpSpeedMultiplier(BaseSpeedMult);
         }
         
+        RevertMaterial(other.gameObject, originalMat);
         Destroy(effect1);
         Destroy(effect2);
         GameManager.RemovePowerUp(gameObject.GetInstanceID());
@@ -122,17 +165,21 @@ public class PowerUpManager : MonoBehaviour
      IEnumerator FoodMagnetPowerUp(Collider other){
         FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"MagnetPowerUP");
 
-         //create magnet
+                //change material
+        Material originalMat = SetMat(other.gameObject, MagnetMat);
+
+        //create magnet
         var magnet = Instantiate(FoodMagnet, other.gameObject.transform);
-        magnet.transform.localPosition = other.gameObject.transform.position;
-        magnet.transform.localScale = new Vector3(FoodMagnetScale, FoodMagnetScale, FoodMagnetScale);
-        magnet.transform.parent = other.transform;
+        magnet.transform.localScale = new Vector3(FoodMagnetScale*other.gameObject.transform.localScale.x, 
+        FoodMagnetScale*other.gameObject.transform.localScale.y, FoodMagnetScale*other.gameObject.transform.localScale.z);
+        magnet.transform.parent = other.gameObject.transform;
 
         magnet.GetComponent<FoodMagnetPowerUP>().MagnetStrength = FoodMagnetSpeed;
 
         yield return new WaitForSeconds(duration);
 
 
+        RevertMaterial(other.gameObject, originalMat);
         Destroy(magnet);
 		GameManager.RemovePowerUp(gameObject.GetInstanceID());
         Destroy(gameObject);
@@ -156,33 +203,36 @@ public class PowerUpManager : MonoBehaviour
 
         actor.setInvincible(true);
 
-        r.material.EnableKeyword("_EMISSION");
+        Material originalMat = SetMat(other.gameObject, InvincibleMat);
         yield return new WaitForSeconds(duration);
-        r.material.DisableKeyword("_EMISSION");
+        RevertMaterial(other.gameObject, originalMat);
         yield return new WaitForSeconds(0.1f);
-        r.material.EnableKeyword("_EMISSION");
+        SetMat(other.gameObject, InvincibleMat);
         yield return new WaitForSeconds(0.2f);
-        r.material.DisableKeyword("_EMISSION");
+        RevertMaterial(other.gameObject, originalMat);
         yield return new WaitForSeconds(0.1f);
-        r.material.EnableKeyword("_EMISSION");
+        SetMat(other.gameObject, InvincibleMat);
         yield return new WaitForSeconds(0.15f);
-        r.material.DisableKeyword("_EMISSION");
+        RevertMaterial(other.gameObject, originalMat);
         yield return new WaitForSeconds(0.1f);
-        r.material.EnableKeyword("_EMISSION");
+        SetMat(other.gameObject, InvincibleMat);
         yield return new WaitForSeconds(0.1f);
-        r.material.DisableKeyword("_EMISSION");
+        RevertMaterial(other.gameObject, originalMat);
         yield return new WaitForSeconds(0.05f);
-        r.material.EnableKeyword("_EMISSION");
+        SetMat(other.gameObject, InvincibleMat);
         yield return new WaitForSeconds(0.1f);
-        r.material.DisableKeyword("_EMISSION");
+        RevertMaterial(other.gameObject, originalMat);
         yield return new WaitForSeconds(0.05f);
-        r.material.EnableKeyword("_EMISSION");
+        SetMat(other.gameObject, InvincibleMat);
         yield return new WaitForSeconds(0.05f);
         actor.setInvincible(false);
-        r.material.DisableKeyword("_EMISSION");
+        RevertMaterial(other.gameObject, originalMat);
 		
 		GameManager.RemovePowerUp(gameObject.GetInstanceID());
         Destroy(gameObject);
     }
+
+
+
 
 }

@@ -508,6 +508,7 @@ GameObject:
   - component: {fileID: 8850037745045172404}
   - component: {fileID: -7738235378393031498}
   - component: {fileID: 868133159711428141}
+  - component: {fileID: -9198660494178340517}
   m_Layer: 2
   m_Name: Player
   m_TagString: Player
@@ -580,6 +581,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Target: {fileID: 0}
+  Name: 
   Score: 1
   Radius: 1
   LockOnRadius: 1
@@ -647,6 +649,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CurrentTarget: {fileID: 0}
   lockOnPrefab: {fileID: 2100000, guid: 3688fdb65dfd94f76839703ad268ff4f, type: 2}
+--- !u!81 &-9198660494178340517
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8850037745045172400}
+  m_Enabled: 1
 --- !u!1 &8850037745246912971
 GameObject:
   m_ObjectHideFlags: 0

@@ -4974,6 +4974,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Target: {fileID: 0}
+  Name: 
   Score: 1
   Radius: 1
   LockOnRadius: 5
