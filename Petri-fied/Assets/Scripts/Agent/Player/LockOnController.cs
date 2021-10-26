@@ -38,17 +38,32 @@ public class LockOnController : MonoBehaviour
 		else
 		{
 			lockOnOriginal = new Material(newTarget.gameObject.GetComponent<Renderer>().material);
-			
-			Vector4 newColour;
+			Color newMainColour;
 			if (lockOnOriginal.HasProperty("_MainColor"))
 			{
-				newColour = lockOnOriginal.GetColor("_MainColor");
+				newMainColour = lockOnOriginal.GetColor("_MainColor");
 			}
 			else
 			{
-				newColour = lockOnOriginal.color;
+				newMainColour = lockOnOriginal.color;
 			}
-			adaptedMaterial.SetColor("_MainColor", newColour);
+			adaptedMaterial.SetColor("_MainColor", newMainColour);
+			
+			if (newTarget.gameObject.tag == "Enemy")
+			{
+				float targetScore = newTarget.GetComponent<IntelligentAgent>().getScore();
+				float playerScore = GetComponent<Player>().getScore();
+				Color oldGlowColour = this.lockOnPrefab.GetColor("_OutlineColor");
+				if (targetScore >= playerScore)
+				{
+					Color newGlowColour = new Color32(145, 0, 8, 255); // manually picked, not fussed
+					adaptedMaterial.SetColor("_OutlineColor", newGlowColour);
+				}
+				else
+				{
+					adaptedMaterial.SetColor("_OutlineColor", oldGlowColour);
+				}
+			}
 			newTarget.gameObject.GetComponent<Renderer>().material = adaptedMaterial;
 		}
 	}
@@ -56,6 +71,9 @@ public class LockOnController : MonoBehaviour
 	// Function to revert replaced target's material back to original
 	void RevertTargetMaterial()
 	{
+		// Reset the target's material and potentially changed lock-on outline colour
 		this.CurrentTarget.gameObject.GetComponent<Renderer>().material = lockOnOriginal;
+		Color oldGlowColour = this.lockOnPrefab.GetColor("_OutlineColor");
+		adaptedMaterial.SetColor("_OutlineColor", oldGlowColour);
 	}
 }

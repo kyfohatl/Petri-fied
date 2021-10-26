@@ -5,8 +5,8 @@ using UnityEngine;
 public class IntelligentAgent : MonoBehaviour
 {
 	// Game manager to load other entities
-	public GameManager GameManager;
-
+	protected GameManager GameManager;
+	
 	// Target: what the agent is currently Locked-onto
 	public GameObject Target;
 
@@ -102,7 +102,7 @@ public class IntelligentAgent : MonoBehaviour
 			}
 		}
 	}
-
+	
 	// Function to check if agent is invincible
 	public bool isInvincible()
 	{
@@ -182,7 +182,8 @@ public class IntelligentAgent : MonoBehaviour
 		if (this.Score > 1 && this.decayTimer >= this.decayDelta)
 		{
 			// Reduce score by one scaled unit and reset timer
-			UpdateScore(reductionAmount);
+			//UpdateScore(reductionAmount);
+			this.Score += reductionAmount; // saves computational time
 			this.decayTimer = 0f;
 		}
 	}
@@ -190,7 +191,7 @@ public class IntelligentAgent : MonoBehaviour
 	// Function to generate random starting genetics
 	public void GenerateRandomGenetics()
 	{
-		float geneticGrowthMin = 0.01f;
+		float geneticGrowthMin = 0.1f;
 		float geneticGrowth = Mathf.Abs(normalRandom(0.5f, 0.1f)); // mean: 0.5, std: 0.1
 		this.GeneticGrowthMultiplier = Mathf.Clamp(geneticGrowth, geneticGrowthMin, 1f);
 
@@ -203,8 +204,9 @@ public class IntelligentAgent : MonoBehaviour
 		float scoreDecayMax = 3f;
 		this.ScoreDecayMultiplier = Mathf.Min(scoreDecayMax, Mathf.Abs(normalRandom(1f, 0.2f))); // mean: 1, std: 0.2
 
+		float arenaScale = GameObject.FindWithTag("Arena").GetComponent<ArenaSize>().ArenaRadius / 100f;
 		float lockOnRadiusMin = 10f;
-		this.LockOnRadiusMultiplier = Mathf.Max(lockOnRadiusMin, Mathf.Abs(normalRandom(20f, 2f))); // mean: 20, std: 2
+		this.LockOnRadiusMultiplier = Mathf.Max(lockOnRadiusMin, arenaScale * Mathf.Abs(normalRandom(20f, 5f))); // mean: 20, std: 5
 	}
 
 	// Function to take on superior genetics of eaten agent

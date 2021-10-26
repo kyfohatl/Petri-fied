@@ -46,6 +46,7 @@ public class SpawnerController : MonoBehaviour
 	{
 		// Determine spawn position
 		Vector3 Target = getRandomPosition();
+		// Target = Random.insideUnitSphere * this.arenaRadius + this.arenaOrigin;
 		
 		// Instantiates the newly spawned object and sets as child of spawner
 		GameObject spawned = Instantiate(this.prefabToSpawn, Target, Random.rotation, transform);

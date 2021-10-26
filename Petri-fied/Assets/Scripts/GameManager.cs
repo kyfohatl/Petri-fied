@@ -171,11 +171,11 @@ public class GameManager : MonoBehaviour
                  && screenPoint.y < 1;
       if (visibleToScreen)
       {
-        if (!Physics.Linecast(objClone.Value.transform.position, Camera.main.transform.position))
+		  visibleObjs.Add(objClone.Key, objClone.Value);
+        /*if (!Physics.Linecast(objClone.Value.transform.position, Camera.main.transform.position))
         {
           // Nothing obstructs the visible enemy with the main camera
-          visibleObjs.Add(objClone.Key, objClone.Value);
-        }
+        }*/ not needed with new fixes
       }
     }
 
@@ -186,7 +186,7 @@ public class GameManager : MonoBehaviour
     }
     return visibleObjs;
   }
-
+  
   // Get all food in the world
   public Dictionary<int, GameObject> getFood()
   {

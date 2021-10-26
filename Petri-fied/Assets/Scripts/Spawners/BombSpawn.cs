@@ -50,6 +50,7 @@ public class BombSpawn : SpawnerController
 		float spawnRadius = this.spawnRadius - (this.outerRadius + 3 * offset);
 		float spawnHeight = this.spawnHeight - (this.outerRadius + 3 * offset);
 		Vector3 spawnOrigin = getRandomPosition(spawnRadius, spawnHeight);
+		// spawnOrigin = Random.insideUnitSphere * spawnRadius;
 		
 		// Instantiates the core object in the sphere
 		GameObject newlyCreated = Instantiate(this.prefabAtCore, spawnOrigin, Random.rotation, transform);

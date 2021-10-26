@@ -12,15 +12,12 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private float turnSmooth = 0.05f;
 	public bool AlwaysFollowTarget;
 
+	// Current forward direction of player
 	private Vector3 curDir = new Vector3(0f, 0f, 0f);
-
-	// Third-per Camera
-	public Transform cam;
-
+	
 	// Entity Manager (contains info of relevant entities)
-	public GameManager GameManager;
-
-
+	protected GameManager GameManager;
+	
 	// Start is called before the first frame update
 	void Start()
 	{
@@ -33,13 +30,13 @@ public class PlayerController : MonoBehaviour
 		// Disable updates if maingame isn't running.
 		if (GameManager.gameOver)
 		{
-				return;
+			return;
 		}
 
 		// Calculate the target direction of movement
-		Vector3 horizontalMoveDir = this.cam.right * Input.GetAxisRaw("Horizontal");
-		Vector3 verticalMoveDir = this.cam.forward * Input.GetAxisRaw("Vertical");
-		Vector3 hoverMoveDir = this.cam.up * Input.GetAxisRaw("Hover");
+		Vector3 horizontalMoveDir = Camera.main.transform.right * Input.GetAxisRaw("Horizontal");
+		Vector3 verticalMoveDir = Camera.main.transform.forward * Input.GetAxisRaw("Vertical");
+		Vector3 hoverMoveDir = Camera.main.transform.up * Input.GetAxisRaw("Hover");
 		Vector3 targetDir = (horizontalMoveDir + verticalMoveDir + hoverMoveDir).normalized;
 		GameObject curTarget = GetComponent<Player>().getTarget();
 
@@ -58,7 +55,7 @@ public class PlayerController : MonoBehaviour
 			else
 			{
 				targetDir = (curTarget.transform.position - this.transform.position).normalized;
-				this.curDir = Vector3.Slerp(curDir, targetDir, 5f * acceleration * Time.deltaTime);
+				this.curDir = targetDir;
 			}
 
 			// Move towards the current direction
@@ -71,7 +68,7 @@ public class PlayerController : MonoBehaviour
 			// Player is not moving
 			GetComponent<IsMoving>().isMoving = false;
 		}
-
+		
 		// Lock-on feature using X to change to next closest visible enemy, locks-onto closest if no current target
 		if (Input.GetKeyDown(KeyCode.X))
 		{
@@ -114,28 +111,32 @@ public class PlayerController : MonoBehaviour
 		{
 			GameObject currentTarget = GetComponent<Player>().getTarget();
 			GameObject nextClosest = null;
-			float lockOnDist = GetComponent<Player>().getLockOnRadius();
-
+			float lockOnDist = GetComponent<IntelligentAgent>().getLockOnRadius();
+			
 			if (currentTarget == null)
 			{
 				// No current target, set as the closest
-				nextClosest = GetComponent<Player>().GetClosestObject(inObjects);
-				float closestDist = Vector3.Distance(nextClosest.transform.position, this.transform.position);
+				nextClosest = GetComponent<IntelligentAgent>().GetClosestObject(inObjects);
+				float closestDist = Vector3.Distance(nextClosest.gameObject.transform.position, this.transform.position);
 				if (closestDist <= lockOnDist)
 				{
 						GetComponent<Player>().setTarget(nextClosest);
+				}
+				else
+				{
+					nextClosest = null;
 				}
 			}
 			else
 			{
 				// Find next closest after current target
 				nextClosest = null;
-				float targetDist = Vector3.Distance(currentTarget.transform.position, this.transform.position);
+				float targetDist = Vector3.Distance(currentTarget.gameObject.transform.position, this.transform.position);
 				float minDist = Mathf.Infinity;
 
 				foreach (var objClone in inObjects)
 				{
-					float dist = Vector3.Distance(objClone.Value.transform.position, this.transform.position);
+					float dist = Vector3.Distance(objClone.Value.gameObject.transform.position, this.transform.position);
 					if (dist < minDist && dist > targetDist && dist <= lockOnDist)
 					{
 						nextClosest = objClone.Value;
@@ -272,6 +273,7 @@ public class PlayerController : MonoBehaviour
 		else
 		{
 			Debug.Log("No hit whatsoever...");
+			GetComponent<Player>().setTarget(null);
 		}
 	}
 }

@@ -82,7 +82,7 @@ public class Enemy : IntelligentAgent
 		// Suffix characters
 		for (int i = 0; i < suffixAlphaCount; i++)
 		{
-			randomString += (char)UnityEngine.Random.Range('A', 'z'); // includes set {[,\,],^,_,'}
+			randomString += (char)UnityEngine.Random.Range('A', 'Z');
 		}
 
 		return randomString;

@@ -25,7 +25,7 @@ public class AudioManager : MonoBehaviour
         //Get sound from list
         Sound s = Array.Find(sounds, sound => sound.name == name);
         if(s == null){
-            Debug.Log("Sound:" + name + " Not Found");
+            Debug.Log("Sound: " + name + " was not found");
             return;
         }
 

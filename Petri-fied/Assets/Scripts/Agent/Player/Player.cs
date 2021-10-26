@@ -68,10 +68,18 @@ public class Player : IntelligentAgent
   // Override function to set the player's target and change target's material properties
   public override void setTarget(GameObject obj)
   {
-    GetComponent<LockOnController>().UpdateTargetMaterial(obj);
-    this.Target = obj;
+	  if (obj != null)
+	  {
+		  float dist = Vector3.Distance(obj.gameObject.transform.position, transform.position);
+		  float travelTime = dist / (getSpeedMultiplier() * getPowerUpSpeedMultiplier() / transform.localScale.x);
+		  Debug.Log("Distance to target: " + dist + ", expected travel time: " + travelTime + " seconds");
+	  }
+	  
+	  GetComponent<LockOnController>().UpdateTargetMaterial(obj);
+	  this.Target = obj;
   }
 
+  // Getter function for player survivial time
   public float getSurvivalTime()
   {
     return this.survivalTime;
