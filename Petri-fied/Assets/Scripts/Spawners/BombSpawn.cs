@@ -47,8 +47,8 @@ public class BombSpawn : SpawnerController
 														   midPoles,
 														   outerPoles};
 		// Position and restriction of bomb origin spawn location
-		float spawnRadius = this.spawnRadius - (this.outerRadius + 3 * offset);
-		float spawnHeight = this.spawnHeight - (this.outerRadius + 3 * offset);
+		float spawnRadius = this.spawnRadius - (this.outerRadius + 4 * offset);
+		float spawnHeight = this.spawnHeight - (this.outerRadius + 4 * offset);
 		Vector3 spawnOrigin = getRandomPosition(spawnRadius, spawnHeight);
 		// spawnOrigin = Random.insideUnitSphere * spawnRadius;
 		

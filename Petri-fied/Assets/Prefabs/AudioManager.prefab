@@ -128,7 +128,7 @@ MonoBehaviour:
   - name: LockOn
     clip: {fileID: 8300000, guid: 87d72817deffd440a97628a270599a5a, type: 3}
     volume: 0.1
-    pitch: 0.6
+    pitch: 0.4
     spatialBlend: 0
     minDistance: 0.1
     maxDistance: 50
