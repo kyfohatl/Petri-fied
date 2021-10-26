@@ -11,7 +11,7 @@ public class IntelligentAgent : MonoBehaviour
 	public GameObject Target;
 
 	// Agent data elements
-	private string Name = "";
+	[SerializeField] private string Name = "";
 	public int Score = 1;
 	public float Radius = 1f;
 	public float LockOnRadius;

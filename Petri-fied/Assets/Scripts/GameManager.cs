@@ -175,7 +175,7 @@ public class GameManager : MonoBehaviour
         /*if (!Physics.Linecast(objClone.Value.transform.position, Camera.main.transform.position))
         {
           // Nothing obstructs the visible enemy with the main camera
-        }*/ not needed with new fixes
+        }*/// not needed with new fixes
       }
     }
 

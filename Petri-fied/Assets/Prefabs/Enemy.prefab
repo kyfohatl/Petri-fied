@@ -4973,7 +4973,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00d96576a9ad54a988cec988839016d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GameManager: {fileID: 0}
   Target: {fileID: 0}
   Score: 1
   Radius: 1

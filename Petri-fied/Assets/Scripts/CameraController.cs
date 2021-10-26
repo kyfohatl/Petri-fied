@@ -66,7 +66,7 @@ public class CameraController : MonoBehaviour
     }
 
 	// Reset fog parameters to match lock-on radius distance
-	updateFog()
+	updateFog();
   }
 
   // Set the camera to the player.
@@ -261,7 +261,7 @@ public class CameraController : MonoBehaviour
     this.orbitUpdateStartTime = Time.time;
 
     // Reset fog parameters to match lock-on radius distance
-	updateFog()
+	updateFog();
   }
 
   // Increments the given angle by the given amount, taking into account framerate, and returns the result

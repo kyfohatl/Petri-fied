@@ -7,7 +7,6 @@ using TMPro;
 
 public class Player : IntelligentAgent
 {
-
   public static Player instance;
 
   // Player statistics tracking
