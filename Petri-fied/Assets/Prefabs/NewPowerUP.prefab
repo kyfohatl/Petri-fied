@@ -113,7 +113,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SpeedPowerUpMult: 3
-  duration: 20
+  duration: 24
   FoodMagnetScale: 5
   FoodMagnetSpeed: 3
   SpeedEffect1: {fileID: 7703314129621319122, guid: 2cad1d93884f8444aba16bdaf992c6b4, type: 3}

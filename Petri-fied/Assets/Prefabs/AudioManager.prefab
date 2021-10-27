@@ -50,7 +50,7 @@ MonoBehaviour:
     pitch: 0.6
     spatialBlend: 1
     minDistance: 0.5
-    maxDistance: 200
+    maxDistance: 50
     loop: 0
     source: {fileID: 0}
   - name: SuperFoodEaten
@@ -72,7 +72,7 @@ MonoBehaviour:
     loop: 1
     source: {fileID: 0}
   - name: EnemyEaten
-    clip: {fileID: 8300000, guid: f47c8136d5bd7eb4b8ef9c0415951fc0, type: 3}
+    clip: {fileID: 8300000, guid: 224c1d71b63eb466dadec571a6c36de5, type: 3}
     volume: 0.69
     pitch: 0.69
     spatialBlend: 1

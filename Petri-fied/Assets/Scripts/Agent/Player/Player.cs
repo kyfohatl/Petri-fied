@@ -7,10 +7,7 @@ using TMPro;
 
 public class Player : IntelligentAgent
 {
-  public static Player instance;
-
-  // Player statistics tracking
-  private float survivalTime = 0.0f;
+	public static Player instance;
 
   // UI elements
   public TMP_Text nameLabel;
@@ -74,14 +71,12 @@ public class Player : IntelligentAgent
 		  float travelTime = dist / (getSpeedMultiplier() * getPowerUpSpeedMultiplier() / transform.localScale.x);
 		  Debug.Log("Distance to target: " + dist + ", expected travel time: " + travelTime + " seconds");
 	  }
+	  else
+	  {
+		  FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "FailedLockOn");
+	  }
 	  
 	  GetComponent<LockOnController>().UpdateTargetMaterial(obj);
 	  this.Target = obj;
-  }
-
-  // Getter function for player survivial time
-  public float getSurvivalTime()
-  {
-    return this.survivalTime;
   }
 }

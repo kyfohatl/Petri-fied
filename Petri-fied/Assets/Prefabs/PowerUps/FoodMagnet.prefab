@@ -109,5 +109,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db8429cc8b9b42c4e855abce7cdcfa0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MagnetStrength: 0
+  MagnetStrength: 1
   MagnetEffect: {fileID: 2431442621338859882, guid: fe21f68b566519f4dbcf7d885fc40cd9, type: 3}

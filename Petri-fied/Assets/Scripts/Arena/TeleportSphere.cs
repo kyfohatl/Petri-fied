@@ -17,8 +17,8 @@ public class TeleportSphere : MonoBehaviour
     void Start()
     {
 		// Get initial game conditions and player data
-		this.Player = GameObject.FindGameObjectWithTag("Player").GetComponent<IntelligentAgent>();
-		this.arenaRadius = GameObject.FindGameObjectWithTag("Arena").GetComponent<ArenaSize>().ArenaRadius;
+		this.Player = GameObject.Find("Player").GetComponent<IntelligentAgent>();
+		this.arenaRadius = GameObject.Find("Arena").GetComponent<ArenaSize>().ArenaRadius;
 		UpdateTeleportDiameter();
     }
 	
