@@ -17,8 +17,8 @@ public class SpawnerController : MonoBehaviour
 	protected float timer = 0f; // clock to track time between generations
 	
 	// Arena and spawner dimensions
-	public float spawnRadius = 150f;
-	public float spawnHeight = 150f;
+	public float spawnRadius = 50f;
+	public float spawnHeight = 50f;
 	private float arenaRadius;
 	private float arenaHeight;
 	private Vector3 arenaOrigin;
@@ -35,7 +35,7 @@ public class SpawnerController : MonoBehaviour
 	// Function to determine spawner parameters given arena dimensions
 	void getArenaDimensions()
 	{
-		GameObject arena =  GameObject.Find("Arena");
+		GameObject arena =  GameObject.FindGameObjectWithTag("Arena");
 		this.arenaRadius = arena.GetComponent<ArenaSize>().ArenaRadius;
 		this.arenaHeight = arena.GetComponent<ArenaSize>().ArenaHeight;
 		this.arenaOrigin = arena.gameObject.transform.position;

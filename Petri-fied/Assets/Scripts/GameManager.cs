@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
   void Awake()
   {
     inst = this;
-	Player = GameObject.Find("Player");
+    Player = GameObject.FindGameObjectWithTag("Player");
     Food = new Dictionary<int, GameObject>();
     SuperFood = new Dictionary<int, GameObject>();
     Enemies = new Dictionary<int, GameObject>();

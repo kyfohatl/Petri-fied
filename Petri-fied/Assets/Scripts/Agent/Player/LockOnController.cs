@@ -46,7 +46,7 @@ public class LockOnController : MonoBehaviour
 			{
 				this.adaptedMaterial.SetColor("_OutlineColor", this.weakEnemyGlow);
 			}
-			this.CurrentTarget.transform.Find("Avatar").gameObject.GetComponent<Renderer>().material = this.adaptedMaterial;
+			this.CurrentTarget.gameObject.GetComponent<Renderer>().material = this.adaptedMaterial;
 		}
 	}
 	
@@ -70,9 +70,20 @@ public class LockOnController : MonoBehaviour
 		}
 		else
 		{
+			lockOnOriginal = new Material(newTarget.gameObject.GetComponent<Renderer>().material);
+			Color newMainColour;
+			if (this.lockOnOriginal.HasProperty("_MainColor"))
+			{
+				newMainColour = this.lockOnOriginal.GetColor("_MainColor");
+			}
+			else
+			{
+				newMainColour = this.lockOnOriginal.color;
+			}
+			this.adaptedMaterial.SetColor("_MainColor", newMainColour);
+			
 			if (newTarget.gameObject.tag == "Enemy")
 			{
-				lockOnOriginal = new Material(newTarget.transform.Find("Avatar").gameObject.GetComponent<Renderer>().material);
 				this.enemyLocked = true;
 				float targetScore = newTarget.GetComponent<IntelligentAgent>().getScore();
 				float playerScore = GetComponent<Player>().getScore();
@@ -87,29 +98,9 @@ public class LockOnController : MonoBehaviour
 			}
 			else
 			{
-				lockOnOriginal = new Material(newTarget.gameObject.GetComponent<Renderer>().material);
 				this.enemyLocked = false;
 			}
-			
-			Color newMainColour;
-			if (this.lockOnOriginal.HasProperty("_MainColor"))
-			{
-				newMainColour = this.lockOnOriginal.GetColor("_MainColor");
-			}
-			else
-			{
-				newMainColour = this.lockOnOriginal.color;
-			}
-			this.adaptedMaterial.SetColor("_MainColor", newMainColour);
-			
-			if (newTarget.gameObject.tag == "Enemy")
-			{
-				newTarget.transform.Find("Avatar").gameObject.GetComponent<Renderer>().material = this.adaptedMaterial;
-			}
-			else
-			{
-				newTarget.gameObject.GetComponent<Renderer>().material = this.adaptedMaterial;
-			}
+			newTarget.gameObject.GetComponent<Renderer>().material = this.adaptedMaterial;
 		}
 	}
 	
@@ -117,14 +108,7 @@ public class LockOnController : MonoBehaviour
 	void RevertTargetMaterial()
 	{
 		// Reset the target's material and potentially changed lock-on outline colour
-		if (this.CurrentTarget.gameObject.tag == "Enemy")
-		{
-			this.CurrentTarget.transform.Find("Avatar").gameObject.GetComponent<Renderer>().material = this.lockOnOriginal;
-		}
-		else
-		{
-			this.CurrentTarget.gameObject.GetComponent<Renderer>().material = this.lockOnOriginal;
-		}
+		this.CurrentTarget.gameObject.GetComponent<Renderer>().material = this.lockOnOriginal;
 		Color oldGlowColour = this.lockOnPrefab.GetColor("_OutlineColor");
 		this.adaptedMaterial.SetColor("_OutlineColor", this.weakEnemyGlow); // reset the adapted outline colour
 	}

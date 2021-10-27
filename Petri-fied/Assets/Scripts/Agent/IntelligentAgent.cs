@@ -41,11 +41,6 @@ public class IntelligentAgent : MonoBehaviour
 	private float decayTimer = 0f; // used for tracking time
 	private float decayDelta; // derived: time between unit score decays
 	private float decayExcess = 0f; // excess accrued from rounding error
-	
-	// Agent statistics tracking
-	protected float survivalTime = 0.0f;
-	protected int killCount = 0;
-	protected int foodPelletsEaten = 0;
 
 	// Function to intialise variables after instantiation, called in start
 	public void StartLife()
@@ -60,7 +55,7 @@ public class IntelligentAgent : MonoBehaviour
 	}
 
 	// Function called on collisions
-	public void ParentOnTriggerEnter(Collider other)
+	void OnTriggerEnter(Collider other)
 	{
 		if (other.gameObject.tag == "Food")
 		{
@@ -68,7 +63,6 @@ public class IntelligentAgent : MonoBehaviour
 			UpdateScore(increase);
 			GameManager.RemoveFood(other.gameObject.GetInstanceID());
 			FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "FoodEaten");
-			this.foodPelletsEaten += 1;
 			Destroy(other.gameObject);
 		}
 		else if (other.gameObject.tag == "SuperFood")
@@ -78,7 +72,6 @@ public class IntelligentAgent : MonoBehaviour
 			GameManager.RemoveFood(other.gameObject.GetInstanceID());
 			GameManager.RemoveSuperFood(other.gameObject.GetInstanceID());
 			FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "SuperFoodEaten");
-			this.foodPelletsEaten += 1;
 			Destroy(other.gameObject);
 		}
 		else if (other.gameObject.tag == "Enemy" || other.gameObject.tag == "Player")
@@ -91,7 +84,6 @@ public class IntelligentAgent : MonoBehaviour
 				if (scoreDifference > 0 && !otherPlayer.isInvincible())
 				{
 					UpdateScore(otherPlayer.getScore());
-					this.killCount += 1;
 					AssimilateGenetics(otherPlayer);
 					Debug.Log(this.Name + " has eaten: " + otherPlayer.getName());
 					if (other.gameObject.tag == "Enemy")
@@ -301,27 +293,11 @@ public class IntelligentAgent : MonoBehaviour
 
 		foreach (KeyValuePair<int, GameObject> clone in objs)
 		{
-			if (clone.Value.tag == "PowerUp")
+			if (clone.Value.GetComponent<MeshRenderer>().enabled) // only rendered objects will be considered
 			{
-				// Only rendered power ups will be added
-				if (clone.Value.gameObject.GetComponent<MeshRenderer>().enabled)
-				{
-					Vector3 directionToObject = clone.Value.transform.position - currentPos;
-					float distSqrToTarget = directionToObject.sqrMagnitude;
-					
-					if (distSqrToTarget < minDist && distSqrToTarget > epsilon)
-					{
-						closest = clone.Value;
-						minDist = distSqrToTarget;
-					}
-				}
-			}
-			else
-			{
-				// Otherwise, proceed as normal
 				Vector3 directionToObject = clone.Value.transform.position - currentPos;
 				float distSqrToTarget = directionToObject.sqrMagnitude;
-				
+
 				if (distSqrToTarget < minDist && distSqrToTarget > epsilon)
 				{
 					closest = clone.Value;
@@ -464,15 +440,9 @@ public class IntelligentAgent : MonoBehaviour
 		this.activePowers = num;
 	}
 
-	//Function to get the number of activePowers for this agent
+	//Function to get the activePowers of the agent
 	public int getActivePowers()
 	{
 		return this.activePowers;
-	}
-	
-	// Getter function for agent survivial time
-	public float getSurvivalTime()
-	{
-		return this.survivalTime;
 	}
 }

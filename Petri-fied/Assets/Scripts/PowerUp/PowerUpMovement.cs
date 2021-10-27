@@ -14,11 +14,9 @@ public class PowerUpMovement : MonoBehaviour
     void Start()
     {
 		// Determine arena origin
-		GameObject arena = GameObject.Find("Arena");
+		GameObject arena = GameObject.FindGameObjectWithTag("Arena");
 		this.arenaOrigin = arena.gameObject.transform.position;
-
 		// Set the type of movement and direction;
-		this.OrbitSpeed = Random.value;
 		this.OrbitClockwise = Random.value > 0.5f; // easy boolean test
 		if (Random.value > 0.5f)
 		{

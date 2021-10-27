@@ -19,7 +19,7 @@ public class Enemy : IntelligentAgent
 		StartLife();
 		this.setName(GenerateRandomName());
 		this.name = "Enemy: " + this.getName();
-		this.Player = GameObject.Find("Player");
+		this.Player = GameObject.FindGameObjectWithTag("Player");
 
 		// Determine aggresion of this enemy and apply initial difficulty sliders
 		this.AggressionMultiplier = Mathf.Abs(normalRandom(0f, 1.4826f)); // this stddev produces 50% of agents above/below aggresion mult of 1f
@@ -260,7 +260,7 @@ public class Enemy : IntelligentAgent
 				return 0f; // power up is no longer visible
 			}
 			// Return a magic value representing the 'value' of a power-up, equal to player's score and rewards smaller travel times
-			return this.AggressionMultiplier * Mathf.Max((float)this.Score, 10f) / (expectedTravelTime * (getActivePowers() + 1f));
+			return this.AggressionMultiplier * Mathf.Max((float)this.Score, 10f) / expectedTravelTime;
 		}
 		else if (target.tag == "SuperFood")
 		{

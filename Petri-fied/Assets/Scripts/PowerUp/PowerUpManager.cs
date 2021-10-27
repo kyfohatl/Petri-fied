@@ -10,7 +10,7 @@ public class PowerUpManager : MonoBehaviour
     private float BaseSpeedMult = 1f;
     public float FoodMagnetScale = 5f;
     public float FoodMagnetSpeed = 0.5f;
-    public GameObject SpeedEffect1; //Will call these effect from folder in final product
+    public GameObject SpeedEffect1;//Will call these effect from folder in final product
     public GameObject SpeedEffect2;
     public GameObject FoodMagnet;
     private int PowerUpType;
@@ -90,15 +90,16 @@ public class PowerUpManager : MonoBehaviour
     //Changes the player's material and return the old material 
     private Material SetMat(GameObject player, Material newMat){
         Material originalMat; // = new Material(objRender.material);
-        Renderer objRender = player.transform.Find("Avatar").gameObject.GetComponent<Renderer>();
-        if(player.gameObject.tag == "Player")
-		{
+        Renderer objRender;
+        if(player.gameObject.tag == "Player"){
             originalMat = PlayerMat;
-        }
-		else
-		{
+            objRender = player.gameObject.GetComponentInChildren(typeof(Renderer)) as Renderer;
+        }else{
             originalMat = EnemyMat;
+            objRender = player.gameObject.GetComponent<Renderer>();
         }
+
+        
 
     	Material adaptedMaterial = new Material(newMat);
         Color newMainColour;
@@ -121,9 +122,10 @@ public class PowerUpManager : MonoBehaviour
             return;
         }
 		// Reset the target's material
-		if(player.gameObject.tag == "Player" || player.gameObject.tag == "Enemy")
-		{
+        if(player.gameObject.tag == "Player"){
             player.transform.Find("Avatar").gameObject.GetComponent<Renderer>().material = oldMat;
+        }else{
+            player.gameObject.GetComponent<Renderer>().material = oldMat;
         }
 	}
 
@@ -214,10 +216,11 @@ public class PowerUpManager : MonoBehaviour
         FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"InvinPowerUP");
         //
         Renderer r;
-		if(other.gameObject.tag == "Player" || other.gameObject.tag == "Enemy")
-		{
-			r = other.transform.Find("Avatar").gameObject.GetComponent<Renderer>();
-		}
+        if (other.gameObject.tag == "Player"){
+            r = other.gameObject.transform.GetChild(0).gameObject.GetComponent<Renderer>();
+        }else{
+            r = other.gameObject.GetComponent<Renderer>();
+        }
 
         IntelligentAgent actor = other.gameObject.GetComponent<IntelligentAgent>();
         actor.setActivePowers(actor.getActivePowers() + 1);
