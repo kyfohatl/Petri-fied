@@ -26,6 +26,13 @@ public class LockOnController : MonoBehaviour
 	// Called at the end of every frame
 	void LateUpdate()
 	{
+		if (this.CurrentTarget == null)
+		{
+			// Exit early if current target no longer exists (might've been eaten)
+			this.enemyLocked = false;
+			return;
+		}
+		// Otherwise, check if target is an enemy and assign material from score difference
 		if (this.enemyLocked)
 		{
 			float targetScore = CurrentTarget.GetComponent<IntelligentAgent>().getScore();
