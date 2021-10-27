@@ -162,6 +162,12 @@ public class IntelligentAgent : MonoBehaviour
 	// Function to implement score decay
 	public void DecayScore()
 	{
+		if (this.InvincibilityMode)
+		{
+			// Exit early if the agent is invincible
+			return;
+		}
+		
 		this.decayTimer += Time.deltaTime; // increase timer
 		float X = 1000f;
 		float decayPerSecondAtX = 1f;

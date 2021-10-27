@@ -207,7 +207,6 @@ MonoBehaviour:
   bubbleEffectObject: {fileID: 3544089868867799279}
   movingEmissionRate: 5
   stationaryEmissionRate: 0.5
-  bubbleSizeScale: 1
 --- !u!114 &5344458707451822501
 MonoBehaviour:
   m_ObjectHideFlags: 0

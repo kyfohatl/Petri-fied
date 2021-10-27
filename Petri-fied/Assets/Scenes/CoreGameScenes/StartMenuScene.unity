@@ -3119,6 +3119,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8951172823056146455, guid: 8d4766e5df4b5cd4ba780ea0ebebc254, type: 3}
+      propertyPath: Score
+      value: 2000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8951172823056146455, guid: 8d4766e5df4b5cd4ba780ea0ebebc254, type: 3}
       propertyPath: GameManager
       value: 
       objectReference: {fileID: 1924299881}
@@ -4264,6 +4268,7 @@ MonoBehaviour:
   gameOver: 1
   Player: {fileID: 1305210861}
   PlayerBasicUI: {fileID: 1305210857}
+  ScaleEnemies: 1
   enemySpeedBoost: 1
   enemyGrowthBoost: 1
   enemyAggressionMultiplier: 1
