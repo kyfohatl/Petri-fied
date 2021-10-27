@@ -122,6 +122,8 @@ MonoBehaviour:
   SpeedMat: {fileID: 2100000, guid: a925a071234f64a9d94df40544c5abe8, type: 2}
   MagnetMat: {fileID: 2100000, guid: e933ff54de0a243df89e775a41256953, type: 2}
   InvincibleMat: {fileID: 2100000, guid: 32c309c798eb14ff2b5de6c0f4248048, type: 2}
+  PlayerMat: {fileID: 2100000, guid: 9543dda1a60184289b94a241a1ece687, type: 2}
+  EnemyMat: {fileID: 2100000, guid: 4de1db8743ca24192aa31cd8de78e6b3, type: 2}
 --- !u!198 &7681953876547958485
 ParticleSystem:
   m_ObjectHideFlags: 0

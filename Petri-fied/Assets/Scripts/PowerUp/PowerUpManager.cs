@@ -18,6 +18,8 @@ public class PowerUpManager : MonoBehaviour
     public Material SpeedMat;
     public Material MagnetMat;
     public Material InvincibleMat;
+    public Material PlayerMat;
+    public Material EnemyMat;
     // Start is called before the first frame update
     void Start()
     {  
@@ -87,15 +89,17 @@ public class PowerUpManager : MonoBehaviour
 
     //Changes the player's material and return the old material 
     private Material SetMat(GameObject player, Material newMat){
-        
+        Material originalMat; // = new Material(objRender.material);
         Renderer objRender;
         if(player.gameObject.tag == "Player"){
+            originalMat = PlayerMat;
             objRender = player.gameObject.GetComponentInChildren(typeof(Renderer)) as Renderer;
         }else{
+            originalMat = EnemyMat;
             objRender = player.gameObject.GetComponent<Renderer>();
         }
 
-        Material originalMat = new Material(objRender.material);
+        
 
     	Material adaptedMaterial = new Material(newMat);
         Color newMainColour;
@@ -114,6 +118,9 @@ public class PowerUpManager : MonoBehaviour
 
     private void RevertMaterial(GameObject player, Material oldMat)
 	{
+        if(player == null){
+            return;
+        }
 		// Reset the target's material
         if(player.gameObject.tag == "Player"){
             player.transform.Find("Avatar").gameObject.GetComponent<Renderer>().material = oldMat;
@@ -132,6 +139,8 @@ public class PowerUpManager : MonoBehaviour
         Material originalMat = SetMat(other.gameObject, SpeedMat);
         
         IntelligentAgent actor = other.gameObject.GetComponent<IntelligentAgent>();
+
+        actor.setactivePowers(actor.getactivePowers() + 1);
 
 
         //Speed power up
@@ -154,7 +163,10 @@ public class PowerUpManager : MonoBehaviour
             actor.setPowerUpSpeedMultiplier(BaseSpeedMult);
         }
         
-        RevertMaterial(other.gameObject, originalMat);
+        actor.setactivePowers(actor.getactivePowers() - 1);
+        if(actor.getactivePowers() <= 0){
+            RevertMaterial(other.gameObject, originalMat);
+        }
         Destroy(effect1);
         Destroy(effect2);
         GameManager.RemovePowerUp(gameObject.GetInstanceID());
@@ -165,7 +177,10 @@ public class PowerUpManager : MonoBehaviour
      IEnumerator FoodMagnetPowerUp(Collider other){
         FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"MagnetPowerUP");
 
-                //change material
+        IntelligentAgent actor = other.gameObject.GetComponent<IntelligentAgent>();
+        actor.setactivePowers(actor.getactivePowers() + 1);
+
+        //change material
         Material originalMat = SetMat(other.gameObject, MagnetMat);
 
         //create magnet
@@ -178,10 +193,14 @@ public class PowerUpManager : MonoBehaviour
 
         yield return new WaitForSeconds(duration);
 
-
-        RevertMaterial(other.gameObject, originalMat);
-        Destroy(magnet);
+        actor.setactivePowers(actor.getactivePowers() - 1);
+        if(actor.getactivePowers() <= 0){
+            RevertMaterial(other.gameObject, originalMat);
+        }
+        
+        
 		GameManager.RemovePowerUp(gameObject.GetInstanceID());
+        Destroy(magnet);
         Destroy(gameObject);
      }
 
@@ -196,6 +215,7 @@ public class PowerUpManager : MonoBehaviour
         }
 
         IntelligentAgent actor = other.gameObject.GetComponent<IntelligentAgent>();
+        actor.setactivePowers(actor.getactivePowers() + 1);
 
         //Color objectColor;
         //Color originalColor = r.material.color;
@@ -205,29 +225,38 @@ public class PowerUpManager : MonoBehaviour
 
         Material originalMat = SetMat(other.gameObject, InvincibleMat);
         yield return new WaitForSeconds(duration);
-        RevertMaterial(other.gameObject, originalMat);
-        yield return new WaitForSeconds(0.1f);
-        SetMat(other.gameObject, InvincibleMat);
-        yield return new WaitForSeconds(0.2f);
-        RevertMaterial(other.gameObject, originalMat);
-        yield return new WaitForSeconds(0.1f);
-        SetMat(other.gameObject, InvincibleMat);
-        yield return new WaitForSeconds(0.15f);
-        RevertMaterial(other.gameObject, originalMat);
-        yield return new WaitForSeconds(0.1f);
-        SetMat(other.gameObject, InvincibleMat);
-        yield return new WaitForSeconds(0.1f);
-        RevertMaterial(other.gameObject, originalMat);
-        yield return new WaitForSeconds(0.05f);
-        SetMat(other.gameObject, InvincibleMat);
-        yield return new WaitForSeconds(0.1f);
-        RevertMaterial(other.gameObject, originalMat);
-        yield return new WaitForSeconds(0.05f);
-        SetMat(other.gameObject, InvincibleMat);
-        yield return new WaitForSeconds(0.05f);
+
+        if(actor.getactivePowers() == 1){
+            RevertMaterial(other.gameObject, originalMat);
+            yield return new WaitForSeconds(0.1f);
+            SetMat(other.gameObject, InvincibleMat);
+            yield return new WaitForSeconds(0.2f);
+            RevertMaterial(other.gameObject, originalMat);
+            yield return new WaitForSeconds(0.1f);
+            SetMat(other.gameObject, InvincibleMat);
+            yield return new WaitForSeconds(0.15f);
+            RevertMaterial(other.gameObject, originalMat);
+            yield return new WaitForSeconds(0.1f);
+            SetMat(other.gameObject, InvincibleMat);
+            yield return new WaitForSeconds(0.1f);
+            RevertMaterial(other.gameObject, originalMat);
+            yield return new WaitForSeconds(0.05f);
+            SetMat(other.gameObject, InvincibleMat);
+            yield return new WaitForSeconds(0.1f);
+            RevertMaterial(other.gameObject, originalMat);
+            yield return new WaitForSeconds(0.05f);
+            SetMat(other.gameObject, InvincibleMat);
+            yield return new WaitForSeconds(0.05f);
+        }else{
+            yield return new WaitForSeconds(1f);
+        }
         actor.setInvincible(false);
-        RevertMaterial(other.gameObject, originalMat);
-		
+
+        actor.setactivePowers(actor.getactivePowers() - 1);
+        if(actor.getactivePowers() <= 0){
+            RevertMaterial(other.gameObject, originalMat);
+        }
+
 		GameManager.RemovePowerUp(gameObject.GetInstanceID());
         Destroy(gameObject);
     }
@@ -236,3 +265,4 @@ public class PowerUpManager : MonoBehaviour
 
 
 }
+

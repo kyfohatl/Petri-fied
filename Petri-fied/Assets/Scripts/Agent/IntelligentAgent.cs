@@ -20,6 +20,7 @@ public class IntelligentAgent : MonoBehaviour
 
 	// Power up trackers
 	private float PowerUpSpeedMultiplier = 1f;
+	private float activePowers = 0f;
 	[SerializeField] private bool InvincibilityMode = false;
 
 	// Agent genetic modifiers
@@ -431,5 +432,17 @@ public class IntelligentAgent : MonoBehaviour
 	public float getSizeUpdateDuration()
 	{
 		return this.sizeUpdateDuration;
+	}
+
+	// Function to set activePowerUps
+	public void setactivePowers(float num)
+	{
+		this.activePowers = num;
+	}
+
+	//Function to get the activePowers of the agent
+	public float getactivePowers()
+	{
+		return this.activePowers;
 	}
 }
