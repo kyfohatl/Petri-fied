@@ -10,7 +10,10 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private float speedMultiplier = 10f;
 	[SerializeField] private float acceleration = 2f;
 	[SerializeField] private float turnSmooth = 0.05f;
-	public bool AlwaysFollowTarget;
+	
+	// Movement-type triggers (both should be avaliable in settings, can be used well together)
+	public bool AutoFollowTarget = false; // will automatically fly at target whenever set
+	public bool AutoFollowCursor = false; // will automatically fly forward in the turn direction of the curse
 	
 	// Current forward direction of player
 	private Vector3 curDir = new Vector3(0f, 0f, 0f);
@@ -37,30 +40,37 @@ public class PlayerController : MonoBehaviour
 		Vector3 horizontalMoveDir = Camera.main.transform.right * Input.GetAxisRaw("Horizontal");
 		Vector3 verticalMoveDir = Camera.main.transform.forward * Input.GetAxisRaw("Vertical");
 		Vector3 hoverMoveDir = Camera.main.transform.up * Input.GetAxisRaw("Hover");
-		Vector3 targetDir = (horizontalMoveDir + verticalMoveDir + hoverMoveDir).normalized;
+		Vector3 targetDir = (horizontalMoveDir + verticalMoveDir + hoverMoveDir);
 		GameObject curTarget = GetComponent<Player>().getTarget();
 		
-		if (targetDir.magnitude >= 0.1f || (this.AlwaysFollowTarget && curTarget != null))
+		if (targetDir.magnitude >= 0.1f || (this.AutoFollowTarget && curTarget != null))
 		{
 			// Player is moving
 			GetComponent<IsMoving>().isMoving = true;
 			
-			// Check for lock-on target and calculate direction based on acceleration
-			if (curTarget == null)
+			// Prioritise lock-on target first
+			if (curTarget != null)
 			{
-				this.curDir = Vector3.Slerp(curDir, targetDir, acceleration * Time.deltaTime);
+				targetDir = (curTarget.transform.position - this.transform.position).normalized;
+				this.curDir = targetDir;
+			}
+			else if (this.AutoFollowCursor)
+			{
 				// Rotate the model to face the direction of travel
+				this.curDir = Vector3.Slerp(curDir, targetDir, acceleration * Time.deltaTime);
 				transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(targetDir), turnSmooth);
 			}
 			else
 			{
-				targetDir = (curTarget.transform.position - this.transform.position).normalized;
-				this.curDir = targetDir;
+				// Rotate the model to face the direction of travel
+				this.curDir = Vector3.Slerp(curDir, targetDir, acceleration * Time.deltaTime);
+				transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(targetDir), turnSmooth);
 			}
 			
 			// Move towards the current direction
 			float geneticSpeedMultiplier = GetComponent<Player>().getSpeedMultiplier() * GetComponent<Player>().getPowerUpSpeedMultiplier();
 			float finalSpeedMultiplier = this.speedMultiplier * geneticSpeedMultiplier; // this.speedMultiplier is an artifact from the character controller == 10f
+			
 			controller.Move(curDir * finalSpeedMultiplier * Time.deltaTime / transform.localScale.x);
 		}
 		else
@@ -91,6 +101,13 @@ public class PlayerController : MonoBehaviour
 		if (Input.GetMouseButtonDown(0))
 		{
 			mouseLockOn();
+		}
+		
+		// Lock-on feature using left mouse click
+		if (Input.GetKeyDown(KeyCode.Space))
+		{
+			this.AutoFollowCursor = !this.AutoFollowCursor;
+			GetComponent<Player>().setTarget(null);
 		}
 		
 		// Rotate player to face target
@@ -149,8 +166,7 @@ public class PlayerController : MonoBehaviour
 			// Return boolean on successful target set
 			if (nextClosest == null)
 			{
-				Debug.Log("No locked-onto anything!");
-				FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "FailedLockOn");
+				Debug.Log("Not locked-onto anything!");
 				return false;
 			}
 			else

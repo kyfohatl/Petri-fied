@@ -153,7 +153,6 @@ public class IntelligentAgent : MonoBehaviour
 
 			if (t >= 1f)
 			{
-				GetComponent<MovingObjectBubbles>().UpdateScaleSize(this.Radius);
 				this.sizeUpdateTriggered = false;
 				this.previousLocalScale = new Vector3(1f, 1f, 1f) * this.Radius;
 			}

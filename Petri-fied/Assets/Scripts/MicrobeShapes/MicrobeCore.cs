@@ -99,7 +99,7 @@ public class MicrobeCore : MonoBehaviour
 
   private void Update()
   {
-    if (gameObject.GetComponent<MeshRenderer>().material.name != material.name)
+	if (this.gameObject.GetComponent<MeshRenderer>().material != this.material)
     {
       setMaterial(gameObject.GetComponent<MeshRenderer>().material);
     }

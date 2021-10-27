@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
   public GameObject PlayerBasicUI;
 
   // Difficulty sliders (all multipliers)
+  public bool ScaleEnemies = false;
   public float enemySpeedBoost = 1f;
   public float enemyGrowthBoost = 1f;
   public float enemyAggressionMultiplier = 1f;

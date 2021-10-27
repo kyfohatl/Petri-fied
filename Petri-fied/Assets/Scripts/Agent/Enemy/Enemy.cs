@@ -23,7 +23,11 @@ public class Enemy : IntelligentAgent
 
 		// Determine aggresion of this enemy and apply initial difficulty sliders
 		this.AggressionMultiplier = Mathf.Abs(normalRandom(0f, 1.4826f)); // this stddev produces 50% of agents above/below aggresion mult of 1f
-		ApplyDifficultySliders();
+		ApplyDifficultySliders(); // apply any difficulty sliders
+		if (GameManager.ScaleEnemies)
+		{
+			ScaleToPlayer(); // apply enemy scale effect if game manager is checked
+		}
 	}
 
 	// Update is called once per frame
@@ -94,6 +98,11 @@ public class Enemy : IntelligentAgent
 		// Initial state: no change to target
 		GameObject newTarget = null;
 		float bestExpected = ExpectedTargetScore(this.Target);
+		if (bestExpected == 0f)
+		{
+			// Current target no longer exists or has grown too powerful for its own good!
+			this.Target = null;
+		}
 
 		//  Calculate expected score of targetting player
 		int playerScore = 0;
@@ -222,17 +231,18 @@ public class Enemy : IntelligentAgent
 			}
 
 			float targetSpeed = target.GetComponent<IntelligentAgent>().getSpeedMultiplier() * target.GetComponent<IntelligentAgent>().getPowerUpSpeedMultiplier() / target.transform.localScale.x;
-
-			if (targetSpeed > mySpeed)
+			// normalised angle between ranges from [0-2] 0: facing away, 2: facing towards each other
+			float angleNormalised = Vector3.Angle(target.transform.forward, this.transform.forward) / 90f;
+			float combinedSpeed = mySpeed + (angleNormalised - 1) * targetSpeed;
+			
+			if (combinedSpeed < -0.5f)
 			{
-				targetScore = Mathf.FloorToInt((targetScore / 2) * (mySpeed / targetSpeed));
-				expectedTravelTime = (dist * 2f) / (mySpeed / targetSpeed);
+				return 0f; // target is moving away from agent at a speed that probably isn't worth trying to catch
 			}
 			else
 			{
-				expectedTravelTime = dist / (mySpeed - targetSpeed);
+				expectedTravelTime = dist / combinedSpeed;
 			}
-
 			return this.AggressionMultiplier * targetScore / expectedTravelTime;
 		}
 		else if (target.tag == "PowerUp")
@@ -267,5 +277,11 @@ public class Enemy : IntelligentAgent
 		setSpeedMultiplier(getSpeedMultiplier() * GameManager.enemySpeedBoost);
 		setFoodGrowthMultiplier(getFoodGrowthMultiplier() * GameManager.enemyGrowthBoost);
 		this.AggressionMultiplier *= GameManager.enemyAggressionMultiplier;
+	}
+	// Function to increase growth and speed of newly spawned agents relative to player's current scale
+	public void ScaleToPlayer()
+	{
+		setSpeedMultiplier(getSpeedMultiplier() + this.Player.transform.localScale.x - 1f);
+		setFoodGrowthMultiplier(getFoodGrowthMultiplier() + this.Player.transform.localScale.x - 1f);
 	}
 }

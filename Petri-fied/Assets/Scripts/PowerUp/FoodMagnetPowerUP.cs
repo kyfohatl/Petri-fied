@@ -20,7 +20,7 @@ public class FoodMagnetPowerUP : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float effectScale = transform.localScale.x*transform.parent.localScale.y;
+        float effectScale = transform.localScale.x * transform.parent.localScale.y;
         pSystem.transform.localScale = new Vector3(effectScale, effectScale, effectScale); 
     }
 

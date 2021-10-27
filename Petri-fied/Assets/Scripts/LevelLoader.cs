@@ -37,6 +37,12 @@ public class LevelLoader : MonoBehaviour
 
     // Run callback (things to do after scene is loaded).
     onResult();
-	SceneManager.SetActiveScene(SceneManager.GetSceneByName("MainScene"));
+	ActiveScene(index);
+  }
+  
+  IEnumerator ActiveScene(int index)
+  {
+	  yield return new WaitForSeconds(0f); // allow frame to finish
+	  SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(index));
   }
 }

@@ -14,7 +14,6 @@ public class MovingObjectBubbles : MonoBehaviour
 	[SerializeField] private float movingEmissionRate = 5f;
 	// The emission rate whist stationary
 	[SerializeField] private float stationaryEmissionRate = 0.5f;
-	[SerializeField] private float bubbleSizeScale = 1f;
 	
 	// Start is called before the first frame update
 	void Start()
@@ -48,11 +47,5 @@ public class MovingObjectBubbles : MonoBehaviour
 				emission.rateOverTime = this.stationaryEmissionRate;
 			}
 		}
-	}
-	
-	// Update the scale size of the emission bubbles
-	public void UpdateScaleSize(float newScale)
-	{
-		this.bubbleEffect.transform.localScale = new Vector3(1f, 1f, 1f) * this.bubbleSizeScale * newScale;
 	}
 }
