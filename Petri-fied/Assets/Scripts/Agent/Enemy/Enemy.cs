@@ -35,18 +35,26 @@ public class Enemy : IntelligentAgent
 	{
 		DecayScore();
 		UpdateSize();
-
-		// Check once every second in case of target updates / closer better loot etc
-		determineTimer += Time.deltaTime;
-		if (determineTimer >= 1f)
-		{
-			determineTimer = 0f;
-			DetermineTarget();
-		}
-
+		float determineTimeMin = 1f;
+		
 		// If no current target, determine next
 		if (this.Target == null)
 		{
+			DetermineTarget();
+		}
+		else
+		{
+			if (this.Target.gameObject.tag == "Enemy" || this.Target.gameObject.tag == "Player")
+			{
+				determineTimeMin = 4f; // give the enemy more time to consider if chasing this enemy is worth it
+			}
+		}
+
+		// Check once every second in case of target updates / closer better loot etc
+		this.determineTimer += Time.deltaTime;
+		if (this.determineTimer >= determineTimeMin)
+		{
+			this.determineTimer = 0f;
 			DetermineTarget();
 		}
 

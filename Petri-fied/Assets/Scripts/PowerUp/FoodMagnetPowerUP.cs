@@ -11,17 +11,9 @@ public class FoodMagnetPowerUP : MonoBehaviour
     void Start()
     {
         pSystem = Instantiate(MagnetEffect, this.transform.position, this.transform.rotation, this.transform);
-        pSystem.transform.localScale = this.transform.localScale;    
         var sh = pSystem.GetComponent<ParticleSystem>().shape;
         sh.shapeType = ParticleSystemShapeType.Mesh;
         sh.mesh =  createNewMesh();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        float effectScale = transform.localScale.x * transform.parent.localScale.y;
-        pSystem.transform.localScale = new Vector3(effectScale, effectScale, effectScale); 
     }
 
     //If hits food, pull food to centre

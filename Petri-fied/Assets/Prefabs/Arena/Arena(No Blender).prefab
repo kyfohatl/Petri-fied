@@ -100,6 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ArenaRadius: 150
   ArenaHeight: 100
+  basicScale: 1
 --- !u!198 &2099806535619109211
 ParticleSystem:
   m_ObjectHideFlags: 0

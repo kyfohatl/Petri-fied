@@ -15,6 +15,5 @@ public class FieldEffect2 : MonoBehaviour
     void Update()
     {
         shaderMat.SetVector("_Position", transform.position);
-        
     }
 }
