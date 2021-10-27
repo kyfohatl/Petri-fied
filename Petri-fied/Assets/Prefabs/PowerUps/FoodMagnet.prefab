@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3108228105945044082}
   - component: {fileID: 4043232857683284589}
   - component: {fileID: -3289407970136895220}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: FoodMagnet
   m_TagString: PowerUp
   m_Icon: {fileID: 0}

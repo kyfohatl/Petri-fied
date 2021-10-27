@@ -27,7 +27,7 @@ public class PowerUpManager : MonoBehaviour
         // 0 is Speed PowerUP
         // 1 is Food Magnet
         // 2 is Invincible
-        PowerUpType = Random.Range(0,3);
+        PowerUpType = Random.Range(1,2);
         ps = GetComponent<ParticleSystem>();
         //Change the visual of the PowerUp pick-up
         switch(PowerUpType){
@@ -154,7 +154,6 @@ public class PowerUpManager : MonoBehaviour
         effect1.transform.localPosition  =  effect1.transform.localPosition + new Vector3(0,0,5);
         
         //wait
-        
         yield return new WaitForSeconds(duration);
 
         //Remove PowerUp Effects
