@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 0}
+  m_Sun: {fileID: 690929571}
   m_IndirectSpecularColor: {r: 0.17276824, g: 0.21589223, b: 0.29782608, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
@@ -163,7 +163,7 @@ Camera:
   m_GameObject: {fileID: 89371847}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 4
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -303,7 +303,7 @@ PrefabInstance:
     - target: {fileID: 5909835616720517245, guid: 1b48694595862604d8d4f1f584324936, type: 3}
       propertyPath: sounds.Array.data[3].clip
       value: 
-      objectReference: {fileID: 8300000, guid: f47c8136d5bd7eb4b8ef9c0415951fc0, type: 3}
+      objectReference: {fileID: 8300000, guid: 1a86cb82aac5e4afa979bfd6e21b6fc1, type: 3}
     - target: {fileID: 5909835616720517245, guid: 1b48694595862604d8d4f1f584324936, type: 3}
       propertyPath: sounds.Array.data[3].name
       value: EnemyEaten
@@ -4240,9 +4240,7 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 2099806535619109212, guid: c74b4a487fb35fe4195b5bd32eff90c3, type: 3}
-    - {fileID: 2099806535619109211, guid: c74b4a487fb35fe4195b5bd32eff90c3, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c74b4a487fb35fe4195b5bd32eff90c3, type: 3}
 --- !u!1 &1924299880
 GameObject:
