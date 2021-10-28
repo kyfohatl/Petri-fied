@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PowerUpManager : MonoBehaviour
 {
-
     public float SpeedPowerUpMult = 5.0f;
     public float duration = 5f;
     private float BaseSpeedMult = 1f;
@@ -27,18 +26,18 @@ public class PowerUpManager : MonoBehaviour
         // 0 is Speed PowerUP
         // 1 is Food Magnet
         // 2 is Invincible
-        PowerUpType = Random.Range(1,2);
+        PowerUpType = Random.Range(0,3);
         ps = GetComponent<ParticleSystem>();
         //Change the visual of the PowerUp pick-up
         switch(PowerUpType){
             case 0:
-                setColor(Color.red); //Temp Color
+                setColor(Color.blue); //Temp Color
                 break;
             case 1:
                 setColor(Color.green); //Temp Color
                 break;
             case 2:
-                setColor(Color.blue); //Temp Color
+                setColor(Color.yellow); //Temp Color
                 break;
         }
 
@@ -51,8 +50,10 @@ public class PowerUpManager : MonoBehaviour
         
     }
 
-    void OnTriggerEnter(Collider other){
-        if (other.gameObject.tag == "Enemy" || other.gameObject.tag == "Player"){
+    void OnTriggerEnter(Collider other)
+	{
+        if (other.gameObject.tag == "Enemy" || other.gameObject.tag == "Player")
+		{
             //Remove PowerUp object (visually)
             GetComponent<MeshRenderer>().enabled = false;
             GetComponent<Collider>().enabled = false;
@@ -60,7 +61,7 @@ public class PowerUpManager : MonoBehaviour
 			
 			// Remove lock on target so agent no longer goes for same spot
 			other.gameObject.GetComponent<IntelligentAgent>().setTarget(null);
-
+			
             //Run power Up code
             switch(PowerUpType)
             {
@@ -74,7 +75,9 @@ public class PowerUpManager : MonoBehaviour
                     StartCoroutine( InvinciblePowerUP(other));
                     break;
             }
-        }else{
+        }
+		else
+		{
             return;
         }
     }
@@ -98,8 +101,6 @@ public class PowerUpManager : MonoBehaviour
             originalMat = EnemyMat;
             objRender = player.gameObject.GetComponent<Renderer>();
         }
-
-        
 
     	Material adaptedMaterial = new Material(newMat);
         Color newMainColour;
@@ -131,25 +132,24 @@ public class PowerUpManager : MonoBehaviour
 
 
     //Code for Speed Power UP
-    IEnumerator SpeedPowerUp(Collider other){
-        FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"SpeedPowerUP");
-
+    IEnumerator SpeedPowerUp(Collider other)
+	{
         //change material
         Material originalMat = SetMat(other.gameObject, SpeedMat);
         
-        IntelligentAgent actor = other.gameObject.GetComponent<IntelligentAgent>();
-
+		// Get agent script of other body
+		IntelligentAgent actor = other.gameObject.GetComponent<IntelligentAgent>();
         actor.setActivePowers(actor.getActivePowers() + 1);
-
 
         //Speed power up
         actor.setPowerUpSpeedMultiplier(SpeedPowerUpMult);
 
         //Spawn visual effects
-        var effect1 = Instantiate(SpeedEffect1, other.gameObject.transform.position , 
-        other.gameObject.transform.rotation * Quaternion.Euler(0,180f,0), other.gameObject.transform);
-        var effect2 = Instantiate(SpeedEffect2, other.gameObject.transform.position, 
-        other.gameObject.transform.rotation * Quaternion.Euler(0,180f,0), other.gameObject.transform);
+		Transform agentTransform = other.gameObject.transform;
+		var effect1 = Instantiate(SpeedEffect1, agentTransform.position, agentTransform.rotation * Quaternion.Euler(0,180f,0), agentTransform);
+        var effect2 = Instantiate(SpeedEffect2, agentTransform.position, agentTransform.rotation * Quaternion.Euler(0,180f,0), agentTransform);
+		FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"SpeedPowerUP");
+
         //move an effect forward
         effect1.transform.localPosition  =  effect1.transform.localPosition + new Vector3(0,0,5);
         
@@ -166,10 +166,11 @@ public class PowerUpManager : MonoBehaviour
 		{
 			actor.setPowerUpSpeedMultiplier(BaseSpeedMult);
 			actor.setActivePowers(actor.getActivePowers() - 1);
-			if(actor.getActivePowers() <= 0){
+			if(actor.getActivePowers() <= 0)
+			{
 				RevertMaterial(other.gameObject, originalMat);
 			}
-			// Remove power up from actor
+			// Remove power up from dictionary and destroy
 			Destroy(effect1);
 			Destroy(effect2);
 			GameManager.RemovePowerUp(gameObject.GetInstanceID());
@@ -178,19 +179,28 @@ public class PowerUpManager : MonoBehaviour
     }
 
 
-     IEnumerator FoodMagnetPowerUp(Collider other){
-        FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"MagnetPowerUP");
-
-        IntelligentAgent actor = other.gameObject.GetComponent<IntelligentAgent>();
+     IEnumerator FoodMagnetPowerUp(Collider other)
+	 {
+		// Get agent script of other body
+		IntelligentAgent actor = other.gameObject.GetComponent<IntelligentAgent>();
         actor.setActivePowers(actor.getActivePowers() + 1);
 
         // Change material
         Material originalMat = SetMat(other.gameObject, MagnetMat);
 
         // Create magnet
-        var magnet = Instantiate(FoodMagnet, other.gameObject.transform);
-        magnet.transform.localScale = FoodMagnetScale * new Vector3(other.gameObject.transform.localScale.x, other.gameObject.transform.localScale.y, other.gameObject.transform.localScale.z);
+		GameObject magnet = null;
+		if (other.gameObject.tag == "Player")
+		{
+			magnet = Instantiate(FoodMagnet, other.gameObject.transform);
+		}
+		else
+		{
+			magnet = Instantiate(FoodMagnet, other.gameObject.transform.parent);
+		}
+		magnet.GetComponent<FoodMagnetPowerUP>().MagnetScale = FoodMagnetScale;
         magnet.GetComponent<FoodMagnetPowerUP>().MagnetStrength = FoodMagnetSpeed;
+		FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"MagnetPowerUP");
 
         yield return new WaitForSeconds(duration);
 		
@@ -202,27 +212,30 @@ public class PowerUpManager : MonoBehaviour
 		else
 		{
 			actor.setActivePowers(actor.getActivePowers() - 1);
-			if(actor.getActivePowers() <= 0){
+			if(actor.getActivePowers() <= 0)
+			{
 				RevertMaterial(other.gameObject, originalMat);
 			}
-			// Remove power up from actor
+			// Remove power up from dictionary and destroy
 			GameManager.RemovePowerUp(gameObject.GetInstanceID());
 			Destroy(magnet);
 			Destroy(gameObject);
 		}
      }
 
-    IEnumerator InvinciblePowerUP(Collider other){
-        FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"InvinPowerUP");
-        //
-        Renderer r;
-        if (other.gameObject.tag == "Player"){
-            r = other.gameObject.transform.GetChild(0).gameObject.GetComponent<Renderer>();
-        }else{
-            r = other.gameObject.GetComponent<Renderer>();
-        }
-
-        IntelligentAgent actor = other.gameObject.GetComponent<IntelligentAgent>();
+    IEnumerator InvinciblePowerUP(Collider other)
+	{
+		// Get renderer and agent script of other body
+		Renderer r;
+		if (other.gameObject.tag == "Player")
+		{
+			r = other.gameObject.transform.GetChild(0).gameObject.GetComponent<Renderer>();
+		}
+		else
+		{
+			r = other.gameObject.GetComponent<Renderer>();
+		}
+		IntelligentAgent actor = other.gameObject.GetComponentInParent<IntelligentAgent>();
         actor.setActivePowers(actor.getActivePowers() + 1);
 
         //Color objectColor;
@@ -230,6 +243,7 @@ public class PowerUpManager : MonoBehaviour
         //objectColor = new Color(originalColor.r, originalColor.g, originalColor.b, 0.5f);
 
         actor.setInvincible(true);
+		FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"InvinPowerUP");
 
         Material originalMat = SetMat(other.gameObject, InvincibleMat);
         yield return new WaitForSeconds(duration);
@@ -268,10 +282,12 @@ public class PowerUpManager : MonoBehaviour
 		{
 			actor.setInvincible(false);
 			actor.setActivePowers(actor.getActivePowers() - 1);
-			if(actor.getActivePowers() <= 0){
+			if (actor.getActivePowers() <= 0)
+			{
 				RevertMaterial(other.gameObject, originalMat);
 			}
-			// Remove power up from actor
+			
+			// Remove power up from dictionary and destroy
 			GameManager.RemovePowerUp(gameObject.GetInstanceID());
 			Destroy(gameObject);
 		}
