@@ -11,7 +11,7 @@ public class CameraController : MonoBehaviour
 
   // The camera orbit multiplier / sensitivity with respect to the player
   [SerializeField] private float orbitDistanceMult = 10f;
-  [SerializeField] private float cameraSensitivityMultiplier = 1f;
+  [SerializeField] public float cameraSensitivityMultiplier = 1f;
 
   // Booleans to track inversions
   public bool invertX = false;
@@ -37,7 +37,7 @@ public class CameraController : MonoBehaviour
   private float arenaHeight;
   private Vector3 arenaOrigin;
   private bool boundaryCollision = false;
-  
+
 
   void Awake()
   {
@@ -68,8 +68,8 @@ public class CameraController : MonoBehaviour
       InitialiseCameraPosition();
     }
 
-	// Reset fog parameters to match lock-on radius distance
-	updateFog();
+    // Reset fog parameters to match lock-on radius distance
+    updateFog();
   }
 
   // Set the camera to the player.
@@ -130,14 +130,14 @@ public class CameraController : MonoBehaviour
       // If the camera is not at the goal orbit distance, interpolate orbit distance to desired
       float t = (Time.time - this.orbitUpdateStartTime) / this.orbitUpdateDuration;
       this.curOrbitDistance = Mathf.Lerp(this.previousOrbitDistance, this.goalOrbitDistance, t);
-	  
-	  float newFogStartDistance = this.curOrbitDistance;
-	  float orbitRatio = this.curOrbitDistance / this.goalOrbitDistance;
-	  float newFogEndDistance = orbitRatio * this.Player.GetComponent<IntelligentAgent>().getLockOnRadius();
-	  
-	  RenderSettings.fogStartDistance = Mathf.Lerp(this.previousFogStartDistance, newFogStartDistance, t);
-	  RenderSettings.fogEndDistance = Mathf.Lerp(this.previousFogEndDistance, newFogEndDistance, t);
-	  
+
+      float newFogStartDistance = this.curOrbitDistance;
+      float orbitRatio = this.curOrbitDistance / this.goalOrbitDistance;
+      float newFogEndDistance = orbitRatio * this.Player.GetComponent<IntelligentAgent>().getLockOnRadius();
+
+      RenderSettings.fogStartDistance = Mathf.Lerp(this.previousFogStartDistance, newFogStartDistance, t);
+      RenderSettings.fogEndDistance = Mathf.Lerp(this.previousFogEndDistance, newFogEndDistance, t);
+
       if (t >= 1f)
       {
         this.orbitUpdateTriggered = false;
@@ -178,7 +178,7 @@ public class CameraController : MonoBehaviour
       {
         if (hit.collider.tag != "Arena")
         {
-			return; // don't intersect with any bodies other than the arena
+          return; // don't intersect with any bodies other than the arena
         }
 
         this.boundaryCollision = true;
@@ -210,7 +210,7 @@ public class CameraController : MonoBehaviour
     {
       float boundarySmooth = 10f;
       transform.position = Vector3.Lerp(transform.position, finalPosition, Time.deltaTime * boundarySmooth);
-	  this.curOrbitDistance = Vector3.Distance(this.Player.transform.position, transform.position);
+      this.curOrbitDistance = Vector3.Distance(this.Player.transform.position, transform.position);
     }
   }
 
@@ -271,8 +271,8 @@ public class CameraController : MonoBehaviour
     this.orbitUpdateStartTime = Time.time;
 
     // Reset fog parameters to match lock-on radius distance
-	this.previousFogStartDistance = RenderSettings.fogStartDistance;
-	this.previousFogEndDistance = RenderSettings.fogEndDistance;
+    this.previousFogStartDistance = RenderSettings.fogStartDistance;
+    this.previousFogEndDistance = RenderSettings.fogEndDistance;
   }
 
   // Increments the given angle by the given amount, taking into account framerate, and returns the result
@@ -302,17 +302,40 @@ public class CameraController : MonoBehaviour
     this.arenaHeight = arena.GetComponent<ArenaSize>().ArenaHeight;
     this.arenaOrigin = arena.gameObject.transform.position;
   }
-  
+
   // Function to update the fog render distance
   public void updateFog()
   {
-	  if (RenderSettings.fog) // is fog enabled
-	  {
-		  float fogRadius = this.Player.GetComponent<IntelligentAgent>().getLockOnRadius();
-		  RenderSettings.fogStartDistance = this.goalOrbitDistance;
-		  fogRadius += this.goalOrbitDistance;
-		  // Camera.main.farClipPlane = fogRadius; // if we abandon the arena
-		  RenderSettings.fogEndDistance = fogRadius;
-	  }
+    if (RenderSettings.fog) // is fog enabled
+    {
+      float fogRadius = this.Player.GetComponent<IntelligentAgent>().getLockOnRadius();
+      RenderSettings.fogStartDistance = this.goalOrbitDistance;
+      fogRadius += this.goalOrbitDistance;
+      // Camera.main.farClipPlane = fogRadius; // if we abandon the arena
+      RenderSettings.fogEndDistance = fogRadius;
+    }
+  }
+
+  // Setter for cam invert x
+  public void SetInvertX(bool enabled)
+  {
+    this.invertX = enabled;
+  }
+
+  // Setter for cam invert y
+  public void SetInvertY(bool enabled)
+  {
+    this.invertY = enabled;
+  }
+
+  // Setter for cam follow mouse
+  public void SetFollowMouse(bool enabled)
+  {
+    this.enableFollowMouse = enabled;
+  }
+
+  public void SetCameraSensitivity(float multiplier)
+  {
+    this.cameraSensitivityMultiplier = multiplier;
   }
 }
