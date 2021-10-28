@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 16716886}
   - component: {fileID: 16716885}
   - component: {fileID: 16716884}
+  - component: {fileID: 16716888}
   m_Layer: 5
   m_Name: UICanvas
   m_TagString: Untagged
@@ -223,6 +224,32 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &16716888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 16716883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &55645186
 GameObject:
   m_ObjectHideFlags: 0
@@ -1391,10 +1418,10 @@ RectTransform:
   m_Father: {fileID: 16716887}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 736.3337, y: 622.0273}
+  m_SizeDelta: {x: 736.3337, y: 709.5323}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &856347050
 MonoBehaviour:
@@ -1897,7 +1924,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1206356256}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 856347051}
+        m_TargetAssemblyTypeName: GameOverMenu, Assembly-CSharp
+        m_MethodName: QuitGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1206356256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2665,7 +2704,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 24.737864}
+  m_SizeDelta: {x: 200, y: 62.4017}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1800414416
 MonoBehaviour:
@@ -2687,7 +2726,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You survived for 00:02:12 and finished at #23 at size 99.
+  m_text: You survived for 00:02:12 and finished at position #23 at size 99.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 56f66bc55f5a34f9baa16d268a3c5ccd, type: 2}
   m_sharedMaterial: {fileID: -1981446074395079258, guid: 56f66bc55f5a34f9baa16d268a3c5ccd, type: 2}

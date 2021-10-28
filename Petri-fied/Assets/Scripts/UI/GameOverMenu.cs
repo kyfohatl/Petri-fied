@@ -30,6 +30,12 @@ public class GameOverMenu : MonoBehaviour
     GameOverStats.text = $"You survived for {timeAliveFormatted} and finished at position #{rank} with a score of {score}.";
   }
 
+  public void QuitGame()
+  {
+    Debug.Log("Quit Game");
+    Application.Quit();
+  }
+
   public static void RestartGame()
   {
     Leaderboard.Instance.ClearLeaderboard();
