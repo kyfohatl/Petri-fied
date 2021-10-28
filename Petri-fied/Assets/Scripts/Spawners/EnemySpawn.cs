@@ -19,7 +19,8 @@ public class EnemySpawn :  SpawnerController
 			{
 				// Track the PowerUp spawned.
 				GameObject newlyCreated = Generate();
-				GameManager.AddEnemy(newlyCreated.GetInstanceID(), newlyCreated);
+				GameObject enemyBody = newlyCreated.transform.Find("Avatar").gameObject;
+				GameManager.AddEnemy(enemyBody.GetInstanceID(), enemyBody);
 			}
 		}
 	}

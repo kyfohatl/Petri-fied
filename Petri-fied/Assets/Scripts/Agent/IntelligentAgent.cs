@@ -14,9 +14,16 @@ public class IntelligentAgent : MonoBehaviour
 	[SerializeField] private string Name = "";
 	public int Score = 1;
 	public float Radius = 1f;
-	public float LockOnRadius;
+	public float LockOnRadius = 10f;
 	private int peakScore = 1;
 	private float initialisationTime;
+	
+	// Player statistics tracking
+	protected float survivalTime = 0.0f;
+	protected int killCount = 0;
+	protected int foodEatenCount = 0;
+	protected int superFoodEatenCount = 0;
+	protected int powerUpsCollected = 0;
 
 	// Power up trackers
 	private float PowerUpSpeedMultiplier = 1f;
@@ -57,6 +64,7 @@ public class IntelligentAgent : MonoBehaviour
 	// Function called on collisions
 	void OnTriggerEnter(Collider other)
 	{
+		// Check tag of collided object
 		if (other.gameObject.tag == "Food")
 		{
 			int increase = (int)Mathf.Round(this.FoodGrowthMultiplier);
@@ -64,6 +72,7 @@ public class IntelligentAgent : MonoBehaviour
 			GameManager.RemoveFood(other.gameObject.GetInstanceID());
 			FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "FoodEaten");
 			Destroy(other.gameObject);
+			this.foodEatenCount += 1;
 		}
 		else if (other.gameObject.tag == "SuperFood")
 		{
@@ -73,34 +82,37 @@ public class IntelligentAgent : MonoBehaviour
 			GameManager.RemoveSuperFood(other.gameObject.GetInstanceID());
 			FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "SuperFoodEaten");
 			Destroy(other.gameObject);
+			this.superFoodEatenCount += 1;
 		}
 		else if (other.gameObject.tag == "Enemy" || other.gameObject.tag == "Player")
 		{
-			if (other.gameObject.GetComponent<IntelligentAgent>() != null)
-			{
-				IntelligentAgent otherPlayer = other.gameObject.GetComponent<IntelligentAgent>();
-				int scoreDifference = this.Score - otherPlayer.getScore();
+			IntelligentAgent otherPlayer = other.gameObject.GetComponent<IntelligentAgent>();
+			int scoreDifference = this.Score - otherPlayer.getScore();
 
-				if (scoreDifference > 0 && !otherPlayer.isInvincible())
+			if (scoreDifference > 0 && !otherPlayer.isInvincible())
+			{
+				UpdateScore(otherPlayer.getScore());
+				AssimilateGenetics(otherPlayer);
+				Debug.Log(this.Name + " has eaten: " + otherPlayer.getName());
+				if (other.gameObject.tag == "Enemy")
 				{
-					UpdateScore(otherPlayer.getScore());
-					AssimilateGenetics(otherPlayer);
-					Debug.Log(this.Name + " has eaten: " + otherPlayer.getName());
-					if (other.gameObject.tag == "Enemy")
-					{
-						GameManager.RemoveEnemy(other.gameObject.GetInstanceID());
-					}
-					FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "EnemyEaten");
-					if (other.gameObject.tag == "Player")
-					{
-						GameManager.EndGameForPlayer();
-					}
-					else
-					{
-						Destroy(other.gameObject);
-					}
+					GameManager.RemoveEnemy(other.gameObject.GetInstanceID());
+				}
+				FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "EnemyEaten");
+				if (other.gameObject.tag == "Player")
+				{
+					GameManager.EndGameForPlayer();
+				}
+				else
+				{
+					Destroy(other.gameObject);
+					this.killCount += 1;
 				}
 			}
+		}
+		else if (other.gameObject.tag == "PowerUp")
+		{
+			this.powerUpsCollected += 1;
 		}
 	}
 	
@@ -335,7 +347,7 @@ public class IntelligentAgent : MonoBehaviour
 	// Setter method for name
 	public void setName(string name)
 	{
-			this.Name = name;
+		this.Name = name;
 	}
 
 	// Getter method for name

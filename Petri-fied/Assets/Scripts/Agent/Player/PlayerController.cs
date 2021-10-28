@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(IsMoving))]
@@ -163,17 +164,17 @@ public class PlayerController : MonoBehaviour
 					}
 				}
 			}
+			
 			// Return boolean on successful target set
-			if (nextClosest == null)
+			if (nextClosest != null)
 			{
-				Debug.Log("Not locked-onto anything!");
-				return false;
+				GetComponent<Player>().setTarget(nextClosest);
+				return true;
 			}
 			else
 			{
-				// Finally set the target as the next closest object visible
-				GetComponent<Player>().setTarget(nextClosest);
-				return true;
+				GetComponent<Player>().setTarget(null);
+				return false;
 			}
 		}
 	}
@@ -189,13 +190,6 @@ public class PlayerController : MonoBehaviour
 			Debug.Log("No enemies are visible to screen");
 			GetComponent<Player>().setTarget(null);
 		}
-		
-		if (GetComponent<Player>().getTarget() != null)
-		{
-			GameObject target = GetComponent<Player>().getTarget();
-			string targetName = target.gameObject.GetComponent<Enemy>().getName();
-			Debug.Log("Locked-onto enemy player: " + targetName);
-		}
 	}
 	
 	// Function to lock-onto power up target using key press
@@ -208,11 +202,6 @@ public class PlayerController : MonoBehaviour
 			// Visible power up dictionary is null
 			Debug.Log("No power ups are visible to screen");
 			GetComponent<Player>().setTarget(null);
-		}
-		
-		if (GetComponent<Player>().getTarget() != null)
-		{
-			Debug.Log("Locked-onto Power-Up");
 		}
 	}
 	
@@ -247,52 +236,32 @@ public class PlayerController : MonoBehaviour
 		if (!LockOn(merged))
 		{
 			// Visible food/super-food dictionary is null
-			Debug.Log("No food capsules are visible to screen");
+			Debug.Log("No food or superfood capsules are visible to screen");
 			GetComponent<Player>().setTarget(null);
-		}
-		
-		if (GetComponent<Player>().getTarget() != null)
-		{
-			string targetTag = GetComponent<Player>().getTarget().tag;
-			Debug.Log("Locked-onto " + targetTag);
 		}
 	}
 	
 	// Function to lock-onto target using a mouse click
 	public void mouseLockOn()
 	{
+		int ignoreMask =~ LayerMask.GetMask("Arena");
 		RaycastHit hitInfo = new RaycastHit();
-		bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo);
+		bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, Mathf.Infinity, ignoreMask);
 		
-		if (hit) // ray cast intersects something not null
+		if (hit) // ray cast intersects something, but what?
 		{
+			string[] tags = {"Enemy", "Food", "SuperFood", "PowerUp"};
 			string targetTag = hitInfo.transform.gameObject.tag;
-			if (targetTag == "Enemy")
+			GameObject newTarget = null;
+			if (tags.Contains(targetTag))
 			{
-				Debug.Log("Locked-onto enemy player: " + hitInfo.transform.gameObject.GetComponent<Enemy>().getName());
-				GetComponent<Player>().setTarget(hitInfo.transform.gameObject);
+				newTarget = hitInfo.transform.gameObject;
 			}
-			else if (targetTag == "Food" || targetTag == "SuperFood")
-			{
-				Debug.Log("Locked-onto " + targetTag);
-				GetComponent<Player>().setTarget(hitInfo.transform.gameObject);
-			}
-			else if (targetTag == "PowerUp")
-			{
-				Debug.Log("Locked-onto Power-Up");
-				// Debug.Log("Locked-onto Power-Up: " + hitInfo.transform.gameObject.GetComponent<PowerUp>().getName());
-				GetComponent<Player>().setTarget(hitInfo.transform.gameObject);
-			}
-			else if (GetComponent<Player>().getTarget() != null) // remove lock-on
-			{
-				Debug.Log("No longer locked-on!");
-				GetComponent<Player>().setTarget(null);
-			}
+			GetComponent<Player>().setTarget(newTarget);
 		}
 		else
 		{
 			Debug.Log("No hit whatsoever...");
-			FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "FailedLockOn");
 			GetComponent<Player>().setTarget(null);
 		}
 	}

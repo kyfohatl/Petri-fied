@@ -72,7 +72,7 @@ MonoBehaviour:
     loop: 1
     source: {fileID: 0}
   - name: EnemyEaten
-    clip: {fileID: 8300000, guid: f47c8136d5bd7eb4b8ef9c0415951fc0, type: 3}
+    clip: {fileID: 8300000, guid: 1a86cb82aac5e4afa979bfd6e21b6fc1, type: 3}
     volume: 0.69
     pitch: 0.69
     spatialBlend: 1

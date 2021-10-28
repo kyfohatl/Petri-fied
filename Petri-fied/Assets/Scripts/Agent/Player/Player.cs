@@ -7,10 +7,8 @@ using TMPro;
 
 public class Player : IntelligentAgent
 {
+  // THE MAIN PROTAGONIST
   public static Player instance;
-
-  // Player statistics tracking
-  private float survivalTime = 0.0f;
 
   // UI elements
   public TMP_Text nameLabel;
@@ -73,8 +71,28 @@ public class Player : IntelligentAgent
 		  float dist = Vector3.Distance(obj.gameObject.transform.position, transform.position);
 		  float travelTime = dist / (getSpeedMultiplier() * getPowerUpSpeedMultiplier() / transform.localScale.x);
 		  Debug.Log("Distance to target: " + dist + ", expected travel time: " + travelTime + " seconds");
+
+		  string targetTag = obj.gameObject.tag;
+		  if (targetTag == "Enemy")
+		  {
+			  Debug.Log("Locked-onto enemy player: " + obj.GetComponent<IntelligentAgent>().getName());
+		  }
+		  else if (targetTag == "Food" || targetTag == "SuperFood")
+		  {
+			  Debug.Log("Locked-onto " + targetTag);
+		  }
+		  else if (targetTag == "PowerUp")
+		  {
+			  Debug.Log("Locked-onto Power-Up");
+		  }
+	  }
+	  else
+	  {
+		  // Target is being reset to null
+		  FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "FailedLockOn");
 	  }
 	  
+	  // Finally check if previous target needs material adjustment and set the new target
 	  GetComponent<LockOnController>().UpdateTargetMaterial(obj);
 	  this.Target = obj;
   }

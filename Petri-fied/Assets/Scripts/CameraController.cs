@@ -176,9 +176,9 @@ public class CameraController : MonoBehaviour
       RaycastHit hit;
       if (Physics.Linecast(this.Player.transform.position, newCameraPos, out hit))
       {
-        if (hit.collider.tag == "Enemy")
+        if (hit.collider.tag != "Arena")
         {
-          return;
+			return; // don't intersect with any bodies other than the arena
         }
 
         this.boundaryCollision = true;

@@ -18,7 +18,7 @@ public class Enemy : IntelligentAgent
 	{
 		StartLife();
 		this.setName(GenerateRandomName());
-		this.name = "Enemy: " + this.getName();
+		this.transform.parent.name = "Enemy: " + this.getName();
 		this.Player = GameObject.FindGameObjectWithTag("Player");
 
 		// Determine aggresion of this enemy and apply initial difficulty sliders
@@ -46,7 +46,7 @@ public class Enemy : IntelligentAgent
 		{
 			if (this.Target.gameObject.tag == "Enemy" || this.Target.gameObject.tag == "Player")
 			{
-				determineTimeMin = 4f; // give the enemy more time to consider if chasing this enemy is worth it
+				determineTimeMin = 3.141f; // give the enemy more time to consider if chasing this enemy is worth it
 			}
 		}
 
