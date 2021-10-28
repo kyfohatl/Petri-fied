@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
 	
 	// Movement-type triggers (both should be avaliable in settings, can be used well together)
 	public bool AutoFollowTarget = false; // will automatically fly at target whenever set
-	public bool AutoFollowCursor = false; // will automatically fly forward in the turn direction of the curse
+	public bool AutoFollowCursor = false; // will automatically fly forward in the turn direction of the cursor
 	
 	// Current forward direction of player
 	private Vector3 curDir = new Vector3(0f, 0f, 0f);
@@ -107,7 +107,7 @@ public class PlayerController : MonoBehaviour
 		// Lock-on feature using left mouse click
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
-			this.AutoFollowCursor = !this.AutoFollowCursor;
+			// this.AutoFollowCursor = !this.AutoFollowCursor;
 			GetComponent<Player>().setTarget(null);
 		}
 		
@@ -131,13 +131,15 @@ public class PlayerController : MonoBehaviour
 			GameObject currentTarget = GetComponent<Player>().getTarget();
 			GameObject nextClosest = null;
 			float lockOnDist = GetComponent<IntelligentAgent>().getLockOnRadius();
+			float lockOnDistSqrd = lockOnDist * lockOnDist;
 			
 			if (currentTarget == null)
 			{
 				// No current target, set as the closest
 				nextClosest = GetComponent<IntelligentAgent>().GetClosestObject(inObjects);
-				float closestDist = Vector3.Distance(nextClosest.gameObject.transform.position, this.transform.position);
-				if (closestDist <= lockOnDist)
+				Vector3 nextClosestPos = nextClosest.gameObject.transform.position;
+				float closestDistSqrd = (nextClosestPos - this.transform.position).sqrMagnitude;
+				if (closestDistSqrd <= lockOnDistSqrd)
 				{
 					GetComponent<Player>().setTarget(nextClosest);
 					return true;
@@ -151,16 +153,18 @@ public class PlayerController : MonoBehaviour
 			{
 				// Find next closest after current target
 				nextClosest = null;
-				float targetDist = Vector3.Distance(currentTarget.gameObject.transform.position, this.transform.position);
+				Vector3 targetPos = currentTarget.gameObject.transform.position;
+				float targetDistSqrd = (targetPos - this.transform.position).sqrMagnitude;
 				float minDist = Mathf.Infinity;
-				
+
 				foreach (var objClone in inObjects)
 				{
-					float dist = Vector3.Distance(objClone.Value.gameObject.transform.position, this.transform.position);
-					if (dist < minDist && dist > targetDist && dist <= lockOnDist)
+					Vector3 clonePos = objClone.Value.gameObject.transform.position;
+					float distSqrd = (clonePos - this.transform.position).sqrMagnitude;
+					if (distSqrd < minDist && distSqrd > targetDistSqrd && distSqrd <= lockOnDistSqrd)
 					{
 						nextClosest = objClone.Value;
-						minDist = dist;
+						minDist = distSqrd;
 					}
 				}
 			}
@@ -244,11 +248,11 @@ public class PlayerController : MonoBehaviour
 	// Function to lock-onto target using a mouse click
 	public void mouseLockOn()
 	{
-		int ignoreMask =~ LayerMask.GetMask("Arena");
+		int ignoreMask = ~((1 << 2) | (1 << 8)); // 2: ignore raycast, 8: arena
 		RaycastHit hitInfo = new RaycastHit();
 		bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, Mathf.Infinity, ignoreMask);
 		
-		if (hit) // ray cast intersects something, but what?
+		if (hit && hitInfo.transform.gameObject.GetComponent<MeshRenderer>().enabled) // successful hit and rendered
 		{
 			string[] tags = {"Enemy", "Food", "SuperFood", "PowerUp"};
 			string targetTag = hitInfo.transform.gameObject.tag;

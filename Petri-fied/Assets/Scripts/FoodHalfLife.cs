@@ -13,12 +13,21 @@ public class FoodHalfLife : MonoBehaviour
 		StartCoroutine("Decompose");
 	}
 	
+	void Update()
+	{
+		transform.Rotate(30f * Time.deltaTime, 0f, 5f * Time.deltaTime);
+	}
+	
 	IEnumerator Decompose()
 	{
 		yield return new WaitForSeconds (this.HalfLifeSeconds);
 		if (Random.value > 0.5)
 		{
 			GameManager.RemoveFood(this.gameObject.GetInstanceID());
+			if (this.gameObject.tag == "SuperFood")
+			{
+				GameManager.RemoveSuperFood(this.gameObject.GetInstanceID());
+			}
 			Destroy(this.gameObject);
 		}
 		else

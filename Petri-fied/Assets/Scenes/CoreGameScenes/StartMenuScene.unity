@@ -3124,7 +3124,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8951172823056146455, guid: 8d4766e5df4b5cd4ba780ea0ebebc254, type: 3}
       propertyPath: Score
-      value: 1
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8951172823056146455, guid: 8d4766e5df4b5cd4ba780ea0ebebc254, type: 3}
       propertyPath: GameManager
@@ -3142,7 +3142,8 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7207756204962701927, guid: 8d4766e5df4b5cd4ba780ea0ebebc254, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 8d4766e5df4b5cd4ba780ea0ebebc254, type: 3}
 --- !u!1 &1305210857 stripped
 GameObject:

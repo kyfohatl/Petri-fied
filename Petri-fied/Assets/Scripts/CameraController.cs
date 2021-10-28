@@ -38,7 +38,7 @@ public class CameraController : MonoBehaviour
   private Vector3 arenaOrigin;
   private bool boundaryCollision = false;
   
-
+  // Called on start-up
   void Awake()
   {
     // Prevent camera from being destroyed between scenes.
@@ -137,6 +137,7 @@ public class CameraController : MonoBehaviour
 	  
 	  RenderSettings.fogStartDistance = Mathf.Lerp(this.previousFogStartDistance, newFogStartDistance, t);
 	  RenderSettings.fogEndDistance = Mathf.Lerp(this.previousFogEndDistance, newFogEndDistance, t);
+	  GetComponent<Camera>().farClipPlane = newFogEndDistance; // if we abandon the arena
 	  
       if (t >= 1f)
       {
@@ -169,6 +170,8 @@ public class CameraController : MonoBehaviour
   // Function to update camera transform position
   void UpdateCameraPosition(Vector3 newCameraPos)
   {
+	  this.transform.position = newCameraPos;
+	  return;
     // Initialize outpit and start by testing if the new camera position is outside arena
     Vector3 finalPosition = newCameraPos;
     if (!withinArena(newCameraPos))
@@ -192,7 +195,7 @@ public class CameraController : MonoBehaviour
       if (this.boundaryCollision)
       {
         // Reset the boundary collision flag if current cam distance is within tolerance
-        this.curOrbitDistance = Vector3.Distance(this.Player.transform.position, transform.position);
+		this.curOrbitDistance = Vector3.Distance(this.Player.transform.position, this.transform.position);
         if (Mathf.Abs(this.curOrbitDistance - this.goalOrbitDistance) < 0.02f)
         {
           this.curOrbitDistance = this.goalOrbitDistance;
@@ -204,13 +207,13 @@ public class CameraController : MonoBehaviour
     // Finally, set the camera position to the new position
     if (!this.boundaryCollision)
     {
-      transform.position = finalPosition;
+		this.transform.position = finalPosition;
     }
     else
     {
       float boundarySmooth = 10f;
-      transform.position = Vector3.Lerp(transform.position, finalPosition, Time.deltaTime * boundarySmooth);
-	  this.curOrbitDistance = Vector3.Distance(this.Player.transform.position, transform.position);
+	  this.transform.position = Vector3.Lerp(this.transform.position, finalPosition, Time.deltaTime * boundarySmooth);
+	  this.curOrbitDistance = Vector3.Distance(this.Player.transform.position, this.transform.position);
     }
   }
 
@@ -279,7 +282,7 @@ public class CameraController : MonoBehaviour
   private float incrementAngle(float angle, float amount)
   {
     float orbitRatio = this.curOrbitDistance / this.goalOrbitDistance;
-    float boundarySmooth = Mathf.Min(1f, this.cameraSensitivityMultiplier * orbitRatio);
+    float boundarySmooth = Mathf.Max(1f, this.cameraSensitivityMultiplier * orbitRatio);
     float newAngle = (angle + amount * boundarySmooth * Time.deltaTime) % (2f * Mathf.PI);
     return newAngle;
   }
@@ -304,15 +307,20 @@ public class CameraController : MonoBehaviour
   }
   
   // Function to update the fog render distance
-  public void updateFog()
+  void updateFog()
   {
 	  if (RenderSettings.fog) // is fog enabled
 	  {
-		  float fogRadius = this.Player.GetComponent<IntelligentAgent>().getLockOnRadius();
+		  float lockOnRadius = this.Player.GetComponent<IntelligentAgent>().getLockOnRadius();
 		  RenderSettings.fogStartDistance = this.goalOrbitDistance;
-		  fogRadius += this.goalOrbitDistance;
-		  // Camera.main.farClipPlane = fogRadius; // if we abandon the arena
-		  RenderSettings.fogEndDistance = fogRadius;
+		  RenderSettings.fogEndDistance = RenderSettings.fogStartDistance + lockOnRadius;
+		  GetComponent<Camera>().farClipPlane = RenderSettings.fogEndDistance; // if we abandon the arena
 	  }
+  }
+  
+  // Getter function for current goal orbit radius
+  public float getGoalOrbitDistance()
+  {
+	  return this.goalOrbitDistance;
   }
 }

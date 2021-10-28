@@ -45,8 +45,8 @@ public class SpawnerController : MonoBehaviour
 	public GameObject Generate()
 	{
 		// Determine spawn position
-		Vector3 Target = getRandomPosition();
-		// Target = Random.insideUnitSphere * this.arenaRadius + this.arenaOrigin;
+		//Vector3 Target = getRandomPosition();
+		Vector3 Target = Random.insideUnitSphere * this.arenaRadius + this.arenaOrigin;
 		
 		// Instantiates the newly spawned object and sets as child of spawner
 		GameObject spawned = Instantiate(this.prefabToSpawn, Target, Random.rotation, transform);
@@ -57,6 +57,8 @@ public class SpawnerController : MonoBehaviour
 	// Function to generate a random position somewhere inside the arena cylinder dimensions
 	public Vector3 getRandomPosition()
 	{
+		return Random.insideUnitSphere * this.arenaRadius + this.arenaOrigin;
+		
 		Vector2 xz = Random.insideUnitCircle * this.spawnRadius;
 		float y = Random.Range(this.arenaOrigin.z - this.spawnHeight / 2f, this.arenaOrigin.z + this.spawnHeight / 2f);
 		Vector3 randomPos = new Vector3(this.arenaOrigin.x + xz.x, this.arenaOrigin.y + y, this.arenaOrigin.z + xz.y);
@@ -65,6 +67,8 @@ public class SpawnerController : MonoBehaviour
 	}
 	public Vector3 getRandomPosition(float inRadius, float inHeight)
 	{
+		return Random.insideUnitSphere * inRadius + this.arenaOrigin;
+		
 		Vector2 xz = Random.insideUnitCircle * inRadius;
 		float y = Random.Range(this.arenaOrigin.z - inHeight / 2f, this.arenaOrigin.z + inHeight / 2f);
 		Vector3 randomPos = new Vector3(this.arenaOrigin.x + xz.x, this.arenaOrigin.y + y, this.arenaOrigin.z + xz.y);

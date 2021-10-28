@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 3375488646298033171}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 7, y: 7, z: 7}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -110,5 +110,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MagnetStrength: 1
-  MagnetScale: 1
+  MagnetScale: 7
   MagnetEffect: {fileID: 2431442621338859882, guid: fe21f68b566519f4dbcf7d885fc40cd9, type: 3}

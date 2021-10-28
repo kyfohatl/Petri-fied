@@ -13,7 +13,6 @@ public class PowerUpManager : MonoBehaviour
     public GameObject SpeedEffect2;
     public GameObject FoodMagnet;
     private int PowerUpType;
-    private ParticleSystem ps;
     public Material SpeedMat;
     public Material MagnetMat;
     public Material InvincibleMat;
@@ -27,20 +26,18 @@ public class PowerUpManager : MonoBehaviour
         // 1 is Food Magnet
         // 2 is Invincible
         PowerUpType = Random.Range(0,3);
-        ps = GetComponent<ParticleSystem>();
         //Change the visual of the PowerUp pick-up
         switch(PowerUpType){
             case 0:
-                setColor(Color.blue); //Temp Color
+				GetComponent<Renderer>().material = this.SpeedMat;
                 break;
             case 1:
-                setColor(Color.green); //Temp Color
+				GetComponent<Renderer>().material = this.MagnetMat;
                 break;
             case 2:
-                setColor(Color.yellow); //Temp Color
+				GetComponent<Renderer>().material = this.InvincibleMat;
                 break;
         }
-
     }
 
     // Update is called once per frame
@@ -57,7 +54,6 @@ public class PowerUpManager : MonoBehaviour
             //Remove PowerUp object (visually)
             GetComponent<MeshRenderer>().enabled = false;
             GetComponent<Collider>().enabled = false;
-            Destroy(ps);
 			
 			// Remove lock on target so agent no longer goes for same spot
 			other.gameObject.GetComponent<IntelligentAgent>().setTarget(null);
@@ -82,24 +78,20 @@ public class PowerUpManager : MonoBehaviour
         }
     }
 
-    private void setColor(Color setTo){
-        //
-        //GetComponent<Renderer>().material.color = setTo;
-        var main = ps.main;
-        main.startColor = setTo;
-
-    }
-
     //Changes the player's material and return the old material 
-    private Material SetMat(GameObject player, Material newMat){
+    private Material SetMat(GameObject actor, Material newMat)
+	{
         Material originalMat; // = new Material(objRender.material);
         Renderer objRender;
-        if(player.gameObject.tag == "Player"){
+        if(actor.gameObject.tag == "Player")
+		{
             originalMat = PlayerMat;
-            objRender = player.gameObject.GetComponentInChildren(typeof(Renderer)) as Renderer;
-        }else{
+            objRender = actor.gameObject.transform.Find("Avatar").gameObject.GetComponent<Renderer>();
+        }
+		else
+		{
             originalMat = EnemyMat;
-            objRender = player.gameObject.GetComponent<Renderer>();
+            objRender = actor.gameObject.GetComponent<Renderer>();
         }
 
     	Material adaptedMaterial = new Material(newMat);
@@ -117,16 +109,20 @@ public class PowerUpManager : MonoBehaviour
         return originalMat;
     }
 
-    private void RevertMaterial(GameObject player, Material oldMat)
+    private void RevertMaterial(GameObject actor, Material oldMat)
 	{
-        if(player == null){
+        if (actor == null)
+		{
             return;
         }
 		// Reset the target's material
-        if(player.gameObject.tag == "Player"){
-            player.transform.Find("Avatar").gameObject.GetComponent<Renderer>().material = oldMat;
-        }else{
-            player.gameObject.GetComponent<Renderer>().material = oldMat;
+        if (actor.gameObject.tag == "Player")
+		{
+            actor.transform.Find("Avatar").gameObject.GetComponent<Renderer>().material = oldMat;
+        }
+		else
+		{
+            actor.gameObject.GetComponent<Renderer>().material = oldMat;
         }
 	}
 
@@ -156,26 +152,22 @@ public class PowerUpManager : MonoBehaviour
         //wait
         yield return new WaitForSeconds(duration);
 
-        //Remove PowerUp Effects
-        if (other == null)
+        // Remove PowerUp Effects if agent isnt destroyed
+        if (other != null)
 		{
-			// Actor was deleted between yield coroutine execution
-			GameManager.RemovePowerUp(gameObject.GetInstanceID());
-        }
-		else
-		{
+			Destroy(effect1); // would be destroyed by agent consumption otherwise
+			Destroy(effect2);
 			actor.setPowerUpSpeedMultiplier(BaseSpeedMult);
 			actor.setActivePowers(actor.getActivePowers() - 1);
 			if(actor.getActivePowers() <= 0)
 			{
 				RevertMaterial(other.gameObject, originalMat);
 			}
-			// Remove power up from dictionary and destroy
-			Destroy(effect1);
-			Destroy(effect2);
-			GameManager.RemovePowerUp(gameObject.GetInstanceID());
-			Destroy(gameObject);
-		}
+        }
+		
+		// Remove power up from dictionary and destroy original power up clone object
+		GameManager.RemovePowerUp(gameObject.GetInstanceID());
+		Destroy(gameObject);
     }
 
 
@@ -188,7 +180,7 @@ public class PowerUpManager : MonoBehaviour
         // Change material
         Material originalMat = SetMat(other.gameObject, MagnetMat);
 
-        // Create magnet
+        // Instantiate magnet object to be attached to agent
 		GameObject magnet = null;
 		if (other.gameObject.tag == "Player")
 		{
@@ -202,25 +194,23 @@ public class PowerUpManager : MonoBehaviour
         magnet.GetComponent<FoodMagnetPowerUP>().MagnetStrength = FoodMagnetSpeed;
 		FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject,"MagnetPowerUP");
 
+		// Now wait until the end of the powerUp
         yield return new WaitForSeconds(duration);
 		
-		// Remove PowerUp Effects
-		if (other == null)
+		// Remove PowerUp Effects if agent isnt destroyed
+		if (other != null)
 		{
-			GameManager.RemovePowerUp(gameObject.GetInstanceID());
-		}
-		else
-		{
+			Destroy(magnet); // can be now
 			actor.setActivePowers(actor.getActivePowers() - 1);
 			if(actor.getActivePowers() <= 0)
 			{
 				RevertMaterial(other.gameObject, originalMat);
 			}
-			// Remove power up from dictionary and destroy
-			GameManager.RemovePowerUp(gameObject.GetInstanceID());
-			Destroy(magnet);
-			Destroy(gameObject);
 		}
+		
+		// Remove power up from dictionary and destroy original power up clone object
+		GameManager.RemovePowerUp(gameObject.GetInstanceID());
+		Destroy(gameObject);
      }
 
     IEnumerator InvinciblePowerUP(Collider other)
@@ -229,13 +219,13 @@ public class PowerUpManager : MonoBehaviour
 		Renderer r;
 		if (other.gameObject.tag == "Player")
 		{
-			r = other.gameObject.transform.GetChild(0).gameObject.GetComponent<Renderer>();
+			r = other.gameObject.transform.Find("Avatar").gameObject.GetComponent<Renderer>();
 		}
 		else
 		{
 			r = other.gameObject.GetComponent<Renderer>();
 		}
-		IntelligentAgent actor = other.gameObject.GetComponentInParent<IntelligentAgent>();
+		IntelligentAgent actor = other.gameObject.GetComponent<IntelligentAgent>();
         actor.setActivePowers(actor.getActivePowers() + 1);
 
         //Color objectColor;
@@ -248,7 +238,8 @@ public class PowerUpManager : MonoBehaviour
         Material originalMat = SetMat(other.gameObject, InvincibleMat);
         yield return new WaitForSeconds(duration);
 
-        if(actor.getActivePowers() == 1){
+        if (actor.getActivePowers() == 1)
+		{
             RevertMaterial(other.gameObject, originalMat);
             yield return new WaitForSeconds(0.1f);
             SetMat(other.gameObject, InvincibleMat);
@@ -269,16 +260,14 @@ public class PowerUpManager : MonoBehaviour
             yield return new WaitForSeconds(0.05f);
             SetMat(other.gameObject, InvincibleMat);
             yield return new WaitForSeconds(0.05f);
-        }else{
+        }
+		else
+		{
             yield return new WaitForSeconds(1f);
         }
 		
-		// Remove PowerUp Effects
-		if (other == null)
-		{
-			GameManager.RemovePowerUp(gameObject.GetInstanceID());
-		}
-		else
+		// Remove PowerUp Effects if agent isnt destroyed
+		if (other != null)
 		{
 			actor.setInvincible(false);
 			actor.setActivePowers(actor.getActivePowers() - 1);
@@ -286,15 +275,11 @@ public class PowerUpManager : MonoBehaviour
 			{
 				RevertMaterial(other.gameObject, originalMat);
 			}
-			
-			// Remove power up from dictionary and destroy
-			GameManager.RemovePowerUp(gameObject.GetInstanceID());
-			Destroy(gameObject);
 		}
+		
+		// Remove power up from dictionary and destroy original power up clone object
+		GameManager.RemovePowerUp(gameObject.GetInstanceID());
+		Destroy(gameObject);
     }
-
-
-
-
 }
 

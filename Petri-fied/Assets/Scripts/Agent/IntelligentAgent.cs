@@ -35,7 +35,7 @@ public class IntelligentAgent : MonoBehaviour
 	[SerializeField] private float FoodGrowthMultiplier = 1f;
 	[SerializeField] private float ScoreDecayMultiplier = 1f;
 	[SerializeField] private float SpeedMultiplier = 1f;
-	[SerializeField] private float LockOnRadiusMultiplier = 10f;
+	[SerializeField] private float LockOnRadiusMultiplier = 15f;
 
 	// Size update parameters
 	private float sizeUpdateDuration = 1f; // default: 1 second
@@ -76,7 +76,7 @@ public class IntelligentAgent : MonoBehaviour
 		}
 		else if (other.gameObject.tag == "SuperFood")
 		{
-			float increase = Mathf.Max((float)this.Score / 10f, 10f); // approx 10% of current score or at minimum 10
+			float increase = Mathf.Max((float)this.Score / 6f, 10f * getFoodGrowthMultiplier()); // 16.67% or a nice chunk of
 			UpdateScore(Mathf.FloorToInt(increase));
 			GameManager.RemoveFood(other.gameObject.GetInstanceID());
 			GameManager.RemoveSuperFood(other.gameObject.GetInstanceID());
@@ -101,11 +101,12 @@ public class IntelligentAgent : MonoBehaviour
 				FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "EnemyEaten");
 				if (other.gameObject.tag == "Player")
 				{
+					this.killCount += 1;
 					GameManager.EndGameForPlayer();
 				}
 				else
 				{
-					Destroy(other.gameObject);
+					Destroy(other.transform.parent.gameObject);
 					this.killCount += 1;
 				}
 			}
@@ -194,6 +195,7 @@ public class IntelligentAgent : MonoBehaviour
 			if (this.decayExcess >= 1)
 			{
 				reductionAmount -= (int)Mathf.Floor(this.decayExcess);
+				this.decayExcess = 0f;
 			}
 		}
 
@@ -219,12 +221,12 @@ public class IntelligentAgent : MonoBehaviour
 		float speedMultMin = 1f;
 		this.SpeedMultiplier = Mathf.Max(speedMultMin, Mathf.Abs(normalRandom(0f, 1f))); // mean: 1, std: 1
 
-		float scoreDecayMax = 3f;
-		this.ScoreDecayMultiplier = Mathf.Min(scoreDecayMax, Mathf.Abs(normalRandom(1f, 0.2f))); // mean: 1, std: 0.2
+		float scoreDecayMax = 2f;
+		this.ScoreDecayMultiplier = Mathf.Min(scoreDecayMax, Mathf.Abs(normalRandom(1f, 0.5f))); // mean: 1, std: 0.2
 
 		float arenaScale = GameObject.FindWithTag("Arena").GetComponent<ArenaSize>().ArenaRadius / 100f;
-		float lockOnRadiusMin = 10f;
-		this.LockOnRadiusMultiplier = Mathf.Max(lockOnRadiusMin, arenaScale * Mathf.Abs(normalRandom(20f, 5f))); // mean: 20, std: 5
+		float lockOnRadiusMin = 15f;
+		this.LockOnRadiusMultiplier = Mathf.Max(lockOnRadiusMin, arenaScale * Mathf.Abs(normalRandom(25f, 5f))); // mean: 20, std: 5
 	}
 
 	// Function to take on superior genetics of eaten agent
@@ -452,7 +454,7 @@ public class IntelligentAgent : MonoBehaviour
 		this.activePowers = num;
 	}
 
-	//Function to get the activePowers of the agent
+	// Function to get the number of activePowers of the agent
 	public int getActivePowers()
 	{
 		return this.activePowers;
