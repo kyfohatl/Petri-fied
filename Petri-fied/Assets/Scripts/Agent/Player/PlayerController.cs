@@ -14,8 +14,7 @@ public class PlayerController : MonoBehaviour
 
   // Movement-type triggers (both should be avaliable in settings, can be used well together)
   public bool AutoFollowTarget = false; // will automatically fly at target whenever set
-  public bool AutoFollowCursor = false; // will automatically fly forward in the turn direction of the curse
-
+  
   // Current forward direction of player
   private Vector3 curDir = new Vector3(0f, 0f, 0f);
 
@@ -208,62 +207,62 @@ public class PlayerController : MonoBehaviour
   // Function to lock-onto food target using key press
   private void foodLockOn()
   {
-    Dictionary<int, GameObject> visibleFood = GameManager.getObjectsVisible(GameManager.getFood());
-    Dictionary<int, GameObject> visibleSuperFood = GameManager.getObjectsVisible(GameManager.getSuperFood());
-    Dictionary<int, GameObject> merged;
-
-    // Merge dictionaries and make the super food the override value in case of duplicate keys (shoudn't be any)
-    if (visibleSuperFood != null && visibleSuperFood.Count > 0)
-    {
-      merged = new Dictionary<int, GameObject>(visibleFood.Count + visibleSuperFood.Count);
-      foreach (var clone in visibleSuperFood)
-      {
-        merged.Add(clone.Key, clone.Value);
-      }
-      foreach (var clone in visibleFood)
-      {
-        if (!visibleSuperFood.ContainsKey(clone.Key))
-        {
-          merged.Add(clone.Key, clone.Value);
-        }
-      }
-    }
-    else
-    {
-      merged = visibleFood;
-    }
-
-    if (!LockOn(merged))
-    {
-      // Visible food/super-food dictionary is null
-      Debug.Log("No food or superfood capsules are visible to screen");
-      GetComponent<Player>().setTarget(null);
-    }
+	  Dictionary<int, GameObject> visibleFood = GameManager.getObjectsVisible(GameManager.getFood());
+	  Dictionary<int, GameObject> visibleSuperFood = GameManager.getObjectsVisible(GameManager.getSuperFood());
+	  Dictionary<int, GameObject> merged;
+	  
+	  // Merge dictionaries and make the super food the override value in case of duplicate keys (shoudn't be any)
+	  if (visibleSuperFood != null && visibleSuperFood.Count > 0)
+	  {
+		  merged = new Dictionary<int, GameObject>(visibleFood.Count + visibleSuperFood.Count);
+		  foreach (var clone in visibleSuperFood)
+		  {
+			  merged.Add(clone.Key, clone.Value);
+		  }
+		  foreach (var clone in visibleFood)
+		  {
+			  if (!visibleSuperFood.ContainsKey(clone.Key))
+			  {
+				  merged.Add(clone.Key, clone.Value);
+			  }
+		  }
+	  }
+	  else
+	  {
+		  merged = visibleFood;
+	  }
+	  
+	  if (!LockOn(merged))
+	  {
+		  // Visible food/super-food dictionary is null
+		  Debug.Log("No food or superfood capsules are visible to screen");
+		  GetComponent<Player>().setTarget(null);
+	  }
   }
-
+  
   // Function to lock-onto target using a mouse click
   public void mouseLockOn()
   {
-    int ignoreMask = ~LayerMask.GetMask("Arena");
-    RaycastHit hitInfo = new RaycastHit();
-    bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, Mathf.Infinity, ignoreMask);
-
-    if (hit) // ray cast intersects something, but what?
-    {
-      string[] tags = { "Enemy", "Food", "SuperFood", "PowerUp" };
-      string targetTag = hitInfo.transform.gameObject.tag;
-      GameObject newTarget = null;
-      if (tags.Contains(targetTag))
-      {
-        newTarget = hitInfo.transform.gameObject;
-      }
-      GetComponent<Player>().setTarget(newTarget);
-    }
-    else
-    {
-      Debug.Log("No hit whatsoever...");
-      GetComponent<Player>().setTarget(null);
-    }
+	  int ignoreMask = ~((1 << 2) | (1 << 8)); // 2: ignore raycast, 8: arena
+	  RaycastHit hitInfo = new RaycastHit();
+	  bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, Mathf.Infinity, ignoreMask);
+	  
+	  if (hit && hitInfo.transform.gameObject.GetComponent<MeshRenderer>().enabled) // successful hit and rendered
+	  {
+		  string[] tags = {"Enemy", "Food", "SuperFood", "PowerUp"};
+		  string targetTag = hitInfo.transform.gameObject.tag;
+		  GameObject newTarget = null;
+		  if (tags.Contains(targetTag))
+		  {
+			  newTarget = hitInfo.transform.gameObject;
+		  }
+		  GetComponent<Player>().setTarget(newTarget);
+	  }
+	  else
+	  {
+		  Debug.Log("No hit whatsoever...");
+		  GetComponent<Player>().setTarget(null);
+	  }
   }
 
   // Setter for auto follow lock on target

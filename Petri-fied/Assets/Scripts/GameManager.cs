@@ -160,24 +160,23 @@ public class GameManager : MonoBehaviour
       return null;
     }
 
-    Dictionary<int, GameObject> visibleObjs = new Dictionary<int, GameObject>();
-
-    foreach (KeyValuePair<int, GameObject> objClone in objs)
+	// Declare output dictionary, to save time preallocate to the in Obj count
+	Dictionary<int, GameObject> visibleObjs = new Dictionary<int, GameObject>(objs.Count);
+	
+    foreach (var objClone in objs)
     {
-      Vector3 screenPoint = Camera.main.WorldToViewportPoint(objClone.Value.transform.position);
-      bool visibleToScreen = screenPoint.z > 0
-                 && screenPoint.x > 0
-                 && screenPoint.x < 1
-                 && screenPoint.y > 0
-                 && screenPoint.y < 1;
-      if (visibleToScreen)
-      {
-		  visibleObjs.Add(objClone.Key, objClone.Value);
-        /*if (!Physics.Linecast(objClone.Value.transform.position, Camera.main.transform.position))
-        {
-          // Nothing obstructs the visible enemy with the main camera
-        }*/// not needed with new fixes
-      }
+		bool isRendered = objClone.Value.GetComponent<MeshRenderer>().enabled;
+	  if (isRendered)
+	  {
+		  Vector3 screenPoint = Camera.main.WorldToViewportPoint(objClone.Value.transform.position);
+		  bool visibleToScreen = screenPoint.z > 0
+		  && screenPoint.x > 0 && screenPoint.x < 1
+		  && screenPoint.y > 0 && screenPoint.y < 1;
+		  if (visibleToScreen)
+		  {
+			  visibleObjs.Add(objClone.Key, objClone.Value);
+		  }
+	  }
     }
 
     if (visibleObjs.Count == 0)

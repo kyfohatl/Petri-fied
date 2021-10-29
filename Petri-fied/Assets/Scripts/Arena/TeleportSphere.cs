@@ -18,14 +18,14 @@ public class TeleportSphere : MonoBehaviour
     {
 		// Get initial game conditions and player data
 		this.Player = GameObject.FindGameObjectWithTag("Player").GetComponent<IntelligentAgent>();
-		this.arenaRadius = GameObject.FindGameObjectWithTag("Arena").GetComponent<ArenaSize>().ArenaRadius;
+		this.arenaRadius = GetComponent<ArenaSize>().ArenaRadius;
 		UpdateTeleportDiameter();
     }
 	
 	// IF inspector changes value
 	void OnValidate()
 	{
-		transform.localScale = this.TeleportDiameter * new Vector3(1f, 1f, 1f);
+		this.transform.localScale = this.TeleportDiameter * new Vector3(1f, 1f, 1f);
 	}
 
     // Update is called once per frame
@@ -41,31 +41,39 @@ public class TeleportSphere : MonoBehaviour
 	// Update the teleport diameter to reflect current dimensions
 	void UpdateTeleportDiameter()
 	{
-		float currentLockOnRadius = this.Player.getLockOnRadius();
-		this.TeleportDiameter = 2f * (this.arenaRadius + 1.05f * currentLockOnRadius);
-		transform.localScale = this.TeleportDiameter * new Vector3(1f, 1f, 1f);
+		float cameraOrbit = Camera.main.GetComponent<CameraController>().getGoalOrbitDistance();
+		this.TeleportDiameter = 2f * (this.arenaRadius + 2f * cameraOrbit);
+		this.transform.localScale = this.TeleportDiameter * new Vector3(1f, 1f, 1f);
 	}
 	
 	
 	// Function called on collisions
 	void OnTriggerExit(Collider other)
 	{
-		if (other.gameObject.tag != "MainCamera")
+		// Handle the player avatar having it's own hitbox
+		if (other.gameObject.tag == "PlayerBody")
 		{
-			Vector3 hitPoint = other.transform.position;
-			Vector3 antipolePoint = new Vector3(0f, 0f, 0f);
-			antipolePoint += -1f * hitPoint;
-			other.gameObject.transform.position = antipolePoint;
-			Debug.Log(other.name + " teleported from: " + hitPoint + " to: " + antipolePoint);
-			
-			if (other.gameObject.tag == "Player")
-			{
-				// Character controller prevents teleportation, needs temporary disabling
-				CharacterController cc = this.Player.GetComponent<CharacterController>();
-				cc.enabled = false;
-				this.Player.transform.position = antipolePoint;
-				cc.enabled = true;
-			}
+			return; // do nothing, we only want to move the parent player object
 		}
+		
+		// Now calculate where the hit was and where the antipole should be
+		Vector3 hitPoint = other.transform.position;
+		Vector3 antipolePoint = new Vector3(0f, 0f, 0f);
+		antipolePoint += -1f * hitPoint;
+		
+		if (other.gameObject.tag == "Player")
+		{
+			// Character controller prevents teleportation, needs temporary disabling
+			CharacterController cc = this.Player.GetComponent<CharacterController>();
+			cc.enabled = false;
+			this.Player.transform.position = antipolePoint;
+			cc.enabled = true;
+		}
+		else if (other.gameObject.tag != "MainCamera")
+		{
+			other.gameObject.transform.position = antipolePoint;
+		}
+		
+		Debug.Log(other.name + " teleported from: " + hitPoint + " to: " + antipolePoint);
 	}
 }

@@ -506,7 +506,6 @@ GameObject:
   - component: {fileID: 8951172823056146455}
   - component: {fileID: 8850037745045172407}
   - component: {fileID: 8850037745045172404}
-  - component: {fileID: -7738235378393031498}
   - component: {fileID: 868133159711428141}
   - component: {fileID: -9198660494178340517}
   m_Layer: 2
@@ -552,7 +551,6 @@ MonoBehaviour:
   acceleration: 2
   turnSmooth: 0.1
   AutoFollowTarget: 0
-  AutoFollowCursor: 0
 --- !u!143 &8850037745045172405
 CharacterController:
   m_ObjectHideFlags: 0
@@ -624,19 +622,6 @@ MonoBehaviour:
   bubbleEffectObject: {fileID: 8850037746083683451}
   movingEmissionRate: 5
   stationaryEmissionRate: 1
---- !u!114 &-7738235378393031498
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8850037745045172400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c5aa9de716ed9148a026e733590d6f1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shaderMat: {fileID: 2100000, guid: 5f6e7eee21cc57c4c88d59d4934d113e, type: 2}
 --- !u!114 &868133159711428141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -671,9 +656,10 @@ GameObject:
   - component: {fileID: 8850037745246912973}
   - component: {fileID: 8717852158714167033}
   - component: {fileID: 6291959626154208600}
+  - component: {fileID: 7207756204962701927}
   m_Layer: 2
   m_Name: Avatar
-  m_TagString: Untagged
+  m_TagString: PlayerBody
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -706,7 +692,7 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8850037745246912971}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.4
@@ -775,6 +761,22 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!54 &7207756204962701927
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8850037745246912971}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &850101291294676830
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2133,6 +2135,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SpeedEffect1
       objectReference: {fileID: 0}
+    - target: {fileID: 7703314129621319122, guid: 2cad1d93884f8444aba16bdaf992c6b4, type: 3}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7703314129621319123, guid: 2cad1d93884f8444aba16bdaf992c6b4, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -2194,6 +2200,10 @@ PrefabInstance:
     - target: {fileID: 5200362872464816308, guid: 7bc80832640ea0c458519e76df24b052, type: 3}
       propertyPath: m_Name
       value: SpeedEffect2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5200362872464816308, guid: 7bc80832640ea0c458519e76df24b052, type: 3}
+      propertyPath: m_Layer
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5200362872464816311, guid: 7bc80832640ea0c458519e76df24b052, type: 3}
       propertyPath: m_RootOrder

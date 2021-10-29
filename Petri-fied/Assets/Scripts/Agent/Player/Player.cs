@@ -14,6 +14,7 @@ public class Player : IntelligentAgent
   public TMP_Text nameLabel;
   public TMP_Text timeLabel;
 
+  // Called on start-up of game
   private void Awake()
   {
     instance = this;

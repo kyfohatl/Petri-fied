@@ -5,20 +5,23 @@ using UnityEngine;
 public class FoodMagnetPowerUP : MonoBehaviour
 {
     public float MagnetStrength = 1f;
-	public float MagnetScale = 3f;
+	public float MagnetScale = 5f;
     public GameObject MagnetEffect;
     private GameObject pSystem;
+	private bool isPlayer;
     // Start is called before the first frame update
     void Start()
     {
 		// Determine initial local scale
 		if (this.transform.parent.tag == "Enemy")
 		{
+			this.isPlayer = false;
 			this.transform.position = this.transform.parent.Find("Avatar").position;
 			this.transform.localScale = this.MagnetScale * this.transform.parent.Find("Avatar").localScale;
 		}
 		else
 		{
+			this.isPlayer = true;
 			this.transform.localScale = this.MagnetScale * new Vector3(1f, 1f, 1f);
 		}
 		// Instantiate the particle effect
@@ -32,25 +35,17 @@ public class FoodMagnetPowerUP : MonoBehaviour
 	// Update is called every frame (needed for enemy)
 	void Update()
 	{
-		if (this.transform.parent.tag == "Enemy")
+		if (!this.isPlayer) // is enemy agent
 		{
 			this.transform.position = this.transform.parent.Find("Avatar").position;
 			this.transform.localScale = this.MagnetScale * this.transform.parent.Find("Avatar").localScale;
 		}
 	}
-
-	// If hits food, pull food to centre
-	void OnTriggerEnter(Collider FoodHit)
+	
+	// In case of inspector changing scale value
+	void OnValidate()
 	{
-		if (FoodHit.gameObject.tag == "Food" || FoodHit.gameObject.tag == "SuperFood")
-		{
-			Vector3 direction = (this.transform.position - FoodHit.gameObject.transform.position).normalized;
-			FoodHit.gameObject.transform.Translate(direction * MagnetStrength * Time.deltaTime, Space.World);
-		}
-		else
-		{
-			return;
-		}
+		this.transform.localScale = this.MagnetScale * new Vector3(1f, 1f, 1f);
 	}
 	
     // If hits food, pull food to centre
@@ -60,8 +55,18 @@ public class FoodMagnetPowerUP : MonoBehaviour
 		{
 			Vector3 offset = FoodHit.gameObject.transform.position - this.transform.position;
 			float sqrdLength = offset.sqrMagnitude;
-			float closenessFraction = this.transform.localScale.x * this.transform.localScale.x / sqrdLength;
-			float strength = closenessFraction * this.MagnetStrength;
+			float closenessFraction = 0f;
+			if (this.isPlayer)
+			{
+				float magnetRadius = this.transform.localScale.x * this.transform.parent.localScale.x;
+				closenessFraction = magnetRadius * magnetRadius / sqrdLength;
+			}
+			else
+			{
+				float magnetRadius = this.transform.localScale.x;
+				closenessFraction = magnetRadius * magnetRadius / sqrdLength;
+			}
+			float strength = (closenessFraction - 1f) * this.MagnetStrength;
             Vector3 direction = -offset.normalized; // reverse the offset vector
             FoodHit.gameObject.transform.Translate(direction * strength * Time.deltaTime, Space.World);
         }
@@ -71,6 +76,7 @@ public class FoodMagnetPowerUP : MonoBehaviour
         }
     }
 
+	// Generate inverse mesh for magnet power up effect
     private Mesh createNewMesh(){
 
         Mesh meshOld = GetComponent<MeshFilter>().mesh;

@@ -27,7 +27,7 @@ public class GameOverMenu : MonoBehaviour
     string timeAliveFormatted = hours.ToString() + ":" + minutes.ToString("D2") + ":" + seconds.ToString("D2");
     int score = Player.instance.getScore();
     int rank = Leaderboard.Instance.playerRank;
-    GameOverStats.text = $"You survived for {timeAliveFormatted} and finished at position #{rank} with a score of {score}.";
+    GameOverStats.text = $"You survived for {timeAliveFormatted}\nFinished at position #{rank} with a score of {score}.";
   }
 
   public void QuitGame()
@@ -46,8 +46,9 @@ public class GameOverMenu : MonoBehaviour
     Destroy(GameObject.Find("Leaderboard"));
     Destroy(GameObject.Find("UniversalMenus"));
     Destroy(GameObject.Find("Player"));
-    Destroy(GameObject.Find("Arena(No Blender)"));
-    Destroy(GameObject.Find("AudioManager"));
+	Destroy(GameObject.FindWithTag("Arena"));
+	Destroy(GameObject.Find("AudioManager"));
+    Destroy(GameObject.Find("UICanvas"));
     GameObject.Find("Main Camera").name = "Old Camera";
     LevelLoader.Instance.LoadNextLevel(0);
   }
