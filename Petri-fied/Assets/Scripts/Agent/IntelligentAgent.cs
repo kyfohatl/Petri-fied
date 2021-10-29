@@ -28,6 +28,7 @@ public class IntelligentAgent : MonoBehaviour
 	// Power up trackers
 	private float PowerUpSpeedMultiplier = 1f;
 	private int activePowers = 0;
+	private Material startingMaterial;
 	[SerializeField] private bool InvincibilityMode = false;
 
 	// Agent genetic modifiers
@@ -59,6 +60,14 @@ public class IntelligentAgent : MonoBehaviour
 		this.GameManager = FindObjectOfType<GameManager>();
 		GenerateRandomGenetics();
 		this.LockOnRadius = this.Radius * this.LockOnRadiusMultiplier;
+
+		//Gets the object's material
+		if(this.gameObject.tag == "Player"){
+            this.startingMaterial = new Material(this.transform.Find("Avatar").gameObject.GetComponent<Renderer>().material);
+        }else{
+            this.startingMaterial = new Material(this.GetComponent<Renderer>().material);
+        }
+		
 	}
 
 	// Function called on collisions
@@ -456,5 +465,9 @@ public class IntelligentAgent : MonoBehaviour
 	public int getActivePowers()
 	{
 		return this.activePowers;
+	}
+
+	public Material getStartingMaterial(){
+		return this.startingMaterial;
 	}
 }
