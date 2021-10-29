@@ -8,10 +8,10 @@ public class BombSpawn : SpawnerController
 	public GameObject prefabAtCore;
 	
 	// Class parameters for food bombs
-	public int innerSphereCount = 15;
-	public int outerSphereCount = 35;
-	public float innerRadius = 3f;
-	public float outerRadius = 6f;
+	public int innerSphereCount = 20;
+	public int outerSphereCount = 40;
+	public float innerRadius = 4f;
+	public float outerRadius = 8f;
 
     // Update is called once per frame
     void Update()
@@ -49,8 +49,8 @@ public class BombSpawn : SpawnerController
 		// Position and restriction of bomb origin spawn location
 		float spawnRadius = this.spawnRadius - (this.outerRadius + 4 * offset);
 		float spawnHeight = this.spawnHeight - (this.outerRadius + 4 * offset);
-		Vector3 spawnOrigin = getRandomPosition(spawnRadius, spawnHeight);
-		// spawnOrigin = Random.insideUnitSphere * spawnRadius;
+		//Vector3 spawnOrigin = getRandomPosition(spawnRadius, spawnHeight); // for cylinder arena
+		Vector3 spawnOrigin = getRandomPosition(spawnRadius);
 		
 		// Instantiates the core object in the sphere
 		GameObject newlyCreated = Instantiate(this.prefabAtCore, spawnOrigin, Random.rotation, transform);
@@ -79,7 +79,6 @@ public class BombSpawn : SpawnerController
 				GameManager.AddFood(newlyCreated.GetInstanceID(), newlyCreated);
 			}
 		}
-		
 	}
 	
 	// Function to generate evenly distributed points across a spehere surface

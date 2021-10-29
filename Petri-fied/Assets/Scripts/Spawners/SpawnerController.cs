@@ -26,6 +26,7 @@ public class SpawnerController : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
 	{
+		// Determine current arena dimensions (useful if arena scales in future)
 		getArenaDimensions();
 		// Set spawner parameters
 		this.spawnRadius = this.arenaRadius - 1f;
@@ -45,8 +46,7 @@ public class SpawnerController : MonoBehaviour
 	public GameObject Generate()
 	{
 		// Determine spawn position
-		//Vector3 Target = getRandomPosition();
-		Vector3 Target = Random.insideUnitSphere * this.arenaRadius + this.arenaOrigin;
+		Vector3 Target = getRandomPosition();
 		
 		// Instantiates the newly spawned object and sets as child of spawner
 		GameObject spawned = Instantiate(this.prefabToSpawn, Target, Random.rotation, transform);
@@ -54,21 +54,21 @@ public class SpawnerController : MonoBehaviour
 		return spawned;
 	}
 	
-	// Function to generate a random position somewhere inside the arena cylinder dimensions
-	public Vector3 getRandomPosition()
+	// Function to generate a random position somewhere inside the arena dimensions
+	public Vector3 getRandomPosition() // generic
 	{
 		return Random.insideUnitSphere * this.arenaRadius + this.arenaOrigin;
-		
-		Vector2 xz = Random.insideUnitCircle * this.spawnRadius;
-		float y = Random.Range(this.arenaOrigin.z - this.spawnHeight / 2f, this.arenaOrigin.z + this.spawnHeight / 2f);
-		Vector3 randomPos = new Vector3(this.arenaOrigin.x + xz.x, this.arenaOrigin.y + y, this.arenaOrigin.z + xz.y);
-		
-		return randomPos;
 	}
-	public Vector3 getRandomPosition(float inRadius, float inHeight)
+	public Vector3 getRandomPosition(float inRadius) // for specified radius
 	{
 		return Random.insideUnitSphere * inRadius + this.arenaOrigin;
-		
+	}
+	public Vector3 getRandomPosition(float inRadius, Vector3 originPoint) // for specified radius and origin
+	{
+		return Random.insideUnitSphere * inRadius + originPoint;
+	}
+	public Vector3 getRandomPosition(float inRadius, float inHeight) // for cylinder arena
+	{
 		Vector2 xz = Random.insideUnitCircle * inRadius;
 		float y = Random.Range(this.arenaOrigin.z - inHeight / 2f, this.arenaOrigin.z + inHeight / 2f);
 		Vector3 randomPos = new Vector3(this.arenaOrigin.x + xz.x, this.arenaOrigin.y + y, this.arenaOrigin.z + xz.y);

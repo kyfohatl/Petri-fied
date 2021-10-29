@@ -269,7 +269,7 @@ public class Enemy : IntelligentAgent
 		}
 		else if (target.tag == "SuperFood")
 		{
-			float value = Mathf.Max((float)this.Score / 6f, 10f * getFoodGrowthMultiplier());
+			float value = Mathf.Max((float)this.Score / 6f, 10f);
 			return value / expectedTravelTime; // refer to IntAgent OnTriggerEnter with superfood tag
 		}
 		else if (target.tag == "Food")

@@ -14,7 +14,6 @@ public class PlayerController : MonoBehaviour
 	
 	// Movement-type triggers (both should be avaliable in settings, can be used well together)
 	public bool AutoFollowTarget = false; // will automatically fly at target whenever set
-	public bool AutoFollowCursor = false; // will automatically fly forward in the turn direction of the cursor
 	
 	// Current forward direction of player
 	private Vector3 curDir = new Vector3(0f, 0f, 0f);
@@ -55,12 +54,6 @@ public class PlayerController : MonoBehaviour
 				targetDir = (curTarget.transform.position - this.transform.position).normalized;
 				this.curDir = targetDir;
 			}
-			else if (this.AutoFollowCursor)
-			{
-				// Rotate the model to face the direction of travel
-				this.curDir = Vector3.Slerp(curDir, targetDir, acceleration * Time.deltaTime);
-				transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(targetDir), turnSmooth);
-			}
 			else
 			{
 				// Rotate the model to face the direction of travel
@@ -80,23 +73,30 @@ public class PlayerController : MonoBehaviour
 			GetComponent<IsMoving>().isMoving = false;
 		}
 		
-		// Lock-on feature using X to change to next closest visible enemy, locks-onto closest if no current target
-		if (Input.GetKeyDown(KeyCode.X))
+		// Lock-on feature using '1' to change to next closest visible enemy, locks-onto closest if no current target
+		if (Input.GetKeyDown(KeyCode.Alpha1))
 		{
 			enemyLockOn();
 		}
 		
-		// Lock-on feature using C to change to next closest visible power up, locks-onto closest if no current target
-		if (Input.GetKeyDown(KeyCode.C))
+		// Lock-on feature using '2' to change to next closest visible food capsule
+		if (Input.GetKeyDown(KeyCode.Alpha2))
+		{
+			foodLockOn();
+		}
+		
+		// Lock-on feature using '3' to change to next closest visible super food capsule
+		if (Input.GetKeyDown(KeyCode.Alpha3))
+		{
+			superFoodLockOn();
+		}
+		
+		// Lock-on feature using '4' to change to next closest visible power up
+		if (Input.GetKeyDown(KeyCode.Alpha4))
 		{
 			powerUpLockOn();
 		}
 		
-		// Lock-on feature using F to change to next closest visible food capsule, locks-onto closest if no current target
-		if (Input.GetKeyDown(KeyCode.F))
-		{
-			foodLockOn();
-		}
 		
 		// Lock-on feature using left mouse click
 		if (Input.GetMouseButtonDown(0))
@@ -107,8 +107,10 @@ public class PlayerController : MonoBehaviour
 		// Lock-on feature using left mouse click
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
-			// this.AutoFollowCursor = !this.AutoFollowCursor;
-			GetComponent<Player>().setTarget(null);
+			if (GetComponent<Player>().getTarget() != null)
+			{
+				GetComponent<Player>().setTarget(null);
+			}
 		}
 		
 		// Rotate player to face target
@@ -209,7 +211,20 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 	
-	// Function to lock-onto food target using key press
+	// Function to lock-onto super food target using key press
+	private void superFoodLockOn()
+	{
+		Dictionary<int, GameObject> visibleSuperFood = GameManager.getObjectsVisible(GameManager.getSuperFood());
+		
+		if (!LockOn(visibleSuperFood))
+		{
+			// Visible super food dictionary is null
+			Debug.Log("No super foood are visible to screen");
+			GetComponent<Player>().setTarget(null);
+		}
+	}
+	
+	// Function to lock-onto food target using key press (will lock onto food and superfood)
 	private void foodLockOn()
 	{
 		Dictionary<int, GameObject> visibleFood = GameManager.getObjectsVisible(GameManager.getFood());

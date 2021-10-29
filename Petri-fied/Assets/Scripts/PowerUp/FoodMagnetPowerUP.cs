@@ -47,20 +47,6 @@ public class FoodMagnetPowerUP : MonoBehaviour
 	{
 		this.transform.localScale = this.MagnetScale * new Vector3(1f, 1f, 1f);
 	}
-
-	// If hits food, pull food to centre
-	void OnTriggerEnter(Collider FoodHit)
-	{
-		if (FoodHit.gameObject.tag == "Food" || FoodHit.gameObject.tag == "SuperFood")
-		{
-			Vector3 direction = (this.transform.position - FoodHit.gameObject.transform.position).normalized;
-			FoodHit.gameObject.transform.Translate(direction * 0.1f, Space.World);
-		}
-		else
-		{
-			return;
-		}
-	}
 	
     // If hits food, pull food to centre
     void OnTriggerStay(Collider FoodHit)
@@ -80,7 +66,7 @@ public class FoodMagnetPowerUP : MonoBehaviour
 				float magnetRadius = this.transform.localScale.x;
 				closenessFraction = magnetRadius * magnetRadius / sqrdLength;
 			}
-			float strength = 0.5f * closenessFraction * this.MagnetStrength;
+			float strength = (closenessFraction - 1f) * this.MagnetStrength;
             Vector3 direction = -offset.normalized; // reverse the offset vector
             FoodHit.gameObject.transform.Translate(direction * strength * Time.deltaTime, Space.World);
         }
@@ -90,6 +76,7 @@ public class FoodMagnetPowerUP : MonoBehaviour
         }
     }
 
+	// Generate inverse mesh for magnet power up effect
     private Mesh createNewMesh(){
 
         Mesh meshOld = GetComponent<MeshFilter>().mesh;

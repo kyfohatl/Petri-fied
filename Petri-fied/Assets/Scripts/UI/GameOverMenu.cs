@@ -27,7 +27,7 @@ public class GameOverMenu : MonoBehaviour
     string timeAliveFormatted = hours.ToString() + ":" + minutes.ToString("D2") + ":" + seconds.ToString("D2");
     int score = Player.instance.getScore();
     int rank = Leaderboard.Instance.playerRank;
-    GameOverStats.text = $"You survived for {timeAliveFormatted} and finished at position #{rank} with a score of {score}.";
+    GameOverStats.text = $"You survived for {timeAliveFormatted}\nFinished at position #{rank} with a score of {score}.";
   }
 
   public void RestartGame()

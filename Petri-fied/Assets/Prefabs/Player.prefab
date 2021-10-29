@@ -550,7 +550,6 @@ MonoBehaviour:
   acceleration: 2
   turnSmooth: 0.1
   AutoFollowTarget: 0
-  AutoFollowCursor: 0
 --- !u!143 &8850037745045172405
 CharacterController:
   m_ObjectHideFlags: 0
