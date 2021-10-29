@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,10 +6,11 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
-public class StartMenu : MonoBehaviour
+public class MainMenu : MonoBehaviour
 {
 
   private TMP_InputField _inputField;
+
   CameraController Camera;
 
   public void Start()
@@ -25,14 +27,23 @@ public class StartMenu : MonoBehaviour
     _inputField.ActivateInputField();
   }
 
+  void Update()
+  {
+    GameObject oldCam = GameObject.Find("Old Camera");
+    if (oldCam != null)
+    {
+      Destroy(oldCam);
+    }
+  }
+
   public void PlayGame()
   {
     if (PlayerPrefs.GetString("Name", "") == "")
     {
-      FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject,"InvalidName");
+      FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "InvalidName");
       return;
     }
-    FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject,"StartGame");
+    FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "StartGame");
     LevelLoader.Instance.LoadNextLevel(1, () =>
     {
       GameManager.get().SetGameOver(false);
@@ -42,9 +53,10 @@ public class StartMenu : MonoBehaviour
     });
   }
 
-  public void ShowSettings()
+  public void QuitGame()
   {
-    Debug.Log("SHOW SETTINGS");
+    Debug.Log("Quit Game");
+    Application.Quit();
   }
 
   public void InputName()

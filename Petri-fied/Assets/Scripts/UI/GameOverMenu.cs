@@ -30,7 +30,13 @@ public class GameOverMenu : MonoBehaviour
     GameOverStats.text = $"You survived for {timeAliveFormatted} and finished at position #{rank} with a score of {score}.";
   }
 
-  public void RestartGame()
+  public void QuitGame()
+  {
+    Debug.Log("Quit Game");
+    Application.Quit();
+  }
+
+  public static void RestartGame()
   {
     Leaderboard.Instance.ClearLeaderboard();
     Destroy(GameObject.Find("GameManager"));
@@ -38,10 +44,10 @@ public class GameOverMenu : MonoBehaviour
     Destroy(GameObject.Find("Enemy Spawner"));
     Destroy(GameObject.Find("PowerUp Spawner"));
     Destroy(GameObject.Find("Leaderboard"));
+    Destroy(GameObject.Find("UniversalMenus"));
     Destroy(GameObject.Find("Player"));
-	Destroy(GameObject.Find("Arena(No Blender)"));
-	Destroy(GameObject.Find("AudioManager"));
-    Destroy(GameObject.Find("UICanvas"));
+    Destroy(GameObject.Find("Arena(No Blender)"));
+    Destroy(GameObject.Find("AudioManager"));
     GameObject.Find("Main Camera").name = "Old Camera";
     LevelLoader.Instance.LoadNextLevel(0);
   }

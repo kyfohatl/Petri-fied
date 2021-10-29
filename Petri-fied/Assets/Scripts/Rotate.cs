@@ -8,7 +8,7 @@ public class Rotate : MonoBehaviour
 
   private void Update()
   {
-    if (!GameManager.inst.gameOver)
+    if (!GameManager.inst.gameOver || !transform)
     {
       return;
     }
