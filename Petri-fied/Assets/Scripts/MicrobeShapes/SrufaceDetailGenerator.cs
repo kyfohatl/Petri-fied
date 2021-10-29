@@ -5,9 +5,9 @@ using UnityEngine;
 public class SurfaceDetailGenerator
 {
   // Returns a psuedo-random perlin value based on the given point
-  public float getPerlinValue(Vector3 point, float scale)
+  public float getPerlinValue(Vector3 point, Vector3 offset, float scale)
   {
-    Vector3 scaledVector = point * scale;
+    Vector3 scaledVector = point * scale + offset;
 
     // With this approach, we turn the 2D perlin noise into 3d by adding all combinations of 
     // coordinates and getting the average

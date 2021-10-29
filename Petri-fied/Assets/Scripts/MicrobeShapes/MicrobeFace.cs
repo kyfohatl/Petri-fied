@@ -5,6 +5,9 @@ using UnityEngine;
 // One face of the core of a microbe
 public class MicrobeFace
 {
+  // The default displacement of points from the center of the mesh
+  private const float defaultDisplacement = 0.5f;
+
   private Mesh mesh;
   // Controls the number of triangles for this face. i.e. the number of vertices per side of the face
   private int detailLevel;
@@ -28,7 +31,7 @@ public class MicrobeFace
   }
 
   // Creates a mesh for the face
-  public void createMesh(float scale)
+  public void createMesh(Vector3 offset, float scale)
   {
     // detailLevel is the number of vertices per side, so the total number of vertices on the quad face 
     // is detailLevel^2
@@ -66,7 +69,20 @@ public class MicrobeFace
         Vector3 pointOnBaseSphereFace = pointOnCubeFace.normalized;
 
         // Add noise to make the microbe surface appear more natural
-        Vector3 pointOnSphereFace = pointOnBaseSphereFace * (detailGenerator.getPerlinValue(pointOnBaseSphereFace, scale));
+        float displacement = detailGenerator.getPerlinValue(pointOnBaseSphereFace, offset, scale);
+
+        float displacementDif = displacement - defaultDisplacement;
+
+        if (displacementDif > 0.165)
+        {
+          displacementDif *= 2f;
+        }
+        else
+        {
+          displacementDif /= 4f;
+        }
+
+        Vector3 pointOnSphereFace = pointOnBaseSphereFace; //* (defaultDisplacement + displacementDif);
 
         // The index of the vertex
         // Every iteration of i has detailLevel indices, so we must add i * detailLevel

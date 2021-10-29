@@ -24,13 +24,9 @@ public class MicrobeCore : MonoBehaviour
   // The scale of the perlin noise used for the generation of surface detail
   [SerializeField]
   private float scale = 15f;
-
-  private void Start()
-  {
-    faceDetailLevel = Random.Range(6, 30);
-    scale = Random.Range(2f, 30f);
-    OnValidate();
-  }
+  // The offset on the perlin noise from which the shapes are generated
+  [SerializeField]
+  private Vector3 offset = new Vector3(5f, 5f, 5f);
 
   private void OnValidate()
   {
@@ -40,7 +36,7 @@ public class MicrobeCore : MonoBehaviour
     // Now create the mesh for each mesh object
     foreach (var face in microbeFaces)
     {
-      face.createMesh(scale);
+      face.createMesh(offset, scale);
     }
   }
 
@@ -63,7 +59,7 @@ public class MicrobeCore : MonoBehaviour
         face.transform.parent = transform;
 
         // Add a material
-        face.AddComponent<MeshRenderer>().sharedMaterial = material;
+        face.AddComponent<MeshRenderer>().sharedMaterial = new Material(material);
         // Add a mesh filter
         filters[i] = face.AddComponent<MeshFilter>();
         // Create the base empty mesh
