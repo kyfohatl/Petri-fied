@@ -1531,7 +1531,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 3500d7ad2ac514d12807d71d298ae18c, type: 3}
+  m_Texture: {fileID: 2800000, guid: 333d5466077b7459fb2a2a6a640246cb, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -1551,7 +1551,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   compass: {fileID: 0}
-  player: {fileID: 0}
+  target: {fileID: 0}
 --- !u!1 &6193714327354066581
 GameObject:
   m_ObjectHideFlags: 0

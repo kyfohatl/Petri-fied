@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3108228105945044082}
   - component: {fileID: 4043232857683284589}
   - component: {fileID: -3289407970136895220}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: FoodMagnet
   m_TagString: PowerUp
   m_Icon: {fileID: 0}
@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 6c08fb6e0b351dc45a122cad23553e35, type: 2}
+  - {fileID: 2100000, guid: f8021a0e4ea144aa7aeaea2004ca6908, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -109,5 +109,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db8429cc8b9b42c4e855abce7cdcfa0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MagnetStrength: 0
+  MagnetStrength: 1
+  MagnetScale: 1
   MagnetEffect: {fileID: 2431442621338859882, guid: fe21f68b566519f4dbcf7d885fc40cd9, type: 3}

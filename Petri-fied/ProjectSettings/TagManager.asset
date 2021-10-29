@@ -8,6 +8,9 @@ TagManager:
   - Food
   - Arena
   - PowerUp
+  - SuperFood
+  - PlayerBody
+  - EnemyBody
   layers:
   - Default
   - TransparentFX
@@ -17,7 +20,7 @@ TagManager:
   - UI
   - Ground
   - PostProcessing
-  - 
+  - Arena
   - 
   - 
   - 

@@ -74,7 +74,7 @@ public class MicrobeCore : MonoBehaviour
         }
         if (filters[i].GetComponent<MeshRenderer>().sharedMaterial == null)
         {
-          filters[i].GetComponent<MeshRenderer>().sharedMaterial = material;
+          filters[i].GetComponent<MeshRenderer>().sharedMaterial = new Material(material);
         }
       }
 
@@ -85,17 +85,17 @@ public class MicrobeCore : MonoBehaviour
 
   public void setMaterial(Material material)
   {
-    this.material = material;
+    this.material = new Material(material);
 
     foreach (MeshFilter face in filters)
     {
-      face.GetComponent<MeshRenderer>().sharedMaterial = material;
+      face.GetComponent<MeshRenderer>().sharedMaterial = new Material(material);
     }
   }
 
   private void Update()
   {
-    if (gameObject.GetComponent<MeshRenderer>().material.name != material.name)
+	if (this.gameObject.GetComponent<MeshRenderer>().material != this.material)
     {
       setMaterial(gameObject.GetComponent<MeshRenderer>().material);
     }

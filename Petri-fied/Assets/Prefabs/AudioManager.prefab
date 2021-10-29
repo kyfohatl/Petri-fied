@@ -1,0 +1,145 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5909835616720517244
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5909835616720517246}
+  - component: {fileID: 5909835616720517245}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5909835616720517246
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5909835616720517244}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.3599999, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5909835616720517245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5909835616720517244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02207e9535d3da8429c98e5fd3fb1f46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: FoodEaten
+    clip: {fileID: 8300000, guid: f8add6057501e284ca23e2a984aa8042, type: 3}
+    volume: 0.42
+    pitch: 0.6
+    spatialBlend: 1
+    minDistance: 0.5
+    maxDistance: 200
+    loop: 0
+    source: {fileID: 0}
+  - name: SuperFoodEaten
+    clip: {fileID: 0}
+    volume: 0.1
+    pitch: 0.45
+    spatialBlend: 0
+    minDistance: 0.1
+    maxDistance: 50
+    loop: 0
+    source: {fileID: 0}
+  - name: BackgroundMusic
+    clip: {fileID: 8300000, guid: 4e44762b74bae40c99b9f1bc1dff6aa7, type: 3}
+    volume: 0.5
+    pitch: 1
+    spatialBlend: 0.25
+    minDistance: 0.1
+    maxDistance: 0
+    loop: 1
+    source: {fileID: 0}
+  - name: EnemyEaten
+    clip: {fileID: 8300000, guid: 1a86cb82aac5e4afa979bfd6e21b6fc1, type: 3}
+    volume: 0.69
+    pitch: 0.69
+    spatialBlend: 1
+    minDistance: 0.8
+    maxDistance: 50
+    loop: 0
+    source: {fileID: 0}
+  - name: SpeedPowerUP
+    clip: {fileID: 0}
+    volume: 1
+    pitch: 1
+    spatialBlend: 1
+    minDistance: 0.1
+    maxDistance: 50
+    loop: 0
+    source: {fileID: 0}
+  - name: MagnetPowerUP
+    clip: {fileID: 0}
+    volume: 1
+    pitch: 1
+    spatialBlend: 1
+    minDistance: 0.1
+    maxDistance: 50
+    loop: 0
+    source: {fileID: 0}
+  - name: InvinPowerUP
+    clip: {fileID: 0}
+    volume: 1
+    pitch: 1
+    spatialBlend: 1
+    minDistance: 0.1
+    maxDistance: 50
+    loop: 0
+    source: {fileID: 0}
+  - name: StartGame
+    clip: {fileID: 8300000, guid: 6981d67a034b5384482683658cee26f1, type: 3}
+    volume: 0.5
+    pitch: 0.2
+    spatialBlend: 0
+    minDistance: 0.1
+    maxDistance: 50
+    loop: 0
+    source: {fileID: 0}
+  - name: InvalidName
+    clip: {fileID: 0}
+    volume: 1
+    pitch: 1
+    spatialBlend: 0
+    minDistance: 0.1
+    maxDistance: 50
+    loop: 0
+    source: {fileID: 0}
+  - name: FailedLockOn
+    clip: {fileID: 8300000, guid: d4599783fae854b038e579f2184b6795, type: 3}
+    volume: 1
+    pitch: 1
+    spatialBlend: 0
+    minDistance: 0.1
+    maxDistance: 50
+    loop: 0
+    source: {fileID: 0}
+  - name: LockOn
+    clip: {fileID: 8300000, guid: 87d72817deffd440a97628a270599a5a, type: 3}
+    volume: 0.1
+    pitch: 0.45
+    spatialBlend: 0
+    minDistance: 0.1
+    maxDistance: 50
+    loop: 0
+    source: {fileID: 0}
