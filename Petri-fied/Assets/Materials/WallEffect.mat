@@ -31,5 +31,5 @@ Material:
     - _Softness: 0.5
     m_Colors:
     - _Color: {r: 0, g: 0.14799088, b: 1, a: 1}
-    - _Position: {r: 0, g: 0, b: 0, a: 0}
+    - _Position: {r: -62.515915, g: 8.954633, b: 48.42045, a: 0}
   m_BuildTextureStacks: []

@@ -162,6 +162,7 @@ MonoBehaviour:
   - {fileID: 7576402526055631407}
   material: {fileID: 2100000, guid: 4de1db8743ca24192aa31cd8de78e6b3, type: 2}
   scale: 15
+  offset: {x: 5, y: 5, z: 5}
 --- !u!114 &7576402525422194161
 MonoBehaviour:
   m_ObjectHideFlags: 0

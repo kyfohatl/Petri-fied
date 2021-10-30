@@ -13,8 +13,12 @@ public class MicrobeCore : MonoBehaviour
   private MeshFilter[] filters;
   // Each face of the original cube
   private MicrobeFace[] microbeFaces;
-  // The player material
-  public Material material;
+  // The default material
+  public Material defaultMaterial;
+  // The lock-on material
+  public Material lockOnMaterial;
+  // When true, means that the microbe is locked onto
+  public bool isLockedOn = false;
 
   // A cube has 6 faces
   private const int numFaces = 6;
@@ -34,11 +38,28 @@ public class MicrobeCore : MonoBehaviour
     setupMeshObjects();
 
     // Now create the mesh for each mesh object
-    foreach (var face in microbeFaces)
-    {
-      face.createMesh(offset, scale);
-    }
+    createFaceMeshes();
   }
+
+  // private void Start()
+  // {
+  //   this.shader = Shader.Find("Unlit/SurfaceNoise");
+  //   this.material = new Material(shader);
+
+  //   if (this.GetComponent<MeshRenderer>() == null)
+  //   {
+  //     this.gameObject.AddComponent<MeshRenderer>().material = this.material;
+  //   }
+
+  //   // Set up the mesh objects
+  //   setupMeshObjects();
+
+  //   // Now create the mesh for each mesh object
+  //   foreach (var face in microbeFaces)
+  //   {
+  //     face.createMesh(offset, scale);
+  //   }
+  // }
 
   // Sets up the mesh objects by adding mesh filters, material and the base empty mesh
   private void setupMeshObjects()
@@ -58,10 +79,18 @@ public class MicrobeCore : MonoBehaviour
         GameObject face = new GameObject("mesh");
         face.transform.parent = transform;
 
-        // Add a material
-        face.AddComponent<MeshRenderer>().sharedMaterial = new Material(material);
         // Add a mesh filter
         filters[i] = face.AddComponent<MeshFilter>();
+        // Add a material
+        if (isLockedOn)
+        {
+          face.AddComponent<MeshRenderer>().sharedMaterial = new Material(lockOnMaterial);
+        }
+        else
+        {
+          face.AddComponent<MeshRenderer>().sharedMaterial = new Material(defaultMaterial);
+        }
+
         // Create the base empty mesh
         filters[i].sharedMesh = new Mesh();
       }
@@ -74,7 +103,14 @@ public class MicrobeCore : MonoBehaviour
         }
         if (filters[i].GetComponent<MeshRenderer>().sharedMaterial == null)
         {
-          filters[i].GetComponent<MeshRenderer>().sharedMaterial = new Material(material);
+          if (isLockedOn)
+          {
+            filters[i].GetComponent<MeshRenderer>().sharedMaterial = new Material(lockOnMaterial);
+          }
+          else
+          {
+            filters[i].GetComponent<MeshRenderer>().sharedMaterial = new Material(defaultMaterial);
+          }
         }
       }
 
@@ -83,21 +119,46 @@ public class MicrobeCore : MonoBehaviour
     }
   }
 
-  public void setMaterial(Material material)
+  // Creates a mesh for each of the faces of the microbe
+  private void createFaceMeshes()
   {
-    this.material = new Material(material);
-
-    foreach (MeshFilter face in filters)
+    foreach (var face in microbeFaces)
     {
-      face.GetComponent<MeshRenderer>().sharedMaterial = new Material(material);
+      face.createMesh(offset, scale);
     }
   }
 
-  private void Update()
+  // If the given status reflects a change in the lock-on status, the material of the mesh will be switched 
+  // and the face meshes recreated
+  public void SetLockedOnStatus(bool newStatus)
   {
-	if (this.gameObject.GetComponent<MeshRenderer>().material != this.material)
+    if (isLockedOn != newStatus)
     {
-      setMaterial(gameObject.GetComponent<MeshRenderer>().material);
+      // The lock-on status has changed
+      isLockedOn = newStatus;
+      // Redo mesh setup
+      setupMeshObjects();
+      // Now recreate the face meshes
+      createFaceMeshes();
     }
   }
+
+  // public void setMaterial(Material material)
+  // {
+  //   this.material = new Material(material);
+
+  //   foreach (MeshFilter face in filters)
+  //   {
+  //     face.GetComponent<MeshRenderer>().sharedMaterial = new Material(material);
+  //   }
+  // }
+
+  // private void Update()
+  // {
+  //   MeshRenderer mr = this.gameObject.GetComponent<MeshRenderer>();
+  //   if (mr != null && mr.material != this.material)
+  //   {
+  //     setMaterial(gameObject.GetComponent<MeshRenderer>().material);
+  //   }
+  // }
 }
