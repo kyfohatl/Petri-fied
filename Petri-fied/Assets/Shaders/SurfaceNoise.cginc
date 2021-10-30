@@ -10,6 +10,9 @@ float _OffsetX;
 float _OffsetY;
 float _Scale;
 float _AdditionalOffset;
+float _IsInvincible;
+float _IsSpeed;
+float _IsMagnet;
 
 struct vertIn
 {
@@ -38,7 +41,21 @@ vertOut vert (vertIn v)
 
 fixed4 frag (vertOut i) : SV_Target
 {
-    fixed4 color = fixed4((_SinTime.w + 1.0f) / 2.0f, i.noise.x , i.noise.x, 1);
+    fixed4 color = fixed4(i.noise.x / 1.5f, i.noise.x / 1.5f , i.noise.x / 1.5f, 1);
+
+    if (_IsInvincible > 0.1) {
+        color = fixed4(i.noise.x / 1.5f, (sin(_Time.w * 1.7f) + 1.0f) / 2.5f  , i.noise.x / 1.5f, 1);
+    }
+    if (_IsSpeed > 0.1) {
+        color = fixed4((sin(_Time.w * 1.7f) + 1.0f) / 2.5f, i.noise.x / 1.5f , i.noise.x / 1.5f, 1);
+    }
+    if (_IsMagnet > 0.1) {
+        color = fixed4(i.noise.x / 1.3f, i.noise.x / 1.3f , (_SinTime.w + 1.0f) / 2.0f, 1);
+    }
+
+    // Other experimental colors
+    //fixed4((cos(_Time.y + 1.5f) + 1.0f) / 2.0f, (_SinTime.w + 1.0f) / 2.0f, i.noise.x / 2.0, 1);
+    //fixed4((_SinTime.w + 1.0f) / 3.0f, (_SinTime.w + 1.0f) / 3.0f, i.noise.x / 3.0, 1);
 
     // apply fog
     UNITY_APPLY_FOG(i.fogCoord, color);

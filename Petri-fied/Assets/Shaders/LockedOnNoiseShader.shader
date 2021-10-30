@@ -12,6 +12,9 @@ Shader "Unlit/LockedOnNoiseShader"
         _InsideColor ("Inside Color", Color) = (0,0,0,1)
         _MinOutlineThickness ("Min Outline Thickness", Range(1.05, 3.0)) = 1.1
         _MaxOutlineThickness ("Max Outline Thickness", Range(1.05, 3.0)) = 1.2
+        _IsInvincible ("Invicibility Effect", Float) = 0.0
+        _IsSpeed ("Speed Powerup Effect", Float) = 0.0
+        _IsMagnet ("Magnet Powerup Effect", Float) = 0.0
     }
     SubShader
     {

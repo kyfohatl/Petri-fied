@@ -41,25 +41,19 @@ public class MicrobeCore : MonoBehaviour
     createFaceMeshes();
   }
 
-  // private void Start()
-  // {
-  //   this.shader = Shader.Find("Unlit/SurfaceNoise");
-  //   this.material = new Material(shader);
+  private void Start()
+  {
+    // Set up the mesh objects
+    setupMeshObjects();
 
-  //   if (this.GetComponent<MeshRenderer>() == null)
-  //   {
-  //     this.gameObject.AddComponent<MeshRenderer>().material = this.material;
-  //   }
+    // Now create the mesh for each mesh object
+    createFaceMeshes();
 
-  //   // Set up the mesh objects
-  //   setupMeshObjects();
-
-  //   // Now create the mesh for each mesh object
-  //   foreach (var face in microbeFaces)
-  //   {
-  //     face.createMesh(offset, scale);
-  //   }
-  // }
+    // Revert material properties to default
+    RevertMaterialProperty("invincible");
+    RevertMaterialProperty("speed");
+    RevertMaterialProperty("magnet");
+  }
 
   // Sets up the mesh objects by adding mesh filters, material and the base empty mesh
   private void setupMeshObjects()
@@ -94,23 +88,20 @@ public class MicrobeCore : MonoBehaviour
         // Create the base empty mesh
         filters[i].sharedMesh = new Mesh();
       }
-
-      if (filters[i] != null)
+      else
       {
         if (filters[i].sharedMesh == null)
         {
           filters[i].sharedMesh = new Mesh();
         }
-        if (filters[i].GetComponent<MeshRenderer>().sharedMaterial == null)
+
+        if (isLockedOn)
         {
-          if (isLockedOn)
-          {
-            filters[i].GetComponent<MeshRenderer>().sharedMaterial = new Material(lockOnMaterial);
-          }
-          else
-          {
-            filters[i].GetComponent<MeshRenderer>().sharedMaterial = new Material(defaultMaterial);
-          }
+          filters[i].GetComponent<MeshRenderer>().sharedMaterial = new Material(lockOnMaterial);
+        }
+        else
+        {
+          filters[i].GetComponent<MeshRenderer>().sharedMaterial = new Material(defaultMaterial);
         }
       }
 
@@ -140,6 +131,68 @@ public class MicrobeCore : MonoBehaviour
       setupMeshObjects();
       // Now recreate the face meshes
       createFaceMeshes();
+    }
+  }
+
+  public void ChangeMaterialProperty(string prop)
+  {
+    switch (prop)
+    {
+      case "invincible":
+        defaultMaterial.SetFloat("_IsInvincible", 1.0f);
+        lockOnMaterial.SetFloat("_IsInvincible", 1.0f);
+        setupMeshObjects();
+        createFaceMeshes();
+        break;
+
+      case "speed":
+        defaultMaterial.SetFloat("_IsSpeed", 1.0f);
+        lockOnMaterial.SetFloat("_IsSpeed", 1.0f);
+        setupMeshObjects();
+        createFaceMeshes();
+        break;
+
+      case "magnet":
+        defaultMaterial.SetFloat("_IsMagnet", 1.0f);
+        lockOnMaterial.SetFloat("_IsMagnet", 1.0f);
+        setupMeshObjects();
+        createFaceMeshes();
+        break;
+
+      default:
+        Debug.Log("Given property type does not exist: " + prop);
+        break;
+    }
+  }
+
+  public void RevertMaterialProperty(string prop)
+  {
+    switch (prop)
+    {
+      case "invincible":
+        defaultMaterial.SetFloat("_IsInvincible", 0.0f);
+        lockOnMaterial.SetFloat("_IsInvincible", 0.0f);
+        setupMeshObjects();
+        createFaceMeshes();
+        break;
+
+      case "speed":
+        defaultMaterial.SetFloat("_IsSpeed", 0.0f);
+        lockOnMaterial.SetFloat("_IsSpeed", 0.0f);
+        setupMeshObjects();
+        createFaceMeshes();
+        break;
+
+      case "magnet":
+        defaultMaterial.SetFloat("_IsMagnet", 0.0f);
+        lockOnMaterial.SetFloat("_IsMagnet", 0.0f);
+        setupMeshObjects();
+        createFaceMeshes();
+        break;
+
+      default:
+        Debug.Log("Given property type does not exist: " + prop);
+        break;
     }
   }
 
