@@ -9,7 +9,6 @@ public class SpawnerController : MonoBehaviour
 	
 	// Spawn rate and constraints
 	public float timeBetweenSpawns = 5f; // time in seconds between spawns
-	
 	public int spawnMin = 1; // lower bound spawns per generation
 	public int spawnMax = 1; // upper bound spawns per generation
 	public int spawnLimit = 20; // maximum spawns allowed
@@ -17,20 +16,14 @@ public class SpawnerController : MonoBehaviour
 	protected float timer = 0f; // clock to track time between generations
 	
 	// Arena and spawner dimensions
-	public float spawnRadius = 50f;
-	public float spawnHeight = 50f;
-	private float arenaRadius;
-	private float arenaHeight;
-	private Vector3 arenaOrigin;
+	protected float arenaRadius;
+	protected Vector3 arenaOrigin;
 	
 	// Start is called before the first frame update
 	void Start()
 	{
 		// Determine current arena dimensions (useful if arena scales in future)
 		getArenaDimensions();
-		// Set spawner parameters
-		this.spawnRadius = this.arenaRadius - 1f;
-		this.spawnHeight = this.arenaHeight - 1f;
 	}
 	
 	// Function to determine spawner parameters given arena dimensions
@@ -38,7 +31,6 @@ public class SpawnerController : MonoBehaviour
 	{
 		GameObject arena =  GameObject.FindGameObjectWithTag("Arena");
 		this.arenaRadius = arena.GetComponent<ArenaSize>().ArenaRadius;
-		this.arenaHeight = arena.GetComponent<ArenaSize>().ArenaHeight;
 		this.arenaOrigin = arena.gameObject.transform.position;
 	}
 	
@@ -47,10 +39,14 @@ public class SpawnerController : MonoBehaviour
 	{
 		// Determine spawn position
 		Vector3 Target = getRandomPosition();
-		
 		// Instantiates the newly spawned object and sets as child of spawner
 		GameObject spawned = Instantiate(this.prefabToSpawn, Target, Random.rotation, transform);
-		
+		return spawned;
+	}
+	public GameObject Generate(Vector3 spawnPosition)
+	{
+		// Instantiates the newly spawned object and sets as child of spawner
+		GameObject spawned = Instantiate(this.prefabToSpawn, spawnPosition, Random.rotation, transform);
 		return spawned;
 	}
 	
@@ -66,13 +62,5 @@ public class SpawnerController : MonoBehaviour
 	public Vector3 getRandomPosition(float inRadius, Vector3 originPoint) // for specified radius and origin
 	{
 		return Random.insideUnitSphere * inRadius + originPoint;
-	}
-	public Vector3 getRandomPosition(float inRadius, float inHeight) // for cylinder arena
-	{
-		Vector2 xz = Random.insideUnitCircle * inRadius;
-		float y = Random.Range(this.arenaOrigin.z - inHeight / 2f, this.arenaOrigin.z + inHeight / 2f);
-		Vector3 randomPos = new Vector3(this.arenaOrigin.x + xz.x, this.arenaOrigin.y + y, this.arenaOrigin.z + xz.y);
-		
-		return randomPos;
 	}
 }

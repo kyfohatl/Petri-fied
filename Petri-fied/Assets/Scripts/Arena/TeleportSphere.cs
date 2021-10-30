@@ -22,7 +22,7 @@ public class TeleportSphere : MonoBehaviour
 		UpdateTeleportDiameter();
     }
 	
-	// IF inspector changes value
+	// If inspector changes value
 	void OnValidate()
 	{
 		this.transform.localScale = this.TeleportDiameter * new Vector3(1f, 1f, 1f);
