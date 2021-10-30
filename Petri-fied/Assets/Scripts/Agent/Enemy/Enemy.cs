@@ -212,7 +212,6 @@ public class Enemy : IntelligentAgent
 		if (this.Target == null && closestFood != null)
 		{
 			Debug.Log(this.name + " has an issue with targetting");
-			Debug.Break();
 		}
 	}
 
@@ -226,8 +225,8 @@ public class Enemy : IntelligentAgent
 		}
 
 		// Calculate distance to the current target
-		float dist = Vector3.Distance(transform.position, target.transform.position);
-		float mySpeed = getSpeedMultiplier() * getPowerUpSpeedMultiplier() / transform.localScale.x;
+		float dist = Vector3.Distance(this.transform.position, target.transform.position);
+		float mySpeed = getSpeedMultiplier() * getPowerUpSpeedMultiplier() / this.transform.localScale.x;
 		float expectedTravelTime = dist / mySpeed;
 
 		if (target.tag == "Enemy" || target.tag == "Player")
@@ -238,7 +237,10 @@ public class Enemy : IntelligentAgent
 				return 0f; // current target cannot be eaten
 			}
 
-			float targetSpeed = target.GetComponent<IntelligentAgent>().getSpeedMultiplier() * target.GetComponent<IntelligentAgent>().getPowerUpSpeedMultiplier() / target.transform.localScale.x;
+			float targetSpeedMult = target.GetComponent<IntelligentAgent>().getSpeedMultiplier();
+			float targetPowerUpSpeedMult = target.GetComponent<IntelligentAgent>().getPowerUpSpeedMultiplier();
+			// Final speed of target here
+			float targetSpeed = targetSpeedMult * targetPowerUpSpeedMult / target.transform.localScale.x;
 			// normalised angle between ranges from [0-2] 0: facing away, 2: facing towards each other
 			float angleNormalised = Vector3.Angle(target.transform.forward, this.transform.forward) / 90f;
 			float combinedSpeed = mySpeed + (angleNormalised - 1) * targetSpeed;
@@ -251,7 +253,9 @@ public class Enemy : IntelligentAgent
 			{
 				expectedTravelTime = dist / combinedSpeed;
 			}
-			return this.AggressionMultiplier * targetScore / expectedTravelTime;
+			
+			float value = this.AggressionMultiplier * targetScore;
+			return value / expectedTravelTime;
 		}
 		else if (target.tag == "PowerUp")
 		{
@@ -260,21 +264,23 @@ public class Enemy : IntelligentAgent
 				return 0f; // power up is no longer visible
 			}
 			// Return a magic value representing the 'value' of a power-up, equal to player's score and rewards smaller travel times
-			return this.AggressionMultiplier * Mathf.Max((float)this.Score, 10f) / expectedTravelTime;
+			float value = this.AggressionMultiplier * Mathf.Max((float)this.Score, 10f * getSpeedMultiplier());
+			return value / expectedTravelTime / (1 + getActivePowers());
 		}
 		else if (target.tag == "SuperFood")
 		{
-			return Mathf.Max((float)this.Score / 10f, 10f) / expectedTravelTime; // refer to IntAgent OnTriggerEnter with superfood tag
+			float value = Mathf.Max((float)this.Score / 6f, 10f);
+			return value / expectedTravelTime; // refer to IntAgent OnTriggerEnter with superfood tag
 		}
 		else if (target.tag == "Food")
 		{
-			return this.transform.localScale.x * this.getFoodGrowthMultiplier() / expectedTravelTime; // is meant to get easier the bigger you are
+			float value = this.transform.localScale.x * this.getFoodGrowthMultiplier();
+			return value / expectedTravelTime; // is meant to get easier the bigger you are
 		}
 		else
 		{
 			// If here, there is an issue
 			Debug.Log(this.name + "Has an issue with targeting, unknown tag encountered.");
-			Debug.Break();
 			return 0f;
 		}
 	}
@@ -286,10 +292,14 @@ public class Enemy : IntelligentAgent
 		setFoodGrowthMultiplier(getFoodGrowthMultiplier() * GameManager.enemyGrowthBoost);
 		this.AggressionMultiplier *= GameManager.enemyAggressionMultiplier;
 	}
+	
 	// Function to increase growth and speed of newly spawned agents relative to player's current scale
 	public void ScaleToPlayer()
 	{
-		setSpeedMultiplier(getSpeedMultiplier() + this.Player.transform.localScale.x - 1f);
-		setFoodGrowthMultiplier(getFoodGrowthMultiplier() + this.Player.transform.localScale.x - 1f);
+		float playerScore = this.Player.GetComponent<IntelligentAgent>().getScore();
+		float extraSpeed = this.Player.transform.localScale.x - 1f;
+		float extraGrowth = Mathf.Pow(playerScore, 1f / 3f) - 1f;
+		setSpeedMultiplier(getSpeedMultiplier() + extraSpeed);
+		setFoodGrowthMultiplier(getFoodGrowthMultiplier() + extraGrowth);
 	}
 }

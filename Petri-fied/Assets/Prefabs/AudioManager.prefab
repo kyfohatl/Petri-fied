@@ -54,7 +54,7 @@ MonoBehaviour:
     loop: 0
     source: {fileID: 0}
   - name: SuperFoodEaten
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: f8add6057501e284ca23e2a984aa8042, type: 3}
     volume: 0.1
     pitch: 0.45
     spatialBlend: 0
@@ -66,7 +66,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 4e44762b74bae40c99b9f1bc1dff6aa7, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 0.25
+    spatialBlend: 0
     minDistance: 0.1
     maxDistance: 0
     loop: 1

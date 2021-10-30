@@ -14,8 +14,7 @@ public class PlayerController : MonoBehaviour
 
   // Movement-type triggers (both should be avaliable in settings, can be used well together)
   public bool AutoFollowTarget = false; // will automatically fly at target whenever set
-  public bool AutoFollowCursor = false; // will automatically fly forward in the turn direction of the curse
-
+  
   // Current forward direction of player
   private Vector3 curDir = new Vector3(0f, 0f, 0f);
 
@@ -55,12 +54,6 @@ public class PlayerController : MonoBehaviour
         targetDir = (curTarget.transform.position - this.transform.position).normalized;
         this.curDir = targetDir;
       }
-      else if (this.AutoFollowCursor)
-      {
-        // Rotate the model to face the direction of travel
-        this.curDir = Vector3.Slerp(curDir, targetDir, acceleration * Time.deltaTime);
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(targetDir), turnSmooth);
-      }
       else
       {
         // Rotate the model to face the direction of travel
@@ -80,190 +73,216 @@ public class PlayerController : MonoBehaviour
       GetComponent<IsMoving>().isMoving = false;
     }
 
-    // Lock-on feature using X to change to next closest visible enemy, locks-onto closest if no current target
-    if (Input.GetKeyDown(KeyCode.X))
-    {
-      enemyLockOn();
-    }
-
-    // Lock-on feature using C to change to next closest visible power up, locks-onto closest if no current target
-    if (Input.GetKeyDown(KeyCode.C))
-    {
-      powerUpLockOn();
-    }
-
-    // Lock-on feature using F to change to next closest visible food capsule, locks-onto closest if no current target
-    if (Input.GetKeyDown(KeyCode.F))
-    {
-      foodLockOn();
-    }
-
-    // Lock-on feature using left mouse click
-    if (Input.GetMouseButtonDown(0) && !UniversalMenus.GameIsPaused)
-    {
-      mouseLockOn();
-    }
-
-    // Lock-on feature using left mouse click
-    if (Input.GetKeyDown(KeyCode.Space))
-    {
-      this.AutoFollowCursor = !this.AutoFollowCursor;
-      GetComponent<Player>().setTarget(null);
-    }
-
-    // Rotate player to face target
-    if (GetComponent<Player>().getTarget() != null)
-    {
-      GetComponent<Player>().FaceTarget();
-    }
+	// Lock-on feature using '1' to change to next closest visible enemy, locks-onto closest if no current target
+	if (Input.GetKeyDown(KeyCode.Alpha1))
+	{
+		enemyLockOn();
+	}
+	
+	// Lock-on feature using '2' to change to next closest visible food capsule
+	if (Input.GetKeyDown(KeyCode.Alpha2))
+	{
+		foodLockOn();
+	}
+	
+	// Lock-on feature using '3' to change to next closest visible super food capsule
+	if (Input.GetKeyDown(KeyCode.Alpha3))
+	{
+		superFoodLockOn();
+	}
+	
+	// Lock-on feature using '4' to change to next closest visible power up
+	if (Input.GetKeyDown(KeyCode.Alpha4))
+	{
+		powerUpLockOn();
+	}
+	
+	
+	// Lock-on feature using left mouse click
+	if (Input.GetMouseButtonDown(0))
+	{
+		mouseLockOn();
+	}
+	
+	// Lock-on feature using left mouse click
+	if (Input.GetKeyDown(KeyCode.Space))
+	{
+		if (GetComponent<Player>().getTarget() != null)
+		{
+			GetComponent<Player>().setTarget(null);
+		}
+	}
+	
+	// Rotate player to face target
+	if (GetComponent<Player>().getTarget() != null)
+	{
+		GetComponent<Player>().FaceTarget();
+	}
   }
-
+  
   // Function to lock-onto next nearest object from input dictionary
   private bool LockOn(Dictionary<int, GameObject> inObjects)
   {
-    if (inObjects == null)
-    {
-      FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "FailedLockOn");
-      return false;
-    }
-    else
-    {
-      GameObject currentTarget = GetComponent<Player>().getTarget();
-      GameObject nextClosest = null;
-      float lockOnDist = GetComponent<IntelligentAgent>().getLockOnRadius();
-
-      if (currentTarget == null)
-      {
-        // No current target, set as the closest
-        nextClosest = GetComponent<IntelligentAgent>().GetClosestObject(inObjects);
-        float closestDist = Vector3.Distance(nextClosest.gameObject.transform.position, this.transform.position);
-        if (closestDist <= lockOnDist)
-        {
-          GetComponent<Player>().setTarget(nextClosest);
-          return true;
-        }
-        else
-        {
-          nextClosest = null;
-        }
-      }
-      else
-      {
-        // Find next closest after current target
-        nextClosest = null;
-        float targetDist = Vector3.Distance(currentTarget.gameObject.transform.position, this.transform.position);
-        float minDist = Mathf.Infinity;
-
-        foreach (var objClone in inObjects)
-        {
-          float dist = Vector3.Distance(objClone.Value.gameObject.transform.position, this.transform.position);
-          if (dist < minDist && dist > targetDist && dist <= lockOnDist)
-          {
-            nextClosest = objClone.Value;
-            minDist = dist;
-          }
-        }
-      }
-
-      // Return boolean on successful target set
-      if (nextClosest != null)
-      {
-        GetComponent<Player>().setTarget(nextClosest);
-        return true;
-      }
-      else
-      {
-        GetComponent<Player>().setTarget(null);
-        return false;
-      }
-    }
+	  if (inObjects == null)
+	  {
+		  FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "FailedLockOn");
+		  return false;
+	  }
+	  else
+	  {
+		  GameObject currentTarget = GetComponent<Player>().getTarget();
+		  GameObject nextClosest = null;
+		  float lockOnDist = GetComponent<IntelligentAgent>().getLockOnRadius();
+		  float lockOnDistSqrd = lockOnDist * lockOnDist;
+		  
+		  if (currentTarget == null)
+		  {
+			  // No current target, set as the closest
+			  nextClosest = GetComponent<IntelligentAgent>().GetClosestObject(inObjects);
+			  Vector3 nextClosestPos = nextClosest.gameObject.transform.position;
+			  float closestDistSqrd = (nextClosestPos - this.transform.position).sqrMagnitude;
+			  if (closestDistSqrd <= lockOnDistSqrd)
+			  {
+				  GetComponent<Player>().setTarget(nextClosest);
+				  return true;
+			  }
+			  else
+			  {
+				  nextClosest = null;
+			  }
+		  }
+		  else
+		  {
+			  // Find next closest after current target
+			  nextClosest = null;
+			  Vector3 targetPos = currentTarget.gameObject.transform.position;
+			  float targetDistSqrd = (targetPos - this.transform.position).sqrMagnitude;
+			  float minDist = Mathf.Infinity;
+			  
+			  foreach (var objClone in inObjects)
+			  {
+				  Vector3 clonePos = objClone.Value.gameObject.transform.position;
+				  float distSqrd = (clonePos - this.transform.position).sqrMagnitude;
+				  if (distSqrd < minDist && distSqrd > targetDistSqrd && distSqrd <= lockOnDistSqrd)
+				  {
+					  nextClosest = objClone.Value;
+					  minDist = distSqrd;
+				  }
+			  }
+		  }
+		  
+		  // Return boolean on successful target set
+		  if (nextClosest != null)
+		  {
+			  GetComponent<Player>().setTarget(nextClosest);
+			  return true;
+		  }
+		  else
+		  {
+			  GetComponent<Player>().setTarget(null);
+			  return false;
+		  }
+	  }
   }
-
+  
   // Function to lock-onto enemy target using key press
   private void enemyLockOn()
   {
-    Dictionary<int, GameObject> visibleEnemies = GameManager.getObjectsVisible(GameManager.getEnemies());
-
-    if (!LockOn(visibleEnemies))
-    {
-      // Visible enemies dictionary is null
-      Debug.Log("No enemies are visible to screen");
-      GetComponent<Player>().setTarget(null);
-    }
+	  Dictionary<int, GameObject> visibleEnemies = GameManager.getObjectsVisible(GameManager.getEnemies());
+	  
+	  if (!LockOn(visibleEnemies))
+	  {
+		  // Visible enemies dictionary is null
+		  Debug.Log("No enemies are visible to screen");
+		  GetComponent<Player>().setTarget(null);
+	  }
   }
-
+  
   // Function to lock-onto power up target using key press
   private void powerUpLockOn()
   {
-    Dictionary<int, GameObject> visiblePowerUps = GameManager.getObjectsVisible(GameManager.getPowerUps());
-
-    if (!LockOn(visiblePowerUps))
-    {
-      // Visible power up dictionary is null
-      Debug.Log("No power ups are visible to screen");
-      GetComponent<Player>().setTarget(null);
-    }
+	  Dictionary<int, GameObject> visiblePowerUps = GameManager.getObjectsVisible(GameManager.getPowerUps());
+	  
+	  if (!LockOn(visiblePowerUps))
+	  {
+		  // Visible power up dictionary is null
+		  Debug.Log("No power ups are visible to screen");
+		  GetComponent<Player>().setTarget(null);
+	  }
   }
-
-  // Function to lock-onto food target using key press
+  
+  // Function to lock-onto super food target using key press
+  private void superFoodLockOn()
+  {
+	  Dictionary<int, GameObject> visibleSuperFood = GameManager.getObjectsVisible(GameManager.getSuperFood());
+	  
+	  if (!LockOn(visibleSuperFood))
+	  {
+		  // Visible super food dictionary is null
+		  Debug.Log("No super foood are visible to screen");
+		  GetComponent<Player>().setTarget(null);
+	  }
+  }
+  
+  // Function to lock-onto food target using key press (will lock onto food and superfood)
   private void foodLockOn()
   {
-    Dictionary<int, GameObject> visibleFood = GameManager.getObjectsVisible(GameManager.getFood());
-    Dictionary<int, GameObject> visibleSuperFood = GameManager.getObjectsVisible(GameManager.getSuperFood());
-    Dictionary<int, GameObject> merged;
-
-    // Merge dictionaries and make the super food the override value in case of duplicate keys (shoudn't be any)
-    if (visibleSuperFood != null && visibleSuperFood.Count > 0)
-    {
-      merged = new Dictionary<int, GameObject>(visibleFood.Count + visibleSuperFood.Count);
-      foreach (var clone in visibleSuperFood)
-      {
-        merged.Add(clone.Key, clone.Value);
-      }
-      foreach (var clone in visibleFood)
-      {
-        if (!visibleSuperFood.ContainsKey(clone.Key))
-        {
-          merged.Add(clone.Key, clone.Value);
-        }
-      }
-    }
-    else
-    {
-      merged = visibleFood;
-    }
-
-    if (!LockOn(merged))
-    {
-      // Visible food/super-food dictionary is null
-      Debug.Log("No food or superfood capsules are visible to screen");
-      GetComponent<Player>().setTarget(null);
-    }
+	  Dictionary<int, GameObject> visibleFood = GameManager.getObjectsVisible(GameManager.getFood());
+	  Dictionary<int, GameObject> visibleSuperFood = GameManager.getObjectsVisible(GameManager.getSuperFood());
+	  Dictionary<int, GameObject> merged;
+	  
+	  // Merge dictionaries and make the super food the override value in case of duplicate keys (shoudn't be any)
+	  if (visibleSuperFood != null && visibleSuperFood.Count > 0)
+	  {
+		  merged = new Dictionary<int, GameObject>(visibleFood.Count + visibleSuperFood.Count);
+		  foreach (var clone in visibleSuperFood)
+		  {
+			  merged.Add(clone.Key, clone.Value);
+		  }
+		  foreach (var clone in visibleFood)
+		  {
+			  if (!visibleSuperFood.ContainsKey(clone.Key))
+			  {
+				  merged.Add(clone.Key, clone.Value);
+			  }
+		  }
+	  }
+	  else
+	  {
+		  merged = visibleFood;
+	  }
+	  
+	  if (!LockOn(merged))
+	  {
+		  // Visible food/super-food dictionary is null
+		  Debug.Log("No food or superfood capsules are visible to screen");
+		  GetComponent<Player>().setTarget(null);
+	  }
   }
-
+  
   // Function to lock-onto target using a mouse click
   public void mouseLockOn()
   {
-    int ignoreMask = ~LayerMask.GetMask("Arena");
-    RaycastHit hitInfo = new RaycastHit();
-    bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, Mathf.Infinity, ignoreMask);
-
-    if (hit) // ray cast intersects something, but what?
-    {
-      string[] tags = { "Enemy", "Food", "SuperFood", "PowerUp" };
-      string targetTag = hitInfo.transform.gameObject.tag;
-      GameObject newTarget = null;
-      if (tags.Contains(targetTag))
-      {
-        newTarget = hitInfo.transform.gameObject;
-      }
-      GetComponent<Player>().setTarget(newTarget);
-    }
-    else
-    {
-      Debug.Log("No hit whatsoever...");
-      GetComponent<Player>().setTarget(null);
-    }
+	  int ignoreMask = ~((1 << 2) | (1 << 8)); // 2: ignore raycast, 8: arena
+	  RaycastHit hitInfo = new RaycastHit();
+	  bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, Mathf.Infinity, ignoreMask);
+	  
+	  if (hit && hitInfo.transform.gameObject.GetComponent<MeshRenderer>().enabled) // successful hit and rendered
+	  {
+		  string[] tags = {"Enemy", "Food", "SuperFood", "PowerUp"};
+		  string targetTag = hitInfo.transform.gameObject.tag;
+		  GameObject newTarget = null;
+		  if (tags.Contains(targetTag))
+		  {
+			  newTarget = hitInfo.transform.gameObject;
+		  }
+		  GetComponent<Player>().setTarget(newTarget);
+	  }
+	  else
+	  {
+		  Debug.Log("No hit whatsoever...");
+		  GetComponent<Player>().setTarget(null);
+	  }
   }
 
   // Setter for auto follow lock on target
