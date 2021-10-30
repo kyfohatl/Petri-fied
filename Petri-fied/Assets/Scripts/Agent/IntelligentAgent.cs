@@ -13,7 +13,7 @@ public class IntelligentAgent : MonoBehaviour
 	// Agent data elements
 	[SerializeField] private string Name = "";
 	public int Score = 1;
-	public float Radius = 1f;
+	public float Radius = 1f; // the scale factor of the agent
 	public float LockOnRadius = 10f;
 	private int peakScore = 1;
 	private float initialisationTime;
@@ -40,7 +40,7 @@ public class IntelligentAgent : MonoBehaviour
 
 	// Size update parameters
 	private float sizeUpdateDuration = 1f; // default: 1 second
-	private bool sizeUpdateTriggered = false;
+	private bool sizeUpdateTriggered = true;
 	private float sizeUpdateStartTime;
 	private Vector3 previousLocalScale;
 	private Vector3 goalLocalScale;
@@ -55,16 +55,21 @@ public class IntelligentAgent : MonoBehaviour
 	{
 		this.initialisationTime = Time.timeSinceLevelLoad;
 		this.sizeUpdateStartTime = Time.timeSinceLevelLoad;
+		UpdateRadius();
+		this.transform.localScale = new Vector3(1f, 1f, 1f) * this.Radius;
+		this.goalLocalScale = this.transform.localScale;
 		this.previousLocalScale = transform.localScale;
-		this.goalLocalScale = new Vector3(1f, 1f, 1f) * this.Radius;
 		this.GameManager = FindObjectOfType<GameManager>();
 		GenerateRandomGenetics();
 		this.LockOnRadius = this.Radius * this.LockOnRadiusMultiplier;
 
-		//Gets the object's material
-		if(this.gameObject.tag == "Player"){
+		// Get the agent's starting material
+		if (this.gameObject.tag == "Player")
+		{
             this.startingMaterial = new Material(this.transform.Find("Avatar").gameObject.GetComponent<Renderer>().material);
-        }else{
+        }
+		else
+		{
             this.startingMaterial = new Material(this.GetComponent<Renderer>().material);
         }
 		
@@ -95,14 +100,15 @@ public class IntelligentAgent : MonoBehaviour
 		}
 		else if (other.gameObject.tag == "Enemy" || other.gameObject.tag == "Player")
 		{
-			IntelligentAgent otherPlayer = other.gameObject.GetComponent<IntelligentAgent>();
-			int scoreDifference = this.Score - otherPlayer.getScore();
+			IntelligentAgent otherAgent = other.gameObject.GetComponent<IntelligentAgent>();
+			int scoreDifference = this.Score - otherAgent.getScore();
 
-			if (scoreDifference > 0 && !otherPlayer.isInvincible())
+			if (scoreDifference > 0 && !otherAgent.isInvincible())
 			{
-				UpdateScore(otherPlayer.getScore());
-				AssimilateGenetics(otherPlayer);
-				Debug.Log(this.Name + " has eaten: " + otherPlayer.getName());
+				UpdateScore(otherAgent.getScore());
+				this.killCount += 1;
+				AssimilateGenetics(otherAgent);
+				Debug.Log(this.Name + " has eaten: " + otherAgent.getName());
 				if (other.gameObject.tag == "Enemy")
 				{
 					GameManager.RemoveEnemy(other.gameObject.GetInstanceID());
@@ -110,13 +116,11 @@ public class IntelligentAgent : MonoBehaviour
 				FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "EnemyEaten");
 				if (other.gameObject.tag == "Player")
 				{
-					this.killCount += 1;
 					GameManager.EndGameForPlayer();
 				}
 				else
 				{
 					Destroy(other.transform.parent.gameObject);
-					this.killCount += 1;
 				}
 			}
 		}
@@ -233,9 +237,8 @@ public class IntelligentAgent : MonoBehaviour
 		float scoreDecayMax = 2f;
 		this.ScoreDecayMultiplier = Mathf.Min(scoreDecayMax, Mathf.Abs(normalRandom(1f, 0.5f))); // mean: 1, std: 0.2
 
-		float arenaScale = GameObject.FindWithTag("Arena").GetComponent<ArenaSize>().ArenaRadius / 100f;
 		float lockOnRadiusMin = 15f;
-		this.LockOnRadiusMultiplier = Mathf.Max(lockOnRadiusMin, arenaScale * Mathf.Abs(normalRandom(25f, 5f))); // mean: 20, std: 5
+		this.LockOnRadiusMultiplier = Mathf.Max(lockOnRadiusMin, Mathf.Abs(normalRandom(25f, 5f))); // mean: 20, std: 5
 	}
 
 	// Function to take on superior genetics of eaten agent

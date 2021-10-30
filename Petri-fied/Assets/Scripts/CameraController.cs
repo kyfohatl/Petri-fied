@@ -29,11 +29,10 @@ public class CameraController : MonoBehaviour
 	private float orbitUpdateStartTime;
 	private float previousOrbitDistance;
 	private float previousFogEndDistance;
-	private bool orbitUpdateTriggered = false;
+	private bool orbitUpdateTriggered = true;
 	
 	// The arena dimensions and boundary collision trackers
 	private float arenaRadius;
-	private float arenaHeight;
 	private Vector3 arenaOrigin;
 	
 	// Called on start-up
@@ -186,34 +185,6 @@ public class CameraController : MonoBehaviour
 		return this.Player.transform.position + newPosOffset;
 	}
 	
-	// Function to test if coordinate is within arena dimensions
-	private bool withinArena(Vector3 testPoint)
-	{
-		float dx = Mathf.Abs(testPoint.x - this.arenaOrigin.x);
-		float dy = Mathf.Abs(testPoint.y - this.arenaOrigin.y);
-		float dz = Mathf.Abs(testPoint.z - this.arenaOrigin.z);
-		
-		if (dy > this.arenaHeight / 2f)
-		{
-			return false;
-		}
-		if (dx + dz <= this.arenaRadius)
-		{
-			return true;
-		}
-		if (dx > this.arenaRadius || dz > this.arenaRadius)
-		{
-			return false;
-		}
-		if (dx * dx + dz * dz < this.arenaRadius * this.arenaRadius)
-		{
-			return true;
-		}
-		
-		// If here, must be outside arena
-		return false;
-	}
-	
 	// Changes the camera distance to the player to match the new given player radius
 	private void onPlayerRadiusChange(float radius)
 	{
@@ -256,7 +227,6 @@ public class CameraController : MonoBehaviour
 	{
 		GameObject arena = GameObject.FindGameObjectWithTag("Arena");
 		this.arenaRadius = arena.GetComponent<ArenaSize>().ArenaRadius;
-		this.arenaHeight = arena.GetComponent<ArenaSize>().ArenaHeight;
 		this.arenaOrigin = arena.gameObject.transform.position;
 	}
 	

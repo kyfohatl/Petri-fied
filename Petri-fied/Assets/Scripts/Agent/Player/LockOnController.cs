@@ -26,10 +26,16 @@ public class LockOnController : MonoBehaviour
 	// Called at the end of every frame
 	void LateUpdate()
 	{
+		// Exit early if current target no longer exists (might've been eaten)
 		if (this.CurrentTarget == null)
 		{
-			// Exit early if current target no longer exists (might've been eaten)
 			this.enemyLocked = false;
+			return;
+		}
+		// Now check if the target is still being renderer (applies to power ups that got eaten)
+		if (!this.CurrentTarget.GetComponent<MeshRenderer>().enabled)
+		{
+			GetComponent<IntelligentAgent>().setTarget(null);
 			return;
 		}
 		// Otherwise, check if target is an enemy and assign material from score difference

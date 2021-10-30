@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FoodSpawn : SpawnerController
+public class SuperFoodSpawn : SpawnerController
 {
 	// Update is called once per frame
 	void Update()

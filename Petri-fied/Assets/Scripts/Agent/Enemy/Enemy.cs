@@ -19,15 +19,11 @@ public class Enemy : IntelligentAgent
 		StartLife();
 		this.setName(GenerateRandomName());
 		this.transform.parent.name = "Enemy: " + this.getName();
-		this.Player = GameObject.FindGameObjectWithTag("Player");
+		this.Player = GameObject.FindWithTag("Player");
 
-		// Determine aggresion of this enemy and apply initial difficulty sliders
+		// Determine aggresion of this enemy and adjust initial stats
 		this.AggressionMultiplier = Mathf.Abs(normalRandom(0f, 1.4826f)); // this stddev produces 50% of agents above/below aggresion mult of 1f
-		ApplyDifficultySliders(); // apply any difficulty sliders
-		if (GameManager.ScaleEnemies)
-		{
-			ScaleToPlayer(); // apply enemy scale effect if game manager is checked
-		}
+		AdjustEnemyStats();
 	}
 
 	// Update is called once per frame
@@ -284,9 +280,20 @@ public class Enemy : IntelligentAgent
 			return 0f;
 		}
 	}
+	
+	// Function to adjust enemy stats to match difficult slider and player scale
+	public void AdjustEnemyStats()
+	{
+		// Adjust enemy stats to scale to player
+		if (GameManager.ScaleEnemies)
+		{
+			ScaleToPlayer();
+		}
+		ApplyDifficultySliders(); // apply any difficulty sliders
+	}
 
 	// Function to apply modified game difficulty sliders
-	public void ApplyDifficultySliders()
+	void ApplyDifficultySliders()
 	{
 		setSpeedMultiplier(getSpeedMultiplier() * GameManager.enemySpeedBoost);
 		setFoodGrowthMultiplier(getFoodGrowthMultiplier() * GameManager.enemyGrowthBoost);
@@ -294,7 +301,7 @@ public class Enemy : IntelligentAgent
 	}
 	
 	// Function to increase growth and speed of newly spawned agents relative to player's current scale
-	public void ScaleToPlayer()
+	void ScaleToPlayer()
 	{
 		float playerScore = this.Player.GetComponent<IntelligentAgent>().getScore();
 		float extraSpeed = this.Player.transform.localScale.x - 1f;
