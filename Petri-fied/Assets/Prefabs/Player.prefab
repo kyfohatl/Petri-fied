@@ -221,10 +221,10 @@ MonoBehaviour:
   - {fileID: 1389705575977790960}
   - {fileID: 4623046320683512733}
   - {fileID: 865183680714826919}
-  defaultMaterial: {fileID: 2100000, guid: 235ef3f2de61c5446a6aae773553e447, type: 2}
-  lockOnMaterial: {fileID: 2100000, guid: 009ead647f43a664fb9cd6d4b66925a4, type: 2}
-  isLockedOn: 0
-  abc: 0
+  defaultMaterial: {fileID: 2100000, guid: 4e5278b386210774ca3265d8390fd19b, type: 2}
+  lockOnMaterial: {fileID: 2100000, guid: 00de4402228128e48ab5d18ed70cb254, type: 2}
+  powerUpMaterial: {fileID: 2100000, guid: 4d248b2342ceb374298210a1a9e1535b, type: 2}
+  isLockedOn: 1
   scale: 15
   offset: {x: 5, y: 5, z: 5}
 --- !u!1 &4707289508095505209

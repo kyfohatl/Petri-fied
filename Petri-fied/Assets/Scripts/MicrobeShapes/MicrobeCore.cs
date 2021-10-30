@@ -17,8 +17,12 @@ public class MicrobeCore : MonoBehaviour
   public Material defaultMaterial;
   // The lock-on material
   public Material lockOnMaterial;
+  // The power-up outline material
+  public Material powerUpMaterial;
   // When true, means that the microbe is locked onto
   public bool isLockedOn = false;
+  // The number of power-ups currently active on the microbe
+  private int numActivePowerUps = 0;
 
   // A cube has 6 faces
   private const int numFaces = 6;
@@ -80,6 +84,10 @@ public class MicrobeCore : MonoBehaviour
         {
           face.AddComponent<MeshRenderer>().sharedMaterial = new Material(lockOnMaterial);
         }
+        else if (numActivePowerUps > 0)
+        {
+          face.AddComponent<MeshRenderer>().sharedMaterial = new Material(powerUpMaterial);
+        }
         else
         {
           face.AddComponent<MeshRenderer>().sharedMaterial = new Material(defaultMaterial);
@@ -99,8 +107,18 @@ public class MicrobeCore : MonoBehaviour
         {
           filters[i].GetComponent<MeshRenderer>().sharedMaterial = new Material(lockOnMaterial);
         }
+        else if (numActivePowerUps > 0)
+        {
+          filters[i].GetComponent<MeshRenderer>().sharedMaterial = new Material(powerUpMaterial);
+        }
         else
         {
+          //Debug.Log(defaultMaterial);
+          //Debug.Log(filters[i].GetComponent<MeshRenderer>().sharedMaterial);
+          if (defaultMaterial == null)
+          {
+            Debug.Log(this.gameObject.tag);
+          }
           filters[i].GetComponent<MeshRenderer>().sharedMaterial = new Material(defaultMaterial);
         }
       }
@@ -134,27 +152,82 @@ public class MicrobeCore : MonoBehaviour
     }
   }
 
+  // Reduces the active power-up count on the microbe, and if reaching zero will and not locked on will
+  // revert the material to default
+  public void ReduceActivePowerUps()
+  {
+    if (numActivePowerUps > 0)
+    {
+      numActivePowerUps--;
+    }
+
+    Debug.Log("isLockedOn: " + isLockedOn + " numActv: " + numActivePowerUps);
+
+    if (!isLockedOn && numActivePowerUps <= 0)
+    {
+      // Redo mesh setup
+      setupMeshObjects();
+      // Now recreate the face meshes
+      createFaceMeshes();
+    }
+  }
+
+  public void IncreaseActivePowerUps()
+  {
+    if (!isLockedOn && numActivePowerUps == 0)
+    {
+      // Increment power-up count before redo-ing the meshes to make sure the material changes
+      numActivePowerUps++;
+      // Redo mesh setup
+      setupMeshObjects();
+      // Now recreate the face meshes
+      createFaceMeshes();
+    }
+    else
+    {
+      numActivePowerUps++;
+    }
+  }
+
   public void ChangeMaterialProperty(string prop)
   {
     switch (prop)
     {
       case "invincible":
+        // Revert other powerup visual effects in case they are running
+        RevertMaterialProperty("speed");
+        RevertMaterialProperty("magnet");
+
+        // Now set the new powerup effects
         defaultMaterial.SetFloat("_IsInvincible", 1.0f);
         lockOnMaterial.SetFloat("_IsInvincible", 1.0f);
+        powerUpMaterial.SetFloat("_IsInvincible", 1.0f);
         setupMeshObjects();
         createFaceMeshes();
         break;
 
       case "speed":
+        // Revert other powerup visual effects in case they are running
+        RevertMaterialProperty("invincible");
+        RevertMaterialProperty("magnet");
+
+        // Now set the new powerup effects
         defaultMaterial.SetFloat("_IsSpeed", 1.0f);
         lockOnMaterial.SetFloat("_IsSpeed", 1.0f);
+        powerUpMaterial.SetFloat("_IsSpeed", 1.0f);
         setupMeshObjects();
         createFaceMeshes();
         break;
 
       case "magnet":
+        // Revert other powerup visual effects in case they are running
+        RevertMaterialProperty("speed");
+        RevertMaterialProperty("invincible");
+
+        // Now set the new powerup effects
         defaultMaterial.SetFloat("_IsMagnet", 1.0f);
         lockOnMaterial.SetFloat("_IsMagnet", 1.0f);
+        powerUpMaterial.SetFloat("_IsMagnet", 1.0f);
         setupMeshObjects();
         createFaceMeshes();
         break;
@@ -172,6 +245,7 @@ public class MicrobeCore : MonoBehaviour
       case "invincible":
         defaultMaterial.SetFloat("_IsInvincible", 0.0f);
         lockOnMaterial.SetFloat("_IsInvincible", 0.0f);
+        powerUpMaterial.SetFloat("_IsInvincible", 0.0f);
         setupMeshObjects();
         createFaceMeshes();
         break;
@@ -179,6 +253,7 @@ public class MicrobeCore : MonoBehaviour
       case "speed":
         defaultMaterial.SetFloat("_IsSpeed", 0.0f);
         lockOnMaterial.SetFloat("_IsSpeed", 0.0f);
+        powerUpMaterial.SetFloat("_IsSpeed", 0.0f);
         setupMeshObjects();
         createFaceMeshes();
         break;
@@ -186,6 +261,7 @@ public class MicrobeCore : MonoBehaviour
       case "magnet":
         defaultMaterial.SetFloat("_IsMagnet", 0.0f);
         lockOnMaterial.SetFloat("_IsMagnet", 0.0f);
+        powerUpMaterial.SetFloat("_IsMagnet", 0.0f);
         setupMeshObjects();
         createFaceMeshes();
         break;
@@ -194,6 +270,21 @@ public class MicrobeCore : MonoBehaviour
         Debug.Log("Given property type does not exist: " + prop);
         break;
     }
+  }
+
+  public void ChangeLockOnOutlineColor(Color newColor)
+  {
+    lockOnMaterial.SetColor("_OutlineColor", newColor);
+    setupMeshObjects();
+    createFaceMeshes();
+  }
+
+  public void RevertAllMaterialProperties()
+  {
+    numActivePowerUps = 0;
+    RevertMaterialProperty("invincible");
+    RevertMaterialProperty("speed");
+    RevertMaterialProperty("magnet");
   }
 
   // public void setMaterial(Material material)

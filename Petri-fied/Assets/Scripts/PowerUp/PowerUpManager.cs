@@ -80,8 +80,20 @@ public class PowerUpManager : MonoBehaviour
   //Changes the player's shader property based on the given propType
   private void SetMat(GameObject actor, string propType)
   {
-    //Renderer objRender;
-    actor.transform.Find("Avatar").gameObject.GetComponent<MicrobeCore>().ChangeMaterialProperty(propType);
+    if (actor.gameObject.tag == "Player")
+    {
+      // Swap material if need be
+      actor.transform.Find("Avatar").gameObject.GetComponent<MicrobeCore>().IncreaseActivePowerUps();
+      // Now set the properties on the material
+      actor.transform.Find("Avatar").gameObject.GetComponent<MicrobeCore>().ChangeMaterialProperty(propType);
+    }
+    else
+    {
+      // Swap material if need be
+      actor.gameObject.GetComponent<MicrobeCore>().IncreaseActivePowerUps();
+      // Now set the properties on the material
+      actor.gameObject.GetComponent<MicrobeCore>().ChangeMaterialProperty(propType);
+    }
     // Material originalMat = new Material(actor.gameObject.GetComponent<IntelligentAgent>().getStartingMaterial());
     // if (actor.gameObject.tag == "Player")
     // {
@@ -123,7 +135,20 @@ public class PowerUpManager : MonoBehaviour
     // {
     // 	actor.gameObject.GetComponent<Renderer>().material = oldMat;
     // }
-    actor.transform.Find("Avatar").gameObject.GetComponent<MicrobeCore>().RevertMaterialProperty(propType);
+    if (actor.gameObject.tag == "Player")
+    {
+      // First revert material properties
+      actor.transform.Find("Avatar").gameObject.GetComponent<MicrobeCore>().RevertAllMaterialProperties();
+      // Now change material if need be
+      actor.transform.Find("Avatar").gameObject.GetComponent<MicrobeCore>().ReduceActivePowerUps();
+    }
+    else
+    {
+      // First revert material properties
+      actor.gameObject.GetComponent<MicrobeCore>().RevertAllMaterialProperties();
+      // Now change material if need be
+      actor.gameObject.GetComponent<MicrobeCore>().ReduceActivePowerUps();
+    }
   }
 
 
@@ -136,7 +161,6 @@ public class PowerUpManager : MonoBehaviour
     actor.setActivePowers(actor.getActivePowers() + 1);
 
     //change material
-    Material originalMat = actor.getStartingMaterial();
     SetMat(other.gameObject, "speed");
 
     //Speed power up
@@ -194,7 +218,6 @@ public class PowerUpManager : MonoBehaviour
     actor.setActivePowers(actor.getActivePowers() + 1);
 
     // Change material
-    Material originalMat = actor.getStartingMaterial();
     SetMat(other.gameObject, "magnet");
 
     // Instantiate magnet object to be attached to agent
@@ -251,8 +274,6 @@ public class PowerUpManager : MonoBehaviour
 
     actor.setInvincible(true);
     FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject, "InvinPowerUP");
-
-    Material originalMat = actor.getStartingMaterial();
     SetMat(other.gameObject, "invincible");
     yield return new WaitForSeconds(duration);
 
