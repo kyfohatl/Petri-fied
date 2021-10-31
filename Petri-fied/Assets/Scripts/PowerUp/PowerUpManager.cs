@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class PowerUpManager : MonoBehaviour
 {
-  private int PowerUpType = 3;
+  public int PowerUpType = 3;
   public float SpeedPowerUpMult = 5.0f;
   public float duration = 5f;
   private float BaseSpeedMult = 1f;
   public float FoodMagnetScale = 5f;
   public float FoodMagnetSpeed = 0.5f;
+  public float InvinGrowthMult = 2f;
+  private float BaseInvinGrowthMult = 2f;
   public GameObject SpeedEffect1;//Will call these effect from folder in final product
   public GameObject SpeedEffect2;
   public GameObject FoodMagnet;
@@ -287,6 +289,8 @@ public class PowerUpManager : MonoBehaviour
     actor.setActivePowers(actor.getActivePowers() + 1);
     actor.setActiveInvin(actor.getActiveInvin() + 1);
 
+    actor.setInvinGrowthMultiplier(InvinGrowthMult);
+
     //Color objectColor;
     //Color originalColor = r.material.color;
     //objectColor = new Color(originalColor.r, originalColor.g, originalColor.b, 0.5f);
@@ -328,6 +332,10 @@ public class PowerUpManager : MonoBehaviour
     {
       actor.setActivePowers(actor.getActivePowers() - 1);
       actor.setActiveInvin(actor.getActiveInvin() - 1);
+
+      if(!actor.isInvincible()){
+        actor.setInvinGrowthMultiplier(BaseInvinGrowthMult);
+      }
       if (actor.getActivePowers() <= 0)
       {
         RevertMaterial(other.gameObject, "invincible");

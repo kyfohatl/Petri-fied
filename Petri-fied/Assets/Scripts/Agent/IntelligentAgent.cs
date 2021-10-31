@@ -27,6 +27,7 @@ public class IntelligentAgent : MonoBehaviour
 
   // Power up trackers
   private float PowerUpSpeedMultiplier = 1f;
+  private float InvinGrowthMultiplier = 1f;
   private int activePowers = 0;
   private int activeSpeed = 0;
   private int activeMagnet = 0;
@@ -72,7 +73,7 @@ public class IntelligentAgent : MonoBehaviour
     // Check tag of collided object
     if (other.gameObject.tag == "Food")
     {
-      int increase = (int)Mathf.Round(this.FoodGrowthMultiplier);
+      int increase = (int)Mathf.Round(this.FoodGrowthMultiplier * InvinGrowthMultiplier);
       UpdateScore(increase);
       GameManager.RemoveFood(other.gameObject.GetInstanceID());
       FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "FoodEaten");
@@ -325,6 +326,12 @@ public class IntelligentAgent : MonoBehaviour
   public void setPowerUpSpeedMultiplier(float newMult)
   {
     this.PowerUpSpeedMultiplier = newMult;
+  }
+
+  // Setter method for Power Up invin growth multiplier
+  public void setInvinGrowthMultiplier(float newMult)
+  {
+    this.InvinGrowthMultiplier = newMult;
   }
 
   // Function to set the target of the agent
