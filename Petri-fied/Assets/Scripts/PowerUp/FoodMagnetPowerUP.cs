@@ -26,7 +26,7 @@ public class FoodMagnetPowerUP : MonoBehaviour
 		}
 		// Instantiate the particle effect
         pSystem = Instantiate(MagnetEffect, this.transform.position, this.transform.rotation, this.transform);
-		pSystem.transform.localScale = this.transform.localScale;
+		//pSystem.transform.localScale = this.transform.localScale;
         var sh = pSystem.GetComponent<ParticleSystem>().shape;
         sh.shapeType = ParticleSystemShapeType.Mesh;
         sh.mesh =  createNewMesh();
