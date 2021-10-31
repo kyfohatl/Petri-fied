@@ -97,6 +97,11 @@ public class firstPersonController : MonoBehaviour
 ```
 
 ## The Surface Noise Shader
+Files involved:
+* **PerlinNoise.cginc**
+* **SurfaceNoise.cginc**
+* **SurfaceNoise.Shader**
+
 During the inception of the project, one of our key ideas was to replicate the look of an organic object: a membrane of fat floating around in water. For example, something inspired by the image below:
 
 <p align="center">
