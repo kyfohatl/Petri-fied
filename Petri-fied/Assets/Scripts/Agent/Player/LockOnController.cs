@@ -88,6 +88,7 @@ public class LockOnController : MonoBehaviour
       {
         this.enemyLocked = true;
         CurrentTarget.GetComponent<MicrobeCore>().SetLockedOnStatus(true);
+
         float targetScore = newTarget.GetComponent<IntelligentAgent>().getScore();
         float playerScore = GetComponent<Player>().getScore();
         if (targetScore >= playerScore)
