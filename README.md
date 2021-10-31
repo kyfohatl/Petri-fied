@@ -137,7 +137,8 @@ So we can use an ease curve to smooth the interpolation:
 <p align="center">
   <img src="Images/smooth-lerp.png">
 </p>
-(Images from https://rtouti.github.io/graphics/perlin-noise-algorithm)
+
+*Images from https://rtouti.github.io/graphics/perlin-noise-algorithm*
 
 
 The whole process is shown nicely by this diagram in Gustavson's paper:
@@ -145,7 +146,8 @@ The whole process is shown nicely by this diagram in Gustavson's paper:
 <p align="center">
   <img src="Images/1d-gradient-noise.png">
 </p>
-(Image from https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf)
+
+*Image from https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf*
 
 
 To extrapolate this to 2D, Ken Perlin replaced the line with a grid, and for each corner point of the grid, he would come up with a random gradient. Then the random number for any point on the grid would be the interpolation of the dot products of each of the 4 surrounding corner points' gradient vector, and the vector from the corner point to the point itself:
@@ -156,7 +158,8 @@ To extrapolate this to 2D, Ken Perlin replaced the line with a grid, and for eac
 <p align="center">
   <img src="Images/2d-perlin-vector-dotproduct.png">
 </p>
-(Images from https://rtouti.github.io/graphics/perlin-noise-algorithm)
+
+*Images from https://rtouti.github.io/graphics/perlin-noise-algorithm*
 
 
 For our purposes, to further extrapolate this idea to 3D, we use a 3D grid, where each point on the grid would be on or within a cube, surrounded by the 8 vertices of a grid cube. Thus, to calculate Perlin noise in 3D, we must come up with 8 random vectors for the surrounding grid points, and take their dot products with the corresponding vector to the input point, interpolating the results to get the final Perlin value for the given point.
@@ -241,7 +244,8 @@ Now, we must somehow translate each pseudo-random value assigned to each corner 
 <p align="center">
   <img src="Images/random-gradients-set.png">
 </p>
-(Image from https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf)
+
+*Image from https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf*
 
 
 ```c
@@ -292,7 +296,8 @@ With the dot products for each of the 8 corners of our cube calculated, we can n
 <p align="center">
   <img src="Images/interp-ease-curve.png">
 </p>
-(Image from https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf)
+
+*Image from https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf*
 
 
 We will use Gustavson's implementation for this function:
