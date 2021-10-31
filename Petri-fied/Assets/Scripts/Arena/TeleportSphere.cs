@@ -11,7 +11,6 @@ public class TeleportSphere : MonoBehaviour
 	public float TeleportDiameter = 300f;
 	private float arenaRadius;
 	private float playerLockOnRadius;
-
 	
     // Start is called before the first frame update
     void Start()
@@ -22,26 +21,27 @@ public class TeleportSphere : MonoBehaviour
 		UpdateTeleportDiameter();
     }
 	
-	// If inspector changes value
-	void OnValidate()
+	// Update is called once per frame
+	void Update()
 	{
-		this.transform.localScale = this.TeleportDiameter * new Vector3(1f, 1f, 1f);
-	}
-
-    // Update is called once per frame
-    void Update()
-    {
 		float currentLockOnRadius = this.Player.getLockOnRadius();
 		if (currentLockOnRadius > this.playerLockOnRadius)
 		{
 			UpdateTeleportDiameter();
 		}
-    }
+	}
+	
+	// If inspector changes value
+	void OnValidate()
+	{
+		this.transform.localScale = this.TeleportDiameter * new Vector3(1f, 1f, 1f);
+	}
 	
 	// Update the teleport diameter to reflect current dimensions
-	void UpdateTeleportDiameter()
+	public void UpdateTeleportDiameter()
 	{
 		float cameraOrbit = Camera.main.GetComponent<CameraController>().getGoalOrbitDistance();
+		this.arenaRadius = GetComponent<ArenaSize>().ArenaRadius;
 		this.TeleportDiameter = 2f * (this.arenaRadius + 2f * cameraOrbit);
 		this.transform.localScale = this.TeleportDiameter * new Vector3(1f, 1f, 1f);
 	}
@@ -69,7 +69,7 @@ public class TeleportSphere : MonoBehaviour
 			this.Player.transform.position = antipolePoint;
 			cc.enabled = true;
 		}
-		else if (other.gameObject.tag != "MainCamera")
+		else if (other.gameObject.tag == "Enemy")
 		{
 			other.gameObject.transform.position = antipolePoint;
 		}

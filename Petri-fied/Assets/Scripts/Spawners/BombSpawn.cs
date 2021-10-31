@@ -38,8 +38,8 @@ public class BombSpawn : SpawnerController
 		float offset = this.outerRadius / 2f;
 		// Arms extending out of axis
 		Vector3[] innerPoles = pointsOnSphere(8, this.outerRadius + offset);
-		Vector3[] midPoles = pointsOnSphere(8, this.outerRadius + 2 * offset);
-		Vector3[] outerPoles = pointsOnSphere(8, this.outerRadius + 3 * offset);
+		Vector3[] midPoles = pointsOnSphere(8, this.outerRadius + 2f * offset);
+		Vector3[] outerPoles = pointsOnSphere(8, this.outerRadius + 3f * offset);
 		// All points arrays collated
 		List<Vector3[]> allArrays = new List<Vector3[]>() {innerSphere,
 														   outerSphere,
@@ -47,7 +47,7 @@ public class BombSpawn : SpawnerController
 														   midPoles,
 														   outerPoles};
 		// Position and restriction of bomb origin spawn location
-		float spawnRadius = this.arenaRadius - (this.outerRadius + 4 * offset);
+		float spawnRadius = this.arenaRadius - (this.outerRadius + 4f * offset);
 		Vector3 spawnOrigin = getRandomPosition(spawnRadius);
 		
 		// Instantiates the core object in the sphere
@@ -84,8 +84,8 @@ public class BombSpawn : SpawnerController
 	{
 		// Uses fibonacci approximation method
 		Vector3[] points = new Vector3[numPoints];
-		float increment = Mathf.PI * (3 - Mathf.Sqrt(5));
-		float offset = 2.0f / numPoints;
+		float increment = Mathf.PI * (3f - Mathf.Sqrt(5f));
+		float offset = 2f / numPoints;
 		float x = 0;
 		float y = 0;
 		float z = 0;
@@ -95,8 +95,8 @@ public class BombSpawn : SpawnerController
 		// Generate each point and replace empty value in array
 		for (int i = 0; i < numPoints; i++)
 		{
-			y = i * offset - 1 + (offset / 2);
-			r = Mathf.Sqrt(1 - y * y);
+			y = i * offset - 1f + (offset / 2f);
+			r = Mathf.Sqrt(1f - y * y);
 			phi = i * increment;
 			x = Mathf.Cos(phi) * r;
 			z = Mathf.Sin(phi) * r;
