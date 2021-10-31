@@ -5,25 +5,44 @@ using UnityEngine;
 public class FoodSpawn : SpawnerController
 {
 	// Pre-instantiated object pool and initial maximum
+	public static FoodSpawn instance;
 	private List<GameObject> foodPool;
-	public int initialMaximum = 400; // at mosy 400 food can be in the scene
-	public int absoluteMinimum = 50; // at least 50 food will be in the scene once spawned
+	public int spawnAroundPlayerMax = 3;
+	public int initialMaximum = 300;
+	public int absoluteMinimum = 50;
 	public float percentageReducedPerLog = 15f;
-	
-	// The governing procedural spawner that calls this spawner
-	private ProceduralSpawner ProcSpawner;
 	
 	// Called on start-up of game
 	void Awake()
 	{
+		instance = this;
 		PreInstantiate();
-		this.ProcSpawner = GetComponent<ProceduralSpawner>();
+		this.ProcSpawner = GameObject.FindWithTag("Spawner");
+		if (this.initialMaximum != this.spawnLimit)
+		{
+			int larger = (int)Mathf.Max(this.initialMaximum, this.spawnLimit);
+			this.initialMaximum = larger;
+			this.spawnLimit = larger;
+		}
 	}
 	
-	// Start is called before the first frame update, used to pre-instanstiate all food
+	// Start is called before the first frame update
 	void Start()
 	{
 		
+	}
+	
+	// Get the first inActive Food Pellet
+	public GameObject GetInactiveFood()
+	{
+		for (int i = 0; i < initialMaximum; i++)
+		{
+			if (!foodPool[i].activeInHierarchy)
+			{
+				return foodPool[i];
+			}
+		}
+		return null;
 	}
 	
 	// During load of game
@@ -31,10 +50,11 @@ public class FoodSpawn : SpawnerController
 	{
 		this.foodPool = new List<GameObject>();
 		GameObject newFood;
-		for (int i = 0; i < initialMaximum; i++)
+		Transform parent = this.gameObject.transform.Find("FoodPellets");
+		for (int i = 0; i < this.initialMaximum; i++)
 		{
 			Vector3 Target = getRandomPosition(); // this will be lastly decided by the procedural spawner anyway
-			newFood = Instantiate(this.prefabToSpawn, this.transform.Find("FoodPellets"));
+			newFood = Instantiate(this.prefabToSpawn, parent);
 			newFood.SetActive(false);
 			newFood.transform.rotation = Random.rotation;
 			this.foodPool.Add(newFood);
@@ -54,43 +74,51 @@ public class FoodSpawn : SpawnerController
 		{
 			// Limit the amount of food spawn to be the initial maximum subtract a multiplier of the log10Score
 			float multiplier = (float)this.initialMaximum * this.percentageReducedPerLog / 100f;
-			float log10Score = this.ProcSpawner.getPlayerLog10ScaleFactor();
+			float log10Score = this.ProcSpawner.GetComponent<ProceduralSpawner>().getPlayerLog10ScaleFactor();
 			int limitDeduction = (int)Mathf.Floor(multiplier * log10Score);
 			int spawnMaximum = this.initialMaximum - limitDeduction;
 			int spawnMinimum = this.absoluteMinimum;
 			int newLimit = (int)Mathf.Max(spawnMinimum, spawnMaximum);
 			this.spawnLimit = newLimit;
 			
-			// Now activate and relocate food pellets equal to how many can spawn; prioritise around player first
-			int howManyToSpawnAroundPlayer = NewSpawnCount(this.ProcSpawner.foodCount);
-			int howManySpawnRandom = NewSpawnCount(this.ProcSpawner.foodCount);
-			// Check to see if proposed spawn counts can still be spawned
-			if (howManyToSpawnAroundPlayer + this.ProcSpawner.foodCount > newLimit)
+			// Determine how many of each food type will spawn
+			int currentActiveFood = this.ProcSpawner.GetComponent<ProceduralSpawner>().foodCount;
+			int howManyToSpawnAroundPlayer = NewSpawnCount(currentActiveFood);
+			if (howManyToSpawnAroundPlayer > this.spawnAroundPlayerMax)
 			{
-				howManyToSpawnAroundPlayer = newLimit - this.ProcSpawner.foodCount;
+				howManyToSpawnAroundPlayer = this.spawnAroundPlayerMax;
+			}
+			int howManySpawnRandom = NewSpawnCount(currentActiveFood);
+			// Check to see if proposed spawn counts can still be spawned
+			if (howManyToSpawnAroundPlayer + currentActiveFood > newLimit)
+			{
+				howManyToSpawnAroundPlayer = newLimit - currentActiveFood;
 				howManySpawnRandom = 0;
 			}
-			else if (howManySpawnRandom + howManyToSpawnAroundPlayer + this.ProcSpawner.foodCount > newLimit)
+			else if (howManySpawnRandom + howManyToSpawnAroundPlayer + currentActiveFood > newLimit)
 			{
-				howManySpawnRandom = newLimit - this.ProcSpawner.foodCount - howManyToSpawnAroundPlayer;
+				howManySpawnRandom = newLimit - currentActiveFood - howManyToSpawnAroundPlayer;
 			}
 			
 			// Now activate and relocate food pellets equal to how many can spawn; prioritise around player first
 			for (int i = 0; i < howManyToSpawnAroundPlayer; i++)
 			{
 				// Determine the final spawn position
-				float lockOnRadius = this.ProcSpawner.Player.GetComponent<IntelligentAgent>().getLockOnRadius();
-				Debug.Log("enabled boi");
-				Vector3 playerPos = this.ProcSpawner.Player.transform.position;
+				float lockOnRadius = this.ProcSpawner.GetComponent<ProceduralSpawner>().Player.GetComponent<IntelligentAgent>().getLockOnRadius();
+				Vector3 playerPos = this.ProcSpawner.GetComponent<ProceduralSpawner>().Player.transform.position;
 				Vector3 spawnPosition = getRandomPosition(lockOnRadius, playerPos);
-				GameObject newFood = this.transform.Find("FoodPellets").GetChild(this.ProcSpawner.foodCount).gameObject;
+				int index = this.ProcSpawner.GetComponent<ProceduralSpawner>().foodCount;
+				GameObject newFood = instance.GetInactiveFood();
+				if (newFood == null)
+				{
+					break;
+				}
 				if (newFood.activeInHierarchy)
 				{
 					Debug.Log("trying to use already active food");
-					Debug.Break();
 				}
 				// Check to ensure the spawn position in within the spawn arena (encourages staying away from edge)
-				if (this.ProcSpawner.withinArena(spawnPosition))
+				if (this.ProcSpawner.GetComponent<ProceduralSpawner>().withinArena(spawnPosition))
 				{
 					newFood.transform.position = spawnPosition;
 				}
@@ -98,7 +126,6 @@ public class FoodSpawn : SpawnerController
 				{
 					newFood.transform.position = getRandomPosition();
 				}
-				Debug.Log("Planned: " + newFood.transform.position);
 				
 				// Adjust scale to make food larger as the player grows
 				float newScaleMultiplier = Mathf.Log(log10Score); // log of log to limit growth
@@ -109,7 +136,7 @@ public class FoodSpawn : SpawnerController
 				// Finally make food active and add to game manager dictionary
 				newFood.SetActive(true);
 				GameManager.AddFood(newFood.GetInstanceID(), newFood);
-				this.ProcSpawner.foodCount += 1;
+				this.ProcSpawner.GetComponent<ProceduralSpawner>().foodCount += 1;
 			}
 			
 			// Now activate food pellets randomly around the arena
@@ -117,14 +144,17 @@ public class FoodSpawn : SpawnerController
 			{
 				// Determine the final spawn position
 				Vector3 spawnPosition = getRandomPosition();
-				GameObject newFood = this.transform.Find("FoodPellets").GetChild(this.ProcSpawner.foodCount).gameObject;
+				int index = this.ProcSpawner.GetComponent<ProceduralSpawner>().foodCount;
+				GameObject newFood = instance.GetInactiveFood();
+				if (newFood == null)
+				{
+					break;
+				}
 				if (newFood.activeInHierarchy)
 				{
 					Debug.Log("trying to use already active food");
-					Debug.Break();
 				}
 				newFood.transform.position = spawnPosition;
-				Debug.Log("Rando: " + newFood.transform.position);
 				
 				// Adjust scale to make food larger as the player grows
 				float newScaleMultiplier = Mathf.Log(log10Score); // log of log to limit growth
@@ -134,7 +164,7 @@ public class FoodSpawn : SpawnerController
 				// Finally make food active and add to game manager dictionary
 				newFood.SetActive(true);
 				GameManager.AddFood(newFood.GetInstanceID(), newFood);
-				this.ProcSpawner.foodCount += 1; //
+				this.ProcSpawner.GetComponent<ProceduralSpawner>().foodCount += 1;
 			}
 			
 			// Now wait for the time between spawns to complete

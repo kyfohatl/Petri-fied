@@ -4,13 +4,10 @@ using UnityEngine;
 
 public class ProceduralSpawner : MonoBehaviour
 {
-	// Instantiate this object
-	public static ProceduralSpawner instance;
-	
 	// Track the player and arena to get relevant statistics
 	public GameObject Player;
 	public GameObject Arena;
-	private float arenaSpawnRadius;
+	private float originalArenaRadius;
 	private Vector3 arenaSpawnOrigin;
 	
 	// Each type of spawner
@@ -26,20 +23,8 @@ public class ProceduralSpawner : MonoBehaviour
 	public int enemyCount = 0;
 	public int powerUpCount = 0;
 	
-	// Average position of each entity type (except food which can keep spawning everywhere equally)
-	private Vector3 averageSuperFoodPosition;
-	private Vector3 averageEnemyPosition;
-	private Vector3 averagePowerUpPosition;
-	
 	// Tracker to scale to player's log10 score
 	[SerializeField] private float playerLog10ScaleFactor;
-	
-	// Call on start-up of game
-	private void Awake()
-	{
-		instance = this;
-		DontDestroyOnLoad(this.gameObject);
-	}
 	
 	// Start is called before the first frame update
 	void Start()
@@ -47,7 +32,7 @@ public class ProceduralSpawner : MonoBehaviour
 		this.Player = GameObject.FindWithTag("Player");
 		this.Arena = GameObject.FindWithTag("Arena");
 		GetInitialArenaDimensions();
-		ScaleArena(); // this function calls
+		ScaleArena(); // this function calls DeterminePlayerScaleFactor()
 		EstablishSpawners();
 		BeginSpawners();
 	}
@@ -71,22 +56,36 @@ public class ProceduralSpawner : MonoBehaviour
 	// Start the spawners
 	void BeginSpawners()
 	{
-		StartCoroutine(GetComponent<FoodSpawn>().GenerateFood());
+		StartCoroutine(this.FoodSpawner.GenerateFood());
+		StartCoroutine(this.SuperFoodSpawner.GenerateSuperFood());
+		StartCoroutine(this.BombSpawner.GenerateBomb());
+		StartCoroutine(this.PowerUpSpawner.GeneratePowerUp());
+		StartCoroutine(this.EnemySpawner.GenerateEnemy());
+	}
+	
+	// Stop them if needed
+	void StopSpawners()
+	{
+		StopCoroutine(this.FoodSpawner.GenerateFood());
+		StopCoroutine(this.SuperFoodSpawner.GenerateSuperFood());
+		StopCoroutine(this.BombSpawner.GenerateBomb());
+		StopCoroutine(this.PowerUpSpawner.GeneratePowerUp());
+		StopCoroutine(this.EnemySpawner.GenerateEnemy());
 	}
 	
 	// Function to determine spawner parameters given arena dimensions
 	void GetInitialArenaDimensions()
 	{
-		this.arenaSpawnRadius = this.Arena.GetComponent<ArenaSize>().ArenaRadius;
+		this.originalArenaRadius = this.Arena.GetComponent<ArenaSize>().ArenaRadius;
 		this.arenaSpawnOrigin = this.Arena.gameObject.transform.position;
 	}
 	
-	// Function to resize arena based on player score
+	// Function to resize arena based on player score every log10 multiplies 10% to arena radius
 	void ScaleArena()
 	{
-		float currentArenaRadius = this.Arena.GetComponent<ArenaSize>().ArenaRadius;
 		DeterminePlayerScaleFactor();
-		this.arenaSpawnRadius = currentArenaRadius * this.playerLog10ScaleFactor;
+		float newScale = Mathf.Pow(1.1f, (this.playerLog10ScaleFactor - 1f));
+		this.Arena.GetComponent<ArenaSize>().ArenaRadius = this.originalArenaRadius * newScale;
 		this.Arena.GetComponent<TeleportSphere>().UpdateTeleportDiameter();
 	}
 	
@@ -102,7 +101,8 @@ public class ProceduralSpawner : MonoBehaviour
 	public bool withinArena(Vector3 testPoint)
 	{
 		float distSqrdToTestPoint = (testPoint - this.arenaSpawnOrigin).sqrMagnitude;
-		bool inSphere = (distSqrdToTestPoint < this.arenaSpawnRadius * this.arenaSpawnRadius);
+		float arenaSpawnRadius = this.Arena.GetComponent<ArenaSize>().ArenaRadius;
+		bool inSphere = (distSqrdToTestPoint < arenaSpawnRadius * arenaSpawnRadius);
 		return inSphere;
 	}
 	public bool withinSphere(Vector3 testPoint, Vector3 sphereOrigin, float sphereRadius)

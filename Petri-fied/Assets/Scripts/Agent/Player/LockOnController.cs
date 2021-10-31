@@ -26,29 +26,36 @@ public class LockOnController : MonoBehaviour
   // Called at the end of every frame
   void LateUpdate()
   {
-    if (this.CurrentTarget == null)
-    {
-      // Exit early if current target no longer exists (might've been eaten)
+	// Exit early if current target no longer exists (might've been eaten)
+	if (this.CurrentTarget == null)
+	{
       this.enemyLocked = false;
       return;
     }
+	
+	// Now check if the target is still being renderer (applies to power ups that got eaten)
+	if (!this.CurrentTarget.GetComponent<MeshRenderer>().enabled || !this.CurrentTarget.activeInHierarchy)
+	{
+		this.enemyLocked = false;
+		GetComponent<IntelligentAgent>().setTarget(null);
+		return;
+	}
+	
     // Otherwise, check if target is an enemy and assign material from score difference
     if (this.enemyLocked)
     {
-      float targetScore = CurrentTarget.GetComponent<IntelligentAgent>().getScore();
+	  float targetScore = this.CurrentTarget.GetComponent<IntelligentAgent>().getScore();
       float playerScore = GetComponent<Player>().getScore();
+	  bool targetInvin = this.CurrentTarget.GetComponent<IntelligentAgent>().isInvincible();
 
-      if (targetScore >= playerScore)
+	  if (targetScore >= playerScore || targetInvin)
       {
-        //this.adaptedMaterial.SetColor("_OutlineColor", this.deadlyEnemyGlow);
         CurrentTarget.GetComponent<MicrobeCore>().ChangeLockOnOutlineColor(this.deadlyEnemyGlow);
       }
       else
       {
-        //this.adaptedMaterial.SetColor("_OutlineColor", this.weakEnemyGlow);
         CurrentTarget.GetComponent<MicrobeCore>().ChangeLockOnOutlineColor(this.weakEnemyGlow);
       }
-      //this.CurrentTarget.gameObject.GetComponent<Renderer>().material = this.adaptedMaterial;
     }
   }
 
@@ -73,17 +80,6 @@ public class LockOnController : MonoBehaviour
     else
     {
       lockOnOriginal = new Material(newTarget.gameObject.GetComponent<Renderer>().material);
-      //Color newMainColour;
-      // if (this.lockOnOriginal.HasProperty("_MainColor"))
-      // {
-      // 	newMainColour = this.lockOnOriginal.GetColor("_MainColor");
-      // }
-      // else
-      // {
-      // 	newMainColour = this.lockOnOriginal.color;
-      // }
-      // this.adaptedMaterial.SetColor("_MainColor", newMainColour);
-
       if (newTarget.gameObject.tag == "Enemy")
       {
         this.enemyLocked = true;
@@ -91,14 +87,16 @@ public class LockOnController : MonoBehaviour
 
         float targetScore = newTarget.GetComponent<IntelligentAgent>().getScore();
         float playerScore = GetComponent<Player>().getScore();
-        if (targetScore >= playerScore)
-        {
-          this.adaptedMaterial.SetColor("_OutlineColor", this.deadlyEnemyGlow);
-        }
-        else
-        {
-          this.adaptedMaterial.SetColor("_OutlineColor", this.weakEnemyGlow);
-        }
+		bool targetInvin = this.CurrentTarget.GetComponent<IntelligentAgent>().isInvincible();
+		
+		if (targetScore >= playerScore || targetInvin)
+		{
+			CurrentTarget.GetComponent<MicrobeCore>().ChangeLockOnOutlineColor(this.deadlyEnemyGlow);
+		}
+		else
+		{
+			CurrentTarget.GetComponent<MicrobeCore>().ChangeLockOnOutlineColor(this.weakEnemyGlow);
+		}
       }
       else
       {

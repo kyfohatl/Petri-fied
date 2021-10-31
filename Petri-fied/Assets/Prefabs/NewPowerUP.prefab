@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 4038944329464481080}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -110,10 +110,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06e82a79d8dd5304ab79b6358e370e4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PowerUpType: 3
   SpeedPowerUpMult: 3
   duration: 24
   FoodMagnetScale: 7
   FoodMagnetSpeed: 1
+  InvinGrowthMult: 2
   SpeedEffect1: {fileID: 7703314129621319122, guid: 2cad1d93884f8444aba16bdaf992c6b4, type: 3}
   SpeedEffect2: {fileID: 5200362872464816308, guid: 7bc80832640ea0c458519e76df24b052, type: 3}
   FoodMagnet: {fileID: 3375488646298033171, guid: 01cc00d56e536a840a549900d84a816d, type: 3}
@@ -134,4 +136,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OrbitSpeed: 1
   OrbitClockwise: 1
-  RandomPath: 0
+  Moving: 0

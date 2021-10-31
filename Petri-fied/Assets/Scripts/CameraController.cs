@@ -277,4 +277,9 @@ public class CameraController : MonoBehaviour
   {
     this.cameraSensitivityMultiplier = multiplier;
   }
+  
+  public float GetCameraInclination()
+  {
+	  return curVerticalRotation * 180 / Mathf.PI; // angle in eularian degrees
+  }
 }
