@@ -104,6 +104,7 @@ During the inception of the project, one of our key ideas was to replicate the l
 </p>
 (Image from https://agfundernews.com/wp-content/uploads/2016/10/13597144015Um.jpg)
 
+
 Given that the base models of our microbes are spheres, randomly displacing the sphere vertices seemed like a good approach. Of course doing so in a purely random manner would not be sufficient as we would end up with complete randomness and sharp, jagged edges. Thus, inspired by Jarrod's Perlin noise lecture, we decided to use Perlin noise to get a more organic and smooth look.
 
 The initial approach was simple. Unity has a built in Perlin noise function ```Mathf.PerlinNoise()```, thus we can feed each vertex to the function, get the corresponding Perlin noise value, and then displace the vertex using said value to generate the final mesh. Of course there was the problem of our vertices being 3D points on a sphere, whilst the unity function is a 2D implementation. Hence we needed a function to map each 3D point to a unique 2D point, but nothing that a quick copy paste from StackOverflow couldn't solve.
@@ -138,12 +139,14 @@ So we can use an ease curve to smooth the interpolation:
 </p>
 (Images from https://rtouti.github.io/graphics/perlin-noise-algorithm)
 
+
 The whole process is shown nicely by this diagram in Gustavson's paper:
 
 <p align="center">
   <img src="Images/1d-gradient-noise.png">
 </p>
 (Image from https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf)
+
 
 To extrapolate this to 2D, Ken Perlin replaced the line with a grid, and for each corner point of the grid, he would come up with a random gradient. Then the random number for any point on the grid would be the interpolation of the dot products of each of the 4 surrounding corner points' gradient vector, and the vector from the corner point to the point itself:
 
@@ -154,6 +157,7 @@ To extrapolate this to 2D, Ken Perlin replaced the line with a grid, and for eac
   <img src="Images/2d-perlin-vector-dotproduct.png">
 </p>
 (Images from https://rtouti.github.io/graphics/perlin-noise-algorithm)
+
 
 For our purposes, to further extrapolate this idea to 3D, we use a 3D grid, where each point on the grid would be on or within a cube, surrounded by the 8 vertices of a grid cube. Thus, to calculate Perlin noise in 3D, we must come up with 8 random vectors for the surrounding grid points, and take their dot products with the corresponding vector to the input point, interpolating the results to get the final Perlin value for the given point.
 
@@ -238,6 +242,8 @@ Now, we must somehow translate each pseudo-random value assigned to each corner 
   <img src="Images/random-gradients-set.png">
 </p>
 (Image from https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf)
+
+
 ```c
 static const  int gradCount = 12;
 
@@ -287,6 +293,7 @@ With the dot products for each of the 8 corners of our cube calculated, we can n
   <img src="Images/interp-ease-curve.png">
 </p>
 (Image from https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf)
+
 
 We will use Gustavson's implementation for this function:
 ```c
@@ -357,13 +364,13 @@ _IsMagnet ("Magnet Powerup Effect", Float) = 0.0
 Which we then use in "if" statements to get different color effects. Here, we use expressions such as ```(_SinTime.w + 1.0f)``` or ```(sin(_Time.w * 1.7f) + 1.0f)``` to get a shader which changes color over time.
 ```c
 if (_IsInvincible > 0.1) {
-color = fixed4(i.noise.x / 1.5f, (sin(_Time.w * 1.7f) + 1.0f) / 2.5f , i.noise.x / 1.5f, 1);
+  color = fixed4(i.noise.x / 1.5f, (sin(_Time.w * 1.7f) + 1.0f) / 2.5f , i.noise.x / 1.5f, 1);
 }
 if (_IsSpeed > 0.1) {
-color = fixed4((sin(_Time.w * 1.7f) + 1.0f) / 2.5f, i.noise.x / 1.5f , i.noise.x / 1.5f, 1);
+  color = fixed4((sin(_Time.w * 1.7f) + 1.0f) / 2.5f, i.noise.x / 1.5f , i.noise.x / 1.5f, 1);
 }
 if (_IsMagnet > 0.1) {
-color = fixed4(i.noise.x / 1.3f, i.noise.x / 1.3f , (_SinTime.w + 1.0f) / 2.0f, 1);
+  color = fixed4(i.noise.x / 1.3f, i.noise.x / 1.3f , (_SinTime.w + 1.0f) / 2.0f, 1);
 }
 ```
 And now we can display "organic-looking" objects on screen:
