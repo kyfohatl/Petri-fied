@@ -103,7 +103,7 @@ During the inception of the project, one of our key ideas was to replicate the l
   <img src="Images/virusIdea.jpg">
 </p>
 
-Image from https://agfundernews.com/wp-content/uploads/2016/10/13597144015Um.jpg
+*Image from https://agfundernews.com/wp-content/uploads/2016/10/13597144015Um.jpg*
 
 Given that the base models of our microbes are spheres, randomly displacing the sphere vertices seemed like a good approach. Of course doing so in a purely random manner would not be sufficient as we would end up with complete randomness and sharp, jagged edges. Thus, inspired by Jarrod's Perlin noise lecture, we decided to use Perlin noise to get a more organic and smooth look.
 
