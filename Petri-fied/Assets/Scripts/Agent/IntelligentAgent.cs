@@ -28,7 +28,12 @@ public class IntelligentAgent : MonoBehaviour
   // Power up trackers
   private float PowerUpSpeedMultiplier = 1f;
   private int activePowers = 0;
+  private int activeSpeed = 0;
+  private int activeMagnet = 0;
+  private int activeInvin = 0;
   [SerializeField] private bool InvincibilityMode = false;
+  [SerializeField] private bool SpeedMode = false;
+  [SerializeField] private bool MagnetMode = false;
 
   // Agent genetic modifiers
   [SerializeField] private float GeneticGrowthMultiplier = 0.5f;
@@ -115,18 +120,6 @@ public class IntelligentAgent : MonoBehaviour
     {
       this.powerUpsCollected += 1;
     }
-  }
-
-  // Function to check if agent is invincible
-  public bool isInvincible()
-  {
-    return this.InvincibilityMode;
-  }
-
-  // Function to update if agent invincible status
-  public void setInvincible(bool setThis)
-  {
-    this.InvincibilityMode = setThis;
   }
 
   // Function to update radius
@@ -459,4 +452,70 @@ public class IntelligentAgent : MonoBehaviour
   {
     return this.activePowers;
   }
+
+  
+  // Function to check if agent is invincible
+  public bool isInvincible()
+  {
+    return this.InvincibilityMode;
+  }
+
+  // Function to check how many invincible power-ups
+  public void setActiveInvin(int num){
+    this.activeInvin = num;
+    if(num > 0){
+      this.InvincibilityMode = true;
+    }else{
+      this.InvincibilityMode = false;
+    }
+  }
+
+  public int getActiveInvin(){
+    return this.activeInvin;
+  }
+
+
+  // Function to check if agent has speed power-up
+  public bool isSpeed()
+  {
+    return this.SpeedMode;
+  }
+
+  // Function to check how many speed power-ups
+  public void setActiveSpeed(int num){
+    this.activeSpeed = num;
+    if(num > 0){
+      this.SpeedMode = true;
+    }else{
+      this.SpeedMode = false;
+    }
+  }
+
+  public int getActiveSpeed(){
+    return this.activeSpeed;
+  }
+
+  // Function to check if agent is Magnet
+  public bool isMagnet()
+  {
+    return this.MagnetMode;
+  }
+
+  // Function to check how many Magnet power-ups
+  public void setActiveMagnet(int num){
+    this.activeMagnet = num;
+    if(num > 0){
+      this.MagnetMode = true;
+    }else{
+      this.MagnetMode = false;
+    }
+  }
+
+  public int getActiveMagnet(){
+    return this.activeMagnet;
+  }
+  
 }
+
+
+
