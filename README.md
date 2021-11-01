@@ -259,6 +259,13 @@ fixed4 col = _OutlineColor * 10;
   <img src="Gifs/bloom-outline.gif">
 </p>
 
+The shader here was inspired by the following sources:
+* *Shader - Smooth Outline* youtube.com/watch?v=SlTkBe4YNbo
+* *Outlined Diffuse Shader Fixed for Unity 5.6* https://github.com/Shrimpey/Outlined-Diffuse-Shader-Fixed
+* *SILHOUETTE Highlight / Outline / Glow Diffuse Shader in Unity* https://www.youtube.com/watch?v=00qMZlacZQo
+* *Stack Overflow* https://stackoverflow.com/questions/57267289/how-to-make-3d-object-visible-behind-wall-but-invisible-if-behind-wall-and-unde
+* https://www.reddit.com/r/Unity3D/comments/3q3whw/need_to_make_a_shader_that_produces_a_silhouette/
+
 ## The Surface Noise Shader
 Files involved:
 * **Petri-fied/Assets/Shaders/PerlinNoise.cginc**
@@ -553,4 +560,27 @@ And now we can display "organic-looking" objects on screen:
   <img src="Gifs/surfaceNoise-shader.gif">
 </p>
 
+The shader work displayed here was inspired by the following:
+* Perlin Noise: A Procedural Generation Algorithm https://rtouti.github.io/graphics/perlin-noise-algorithm
+* Stefan Gustavson's *Simplex Noise Demystified*, Linkoping University 2005 https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
 
+## Credits
+Perlin Noise: A Procedural Generation Algorithm
+https://rtouti.github.io/graphics/perlin-noise-algorithm
+
+Stefan Gustavson's *Simplex Noise Demystified*, Linkoping University 2005
+https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
+
+Shader - Smooth Outline
+youtube.com/watch?v=SlTkBe4YNbo
+
+Outlined Diffuse Shader Fixed for Unity 5.6
+https://github.com/Shrimpey/Outlined-Diffuse-Shader-Fixed
+
+SILHOUETTE Highlight / Outline / Glow Diffuse Shader in Unity
+https://www.youtube.com/watch?v=00qMZlacZQo
+
+Stack Overflow
+https://stackoverflow.com/questions/57267289/how-to-make-3d-object-visible-behind-wall-but-invisible-if-behind-wall-and-unde
+
+https://www.reddit.com/r/Unity3D/comments/3q3whw/need_to_make_a_shader_that_produces_a_silhouette/
