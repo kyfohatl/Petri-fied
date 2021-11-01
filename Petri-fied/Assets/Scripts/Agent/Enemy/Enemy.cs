@@ -270,6 +270,10 @@ public class Enemy : IntelligentAgent
 		}
 		else if (target.tag == "Food")
 		{
+			if (!target.activeInHierarchy)
+			{
+				return 0f; // if food has been eaten
+			}
 			float value = this.transform.localScale.x * this.getFoodGrowthMultiplier();
 			return value / expectedTravelTime; // is meant to get easier the bigger you are
 		}
@@ -287,6 +291,10 @@ public class Enemy : IntelligentAgent
 		// Adjust enemy stats to scale to player
 		if (GameManager.ScaleEnemies)
 		{
+			// Add an extra starting bonus to the enemy to help them reach high scores
+			int playerScore = this.Player.GetComponent<IntelligentAgent>().getScore();
+			int enemyStartingBonus = (int)Mathf.Round(UnityEngine.Random.Range(0.05f, 0.02f) * playerScore); // 1% to 2%
+			UpdateScore(enemyStartingBonus);
 			ScaleToPlayer();
 		}
 		ApplyDifficultySliders(); // apply any difficulty sliders

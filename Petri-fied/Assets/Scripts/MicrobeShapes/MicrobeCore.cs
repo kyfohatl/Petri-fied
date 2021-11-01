@@ -14,6 +14,12 @@ public class MicrobeCore : MonoBehaviour
   // Each face of the original cube
   private MicrobeFace[] microbeFaces;
   // The default material
+  public Material defaultMaterialBase;
+  // The lock-on material
+  public Material lockOnMaterialBase;
+  // The power-up outline material
+  public Material powerUpMaterialBase;
+  // The default material
   public Material defaultMaterial;
   // The lock-on material
   public Material lockOnMaterial;
@@ -38,6 +44,13 @@ public class MicrobeCore : MonoBehaviour
 
   private void OnValidate()
   {
+    if (defaultMaterialBase != null && lockOnMaterialBase != null && powerUpMaterialBase != null)
+    {
+      defaultMaterial = new Material(defaultMaterialBase);
+      lockOnMaterial = new Material(lockOnMaterialBase);
+      powerUpMaterial = new Material(powerUpMaterialBase);
+    }
+
     // Set up the mesh objects
     setupMeshObjects();
 
@@ -47,6 +60,13 @@ public class MicrobeCore : MonoBehaviour
 
   private void Start()
   {
+    if (defaultMaterialBase != null && lockOnMaterialBase != null && powerUpMaterialBase != null)
+    {
+      defaultMaterial = new Material(defaultMaterialBase);
+      lockOnMaterial = new Material(lockOnMaterialBase);
+      powerUpMaterial = new Material(powerUpMaterialBase);
+    }
+
     // Set up the mesh objects
     setupMeshObjects();
 
@@ -113,12 +133,6 @@ public class MicrobeCore : MonoBehaviour
         }
         else
         {
-          //Debug.Log(defaultMaterial);
-          //Debug.Log(filters[i].GetComponent<MeshRenderer>().sharedMaterial);
-          if (defaultMaterial == null)
-          {
-            Debug.Log(this.gameObject.tag);
-          }
           filters[i].GetComponent<MeshRenderer>().sharedMaterial = new Material(defaultMaterial);
         }
       }
@@ -160,8 +174,6 @@ public class MicrobeCore : MonoBehaviour
     {
       numActivePowerUps--;
     }
-
-    Debug.Log("isLockedOn: " + isLockedOn + " numActv: " + numActivePowerUps);
 
     if (!isLockedOn && numActivePowerUps <= 0)
     {

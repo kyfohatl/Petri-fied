@@ -10,7 +10,7 @@ public class FoodLife : MonoBehaviour
 	// Start is called on first frame
 	void Start()
 	{
-		StartCoroutine("Decompose");
+		StartCoroutine(Decompose());
 	}
 	
 	// Update is called every frame
@@ -30,7 +30,11 @@ public class FoodLife : MonoBehaviour
 			{
 				GameManager.RemoveSuperFood(this.gameObject.GetInstanceID());
 			}
-			Destroy(this.gameObject);
+			this.gameObject.SetActive(false);
+			ProceduralSpawner spawner = GameObject.FindWithTag("Spawner").GetComponent<ProceduralSpawner>();
+			spawner.foodCount -= 1;
+			int newIndex = GameObject.FindWithTag("Spawner").GetComponent<FoodSpawn>().initialMaximum;
+			this.transform.SetSiblingIndex(newIndex); // move this game object to be last in inactive spawn queue
 		}
 		else
 		{

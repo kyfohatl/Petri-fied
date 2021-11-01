@@ -13,7 +13,7 @@ public class IntelligentAgent : MonoBehaviour
   // Agent data elements
   [SerializeField] private string Name = "";
   public int Score = 1;
-  public float Radius = 1f;
+  public float Radius = 1f; // the scale factor of the agent
   public float LockOnRadius = 10f;
   public int peakScore = 1;
   private float initialisationTime;
@@ -27,8 +27,14 @@ public class IntelligentAgent : MonoBehaviour
 
   // Power up trackers
   private float PowerUpSpeedMultiplier = 1f;
+  private float InvinGrowthMultiplier = 1f;
   private int activePowers = 0;
+  private int activeSpeed = 0;
+  private int activeMagnet = 0;
+  private int activeInvin = 0;
   [SerializeField] private bool InvincibilityMode = false;
+  private bool SpeedMode = false;
+  private bool MagnetMode = false;
 
   // Agent genetic modifiers
   [SerializeField] private float GeneticGrowthMultiplier = 0.5f;
@@ -39,7 +45,7 @@ public class IntelligentAgent : MonoBehaviour
 
   // Size update parameters
   private float sizeUpdateDuration = 1f; // default: 1 second
-  private bool sizeUpdateTriggered = false;
+  private bool sizeUpdateTriggered = true;
   private float sizeUpdateStartTime;
   private Vector3 previousLocalScale;
   private Vector3 goalLocalScale;
@@ -54,8 +60,10 @@ public class IntelligentAgent : MonoBehaviour
   {
     this.initialisationTime = Time.timeSinceLevelLoad;
     this.sizeUpdateStartTime = Time.timeSinceLevelLoad;
-    this.previousLocalScale = transform.localScale;
-    this.goalLocalScale = new Vector3(1f, 1f, 1f) * this.Radius;
+	UpdateRadius();
+	this.transform.localScale = new Vector3(1f, 1f, 1f) * this.Radius;
+	this.goalLocalScale = this.transform.localScale;
+	this.previousLocalScale = this.transform.localScale;
     this.GameManager = FindObjectOfType<GameManager>();
     GenerateRandomGenetics();
     this.LockOnRadius = this.Radius * this.LockOnRadiusMultiplier;
@@ -67,11 +75,23 @@ public class IntelligentAgent : MonoBehaviour
     // Check tag of collided object
     if (other.gameObject.tag == "Food")
     {
-      int increase = (int)Mathf.Round(this.FoodGrowthMultiplier);
+      int increase = (int)Mathf.Round(this.FoodGrowthMultiplier * InvinGrowthMultiplier);
       UpdateScore(increase);
       GameManager.RemoveFood(other.gameObject.GetInstanceID());
       FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "FoodEaten");
-      Destroy(other.gameObject);
+	  
+	  // Check to see if the game object has a parent and if it's the food pellets object
+	  if (other.transform.parent != null && other.transform.parent.name == "FoodPellets")
+	  {
+		  other.gameObject.SetActive(false);
+		  GameObject spawner = GameObject.FindWithTag("Spawner");
+		  spawner.GetComponent<ProceduralSpawner>().foodCount -= 1;
+	  }
+	  else
+	  {
+		  // Must be a food object not instantiated by the procedural spawner (delete it)
+		  Destroy(other.gameObject);
+	  }
       this.foodEatenCount += 1;
     }
     else if (other.gameObject.tag == "SuperFood")
@@ -81,22 +101,32 @@ public class IntelligentAgent : MonoBehaviour
       GameManager.RemoveFood(other.gameObject.GetInstanceID());
       GameManager.RemoveSuperFood(other.gameObject.GetInstanceID());
       FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "SuperFoodEaten");
-      Destroy(other.gameObject);
+	  
+	  // Check to see if the game object has a parent and if it's the supers object
+	  if (other.transform.parent != null && other.transform.parent.name == "Supers")
+	  {
+		  GameObject spawner = GameObject.FindWithTag("Spawner");
+		  spawner.GetComponent<ProceduralSpawner>().superFoodCount -= 1;
+	  }
+      Destroy(other.gameObject); // this one can always be deleted regardless who instantiated it
       this.superFoodEatenCount += 1;
     }
     else if (other.gameObject.tag == "Enemy" || other.gameObject.tag == "Player")
     {
-      IntelligentAgent otherPlayer = other.gameObject.GetComponent<IntelligentAgent>();
-      int scoreDifference = this.Score - otherPlayer.getScore();
+      IntelligentAgent otherAgent = other.gameObject.GetComponent<IntelligentAgent>();
+      int scoreDifference = this.Score - otherAgent.getScore();
 
-      if (scoreDifference > 0 && !otherPlayer.isInvincible())
+      if (scoreDifference > 0 && !otherAgent.isInvincible())
       {
-        UpdateScore(otherPlayer.getScore());
-        AssimilateGenetics(otherPlayer);
-        Debug.Log(this.Name + " has eaten: " + otherPlayer.getName());
+        UpdateScore(otherAgent.getScore());
+        AssimilateGenetics(otherAgent);
+        Debug.Log(this.Name + " has eaten: " + otherAgent.getName());
         if (other.gameObject.tag == "Enemy")
         {
           GameManager.RemoveEnemy(other.gameObject.GetInstanceID());
+		  GameObject spawner = GameObject.FindWithTag("Spawner");
+		  spawner.GetComponent<PowerUpSpawn>().DeathGeneratedPowerUp();
+		  spawner.GetComponent<ProceduralSpawner>().enemyCount -= 1;
         }
         FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "EnemyEaten");
         if (other.gameObject.tag == "Player")
@@ -113,20 +143,10 @@ public class IntelligentAgent : MonoBehaviour
     }
     else if (other.gameObject.tag == "PowerUp")
     {
+	  GameObject spawner = GameObject.FindWithTag("Spawner");
+	  spawner.GetComponent<ProceduralSpawner>().powerUpCount -= 1;
       this.powerUpsCollected += 1;
     }
-  }
-
-  // Function to check if agent is invincible
-  public bool isInvincible()
-  {
-    return this.InvincibilityMode;
-  }
-
-  // Function to update if agent invincible status
-  public void setInvincible(bool setThis)
-  {
-    this.InvincibilityMode = setThis;
   }
 
   // Function to update radius
@@ -202,7 +222,7 @@ public class IntelligentAgent : MonoBehaviour
     if (this.Score > 1 && this.decayTimer >= this.decayDelta)
     {
       // Reduce score by one scaled unit and reset timer
-      //UpdateScore(reductionAmount);
+      // UpdateScore(reductionAmount);
       this.Score += reductionAmount; // saves computational time
       this.decayTimer = 0f;
     }
@@ -224,9 +244,8 @@ public class IntelligentAgent : MonoBehaviour
     float scoreDecayMax = 2f;
     this.ScoreDecayMultiplier = Mathf.Min(scoreDecayMax, Mathf.Abs(normalRandom(1f, 0.5f))); // mean: 1, std: 0.2
 
-    float arenaScale = GameObject.FindWithTag("Arena").GetComponent<ArenaSize>().ArenaRadius / 100f;
     float lockOnRadiusMin = 15f;
-    this.LockOnRadiusMultiplier = Mathf.Max(lockOnRadiusMin, arenaScale * Mathf.Abs(normalRandom(25f, 5f))); // mean: 20, std: 5
+    this.LockOnRadiusMultiplier = Mathf.Max(lockOnRadiusMin, Mathf.Abs(normalRandom(30f, 5f))); // mean: 30, std: 5
   }
 
   // Function to take on superior genetics of eaten agent
@@ -332,6 +351,12 @@ public class IntelligentAgent : MonoBehaviour
   public void setPowerUpSpeedMultiplier(float newMult)
   {
     this.PowerUpSpeedMultiplier = newMult;
+  }
+
+  // Setter method for Power Up invin growth multiplier
+  public void setInvinGrowthMultiplier(float newMult)
+  {
+    this.InvinGrowthMultiplier = newMult;
   }
 
   // Function to set the target of the agent
@@ -459,4 +484,70 @@ public class IntelligentAgent : MonoBehaviour
   {
     return this.activePowers;
   }
+
+  
+  // Function to check if agent is invincible
+  public bool isInvincible()
+  {
+    return this.InvincibilityMode;
+  }
+
+  // Function to check how many invincible power-ups
+  public void setActiveInvin(int num){
+    this.activeInvin = num;
+    if(num > 0){
+      this.InvincibilityMode = true;
+    }else{
+      this.InvincibilityMode = false;
+    }
+  }
+
+  public int getActiveInvin(){
+    return this.activeInvin;
+  }
+
+
+  // Function to check if agent has speed power-up
+  public bool isSpeed()
+  {
+    return this.SpeedMode;
+  }
+
+  // Function to check how many speed power-ups
+  public void setActiveSpeed(int num){
+    this.activeSpeed = num;
+    if(num > 0){
+      this.SpeedMode = true;
+    }else{
+      this.SpeedMode = false;
+    }
+  }
+
+  public int getActiveSpeed(){
+    return this.activeSpeed;
+  }
+
+  // Function to check if agent is Magnet
+  public bool isMagnet()
+  {
+    return this.MagnetMode;
+  }
+
+  // Function to check how many Magnet power-ups
+  public void setActiveMagnet(int num){
+    this.activeMagnet = num;
+    if(num > 0){
+      this.MagnetMode = true;
+    }else{
+      this.MagnetMode = false;
+    }
+  }
+
+  public int getActiveMagnet(){
+    return this.activeMagnet;
+  }
+  
 }
+
+
+

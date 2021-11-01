@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 4038944329464481080}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 32c309c798eb14ff2b5de6c0f4248048, type: 2}
+  - {fileID: 2100000, guid: 614c528daed6d12408ade0edeeb7c026, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -110,18 +110,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06e82a79d8dd5304ab79b6358e370e4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PowerUpType: 3
   SpeedPowerUpMult: 3
   duration: 24
   FoodMagnetScale: 7
   FoodMagnetSpeed: 1
+  InvinGrowthMult: 2
   SpeedEffect1: {fileID: 7703314129621319122, guid: 2cad1d93884f8444aba16bdaf992c6b4, type: 3}
   SpeedEffect2: {fileID: 5200362872464816308, guid: 7bc80832640ea0c458519e76df24b052, type: 3}
   FoodMagnet: {fileID: 3375488646298033171, guid: 01cc00d56e536a840a549900d84a816d, type: 3}
   SpeedMat: {fileID: 2100000, guid: a925a071234f64a9d94df40544c5abe8, type: 2}
   MagnetMat: {fileID: 2100000, guid: e933ff54de0a243df89e775a41256953, type: 2}
   InvincibleMat: {fileID: 2100000, guid: 32c309c798eb14ff2b5de6c0f4248048, type: 2}
-  PlayerMat: {fileID: 2100000, guid: 9543dda1a60184289b94a241a1ece687, type: 2}
-  EnemyMat: {fileID: 2100000, guid: 4de1db8743ca24192aa31cd8de78e6b3, type: 2}
 --- !u!114 &-3328643443480449416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,4 +136,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OrbitSpeed: 1
   OrbitClockwise: 1
-  RandomPath: 0
+  Moving: 0

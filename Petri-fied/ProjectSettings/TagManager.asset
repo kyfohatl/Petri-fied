@@ -11,6 +11,7 @@ TagManager:
   - SuperFood
   - PlayerBody
   - EnemyBody
+  - Spawner
   layers:
   - Default
   - TransparentFX

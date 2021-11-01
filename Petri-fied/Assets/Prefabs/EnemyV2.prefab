@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 7576402525422194166}
   - component: {fileID: 7576402525422194161}
   - component: {fileID: 7576402525422194160}
+  - component: {fileID: 4755121547967759976}
   m_Layer: 0
   m_Name: Avatar
   m_TagString: Enemy
@@ -161,9 +162,12 @@ MonoBehaviour:
   - {fileID: 7576402526391902165}
   - {fileID: 7576402526641594225}
   - {fileID: 7576402526055631407}
-  defaultMaterial: {fileID: 2100000, guid: 0690eedc2987d3a46aefbbc7fba5ae90, type: 2}
-  lockOnMaterial: {fileID: 2100000, guid: 00de4402228128e48ab5d18ed70cb254, type: 2}
-  powerUpMaterial: {fileID: 2100000, guid: 0ae71e61961c1094592edcab53e39967, type: 2}
+  defaultMaterialBase: {fileID: 2100000, guid: 0690eedc2987d3a46aefbbc7fba5ae90, type: 2}
+  lockOnMaterialBase: {fileID: 2100000, guid: 00de4402228128e48ab5d18ed70cb254, type: 2}
+  powerUpMaterialBase: {fileID: 2100000, guid: 0ae71e61961c1094592edcab53e39967, type: 2}
+  defaultMaterial: {fileID: 0}
+  lockOnMaterial: {fileID: 0}
+  powerUpMaterial: {fileID: 0}
   isLockedOn: 0
   scale: 15
   offset: {x: 5, y: 5, z: 5}
@@ -195,6 +199,19 @@ MonoBehaviour:
   bubbleEffectObject: {fileID: 8100340994805778769}
   movingEmissionRate: 5
   stationaryEmissionRate: 0.5
+--- !u!135 &4755121547967759976
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7576402525422194154}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.2
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7576402525499532589
 GameObject:
   m_ObjectHideFlags: 0

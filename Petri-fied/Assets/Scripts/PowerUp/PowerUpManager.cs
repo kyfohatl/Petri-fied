@@ -4,26 +4,38 @@ using UnityEngine;
 
 public class PowerUpManager : MonoBehaviour
 {
+  public int PowerUpType = 3;
   public float SpeedPowerUpMult = 5.0f;
   public float duration = 5f;
   private float BaseSpeedMult = 1f;
   public float FoodMagnetScale = 5f;
   public float FoodMagnetSpeed = 0.5f;
+  public float InvinGrowthMult = 2f;
+  private float BaseInvinGrowthMult = 2f;
   public GameObject SpeedEffect1;//Will call these effect from folder in final product
   public GameObject SpeedEffect2;
   public GameObject FoodMagnet;
-  private int PowerUpType;
   public Material SpeedMat;
   public Material MagnetMat;
   public Material InvincibleMat;
   // Start is called before the first frame update
   void Start()
   {
+    setType(PowerUpType);
+  }
+
+  public void setType(int setTo){
     //pick random effect for the powerup
     // 0 is Speed PowerUP
     // 1 is Food Magnet
     // 2 is Invincible
-    PowerUpType = Random.Range(0, 3);
+    // 3 is random
+    if(setTo == 3){
+      PowerUpType = Random.Range(0, 3);
+    }else{
+      PowerUpType = setTo;
+    }
+    
     //Change the visual of the PowerUp pick-up
     switch (PowerUpType)
     {
@@ -39,13 +51,6 @@ public class PowerUpManager : MonoBehaviour
     }
   }
 
-  // Update is called once per frame
-  void Update()
-  {
-
-
-  }
-
   void OnTriggerEnter(Collider other)
   {
     if (other.gameObject.tag == "Enemy" || other.gameObject.tag == "Player")
@@ -53,6 +58,10 @@ public class PowerUpManager : MonoBehaviour
       //Remove PowerUp object (visually)
       GetComponent<MeshRenderer>().enabled = false;
       GetComponent<Collider>().enabled = false;
+	  foreach (Transform child in transform)
+	  {
+		  child.gameObject.SetActive(false);
+	  }
 
       // Remove lock on target so agent no longer goes for same spot
       other.gameObject.GetComponent<IntelligentAgent>().setTarget(null);
@@ -159,19 +168,13 @@ public class PowerUpManager : MonoBehaviour
     // Get agent script of other body
     IntelligentAgent actor = other.gameObject.GetComponent<IntelligentAgent>();
     actor.setActivePowers(actor.getActivePowers() + 1);
+    actor.setActiveSpeed(actor.getActiveSpeed()+1);
 
     //change material
     SetMat(other.gameObject, "speed");
 
     //Speed power up
     actor.setPowerUpSpeedMultiplier(SpeedPowerUpMult);
-
-    // //Spawn visual effects
-    // Transform agentTransform = other.gameObject.transform;
-    // var effect1 = Instantiate(SpeedEffect1, agentTransform.position, agentTransform.rotation * Quaternion.Euler(0,180f,0), agentTransform);
-    // var effect2 = Instantiate(SpeedEffect2, agentTransform.position, agentTransform.rotation * Quaternion.Euler(0,180f,0), agentTransform);
-    // //move an effect forward
-    // effect1.transform.localPosition  =  effect1.transform.localPosition + new Vector3(0,0,5);
 
     //Active powerUp effects
     if (other.gameObject.tag == "Player")
@@ -189,20 +192,34 @@ public class PowerUpManager : MonoBehaviour
     // Remove PowerUp Effects if agent isn't destroyed
     if (other != null)
     {
-      actor.setPowerUpSpeedMultiplier(BaseSpeedMult);
+      
       actor.setActivePowers(actor.getActivePowers() - 1);
+      actor.setActiveSpeed(actor.getActiveSpeed() - 1);
+      
+      
+      
+      if(!actor.isSpeed()){
+        //Reset speed
+        actor.setPowerUpSpeedMultiplier(BaseSpeedMult);
+        
+        //Stop the visual effect
+        if (other.gameObject.tag == "Player")
+        {
+        other.gameObject.transform.Find("SpeedEffect1").gameObject.GetComponent<ParticleSystem>().Stop();
+        }
+        other.gameObject.transform.Find("SpeedEffect2").gameObject.GetComponent<ParticleSystem>().Stop();
+      }
+
+
       if (actor.getActivePowers() <= 0)
       {
+        //reset player visual look
         RevertMaterial(other.gameObject, "speed");
       }
       // Remove power up from dictionary and destroy
       // Destroy(effect1);
       // Destroy(effect2);
-      if (other.gameObject.tag == "Player")
-      {
-        other.gameObject.transform.Find("SpeedEffect1").gameObject.GetComponent<ParticleSystem>().Stop();
-      }
-      other.gameObject.transform.Find("SpeedEffect2").gameObject.GetComponent<ParticleSystem>().Stop();
+
     }
 
     // Remove power up from dictionary and destroy original power up clone object
@@ -216,6 +233,8 @@ public class PowerUpManager : MonoBehaviour
     // Get agent script of other body
     IntelligentAgent actor = other.gameObject.GetComponent<IntelligentAgent>();
     actor.setActivePowers(actor.getActivePowers() + 1);
+    actor.setActiveMagnet(actor.getActiveMagnet() + 1);
+    
 
     // Change material
     SetMat(other.gameObject, "magnet");
@@ -242,6 +261,7 @@ public class PowerUpManager : MonoBehaviour
     {
       Destroy(magnet); // can be now
       actor.setActivePowers(actor.getActivePowers() - 1);
+      actor.setActiveMagnet(actor.getActiveMagnet() - 1);
       if (actor.getActivePowers() <= 0)
       {
         RevertMaterial(other.gameObject, "magnet");
@@ -267,12 +287,14 @@ public class PowerUpManager : MonoBehaviour
     }
     IntelligentAgent actor = other.gameObject.GetComponent<IntelligentAgent>();
     actor.setActivePowers(actor.getActivePowers() + 1);
+    actor.setActiveInvin(actor.getActiveInvin() + 1);
+
+    actor.setInvinGrowthMultiplier(InvinGrowthMult);
 
     //Color objectColor;
     //Color originalColor = r.material.color;
     //objectColor = new Color(originalColor.r, originalColor.g, originalColor.b, 0.5f);
 
-    actor.setInvincible(true);
     FindObjectOfType<AudioManager>().CreateAndPlay(other.gameObject, "InvinPowerUP");
     SetMat(other.gameObject, "invincible");
     yield return new WaitForSeconds(duration);
@@ -308,8 +330,12 @@ public class PowerUpManager : MonoBehaviour
     // Remove PowerUp Effects if agent isnt destroyed
     if (other != null)
     {
-      actor.setInvincible(false);
       actor.setActivePowers(actor.getActivePowers() - 1);
+      actor.setActiveInvin(actor.getActiveInvin() - 1);
+
+      if(!actor.isInvincible()){
+        actor.setInvinGrowthMultiplier(BaseInvinGrowthMult);
+      }
       if (actor.getActivePowers() <= 0)
       {
         RevertMaterial(other.gameObject, "invincible");
