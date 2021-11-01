@@ -88,7 +88,7 @@ Shader "Unlit/LockedOnNoiseShader"
             fixed4 frag (vertOut i) : COLOR
             {
                 // Set the color to be the outline color
-                fixed4 col = _OutlineColor * 10;
+                fixed4 col = _OutlineColor * 45;
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;

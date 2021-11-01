@@ -100,7 +100,7 @@ Shader "Unlit/PowerupNoiseShader"
                     baseColor = _MagnetOutlineColor;
                 }
 
-                fixed4 col = baseColor * 10;
+                fixed4 col = baseColor * 45;
 
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
