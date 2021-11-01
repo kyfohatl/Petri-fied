@@ -81,28 +81,28 @@ MonoBehaviour:
     loop: 0
     source: {fileID: 0}
   - name: SpeedPowerUP
-    clip: {fileID: 0}
-    volume: 1
+    clip: {fileID: 8300000, guid: 4b674e75a7b68479ab1c39bbe88acc8d, type: 3}
+    volume: 0.5
     pitch: 1
-    spatialBlend: 1
+    spatialBlend: 0
     minDistance: 0.1
     maxDistance: 50
     loop: 0
     source: {fileID: 0}
   - name: MagnetPowerUP
-    clip: {fileID: 0}
-    volume: 1
+    clip: {fileID: 8300000, guid: 4b674e75a7b68479ab1c39bbe88acc8d, type: 3}
+    volume: 0.5
     pitch: 1
-    spatialBlend: 1
+    spatialBlend: 0
     minDistance: 0.1
     maxDistance: 50
     loop: 0
     source: {fileID: 0}
   - name: InvinPowerUP
-    clip: {fileID: 0}
-    volume: 1
+    clip: {fileID: 8300000, guid: 4b674e75a7b68479ab1c39bbe88acc8d, type: 3}
+    volume: 0.5
     pitch: 1
-    spatialBlend: 1
+    spatialBlend: 0
     minDistance: 0.1
     maxDistance: 50
     loop: 0
@@ -117,7 +117,7 @@ MonoBehaviour:
     loop: 0
     source: {fileID: 0}
   - name: InvalidName
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 6981d67a034b5384482683658cee26f1, type: 3}
     volume: 1
     pitch: 1
     spatialBlend: 0
