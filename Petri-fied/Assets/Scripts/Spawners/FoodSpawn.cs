@@ -70,6 +70,8 @@ public class FoodSpawn : SpawnerController
 	// Function to generate food, will try to spawn some food around the player first then randomly in arena
 	public IEnumerator GenerateFood()
 	{
+		// Initial wait before first spawn
+		yield return new WaitForSeconds(this.timeBetweenSpawns);
 		while(this.enabled)
 		{
 			// Limit the amount of food spawn to be the initial maximum subtract a multiplier of the log10Score

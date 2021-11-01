@@ -12,7 +12,7 @@ public class Enemy : IntelligentAgent
 	// Determination timer
 	private float determineTimer = 0f;
 	[SerializeField] private float AggressionMultiplier = 1f;
-
+	
 	// Start is called before the first frame update
 	void Start()
 	{
@@ -293,7 +293,7 @@ public class Enemy : IntelligentAgent
 		{
 			// Add an extra starting bonus to the enemy to help them reach high scores
 			int playerScore = this.Player.GetComponent<IntelligentAgent>().getScore();
-			int enemyStartingBonus = (int)Mathf.Round(UnityEngine.Random.Range(0.05f, 0.02f) * playerScore); // 1% to 2%
+			int enemyStartingBonus = (int)Mathf.Round(UnityEngine.Random.Range(0.05f, 0.025f) * playerScore); // 0.5% to 2.5%
 			UpdateScore(enemyStartingBonus);
 			ScaleToPlayer();
 		}

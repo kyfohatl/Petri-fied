@@ -26,6 +26,8 @@ public class SuperFoodSpawn : SpawnerController
 	// Function to generate food, will try to spawn some food around the player first then randomly in arena
 	public IEnumerator GenerateSuperFood()
 	{
+		// Initial wait before first spawn
+		yield return new WaitForSeconds(this.timeBetweenSpawns);
 		while(this.enabled)
 		{
 			// Decrease the spawn-rate by a subtraction of a multiple of the log10Score

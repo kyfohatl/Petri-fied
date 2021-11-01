@@ -18,6 +18,7 @@ public class EnemySpawn : SpawnerController
 	{
 		this.ProcSpawner = GameObject.FindWithTag("Spawner");
 		this.Arena = GameObject.FindWithTag("Arena");
+		getArenaDimensions();
 		if (this.initialMaximum != this.spawnLimit)
 		{
 			int larger = (int)Mathf.Max(this.initialMaximum, this.spawnLimit);
@@ -82,12 +83,11 @@ public class EnemySpawn : SpawnerController
 	// Funtion to determine the pair largest possible sphere that can fit in the spawn arena
 	public void GetOpposingSphere(Vector3 point, float boundingSphereRadius)
 	{
-		float arenaRadius = this.Arena.GetComponent<ArenaSize>().ArenaRadius;
-		Vector3 arenaOrigin = this.Arena.transform.position;
-		Vector3 vectorToPoint = point - arenaOrigin;
+		getArenaDimensions();
+		Vector3 vectorToPoint = point - this.arenaOrigin;
 		Vector3 direction = vectorToPoint.normalized;
 		float distToPoint = vectorToPoint.magnitude;
-		this.opposingSphereRadius = 0.5f * arenaRadius - (boundingSphereRadius - distToPoint);
+		this.opposingSphereRadius = 0.5f * this.arenaRadius - (boundingSphereRadius - distToPoint);
 		this.opposingSphereOrigin = point + (-direction * (boundingSphereRadius + this.opposingSphereRadius));
 	}
 	
@@ -100,6 +100,7 @@ public class EnemySpawn : SpawnerController
 	// Function to generate enemies throughout the scene
 	public IEnumerator GenerateEnemy()
 	{
+		// Initial wait before first spawn
 		yield return new WaitForSeconds(this.timeBetweenSpawns);
 		while (this.enabled)
 		{
@@ -113,7 +114,7 @@ public class EnemySpawn : SpawnerController
 			}
 			int currentEnemyCount = this.ProcSpawner.GetComponent<ProceduralSpawner>().enemyCount;
 			int randomSpawn = NewSpawnCount(currentEnemyCount);
-			randomSpawn = (int)Mathf.Max(1f, randomSpawn);
+			randomSpawn = (int)Mathf.Min(1f, randomSpawn);
 			// Always try to spawn one enemy completly randomly unless at spawn max already
 			for (int i = 0; i < randomSpawn; i++)
 			{

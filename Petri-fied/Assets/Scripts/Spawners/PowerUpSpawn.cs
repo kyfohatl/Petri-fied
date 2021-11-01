@@ -145,6 +145,8 @@ public class PowerUpSpawn : SpawnerController
 	// Function to generate power ups throughout the scene
 	public IEnumerator GeneratePowerUp()
 	{
+		// Initial wait before first spawn
+		yield return new WaitForSeconds(this.timeBetweenSpawns);
 		while (this.enabled)
 		{
 			int currentPowerUpCount = this.ProcSpawner.GetComponent<ProceduralSpawner>().powerUpCount;
