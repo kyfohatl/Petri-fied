@@ -34,7 +34,7 @@ public class Enemy : IntelligentAgent
 		float determineTimeMin = 1f;
 		
 		// If no current target, determine next
-		if (this.Target == null)
+		if (this.Target == null || !this.Target.activeInHierarchy)
 		{
 			DetermineTarget();
 		}
