@@ -13,6 +13,10 @@ public class Player : IntelligentAgent
   // UI elements
   public TMP_Text nameLabel;
   public TMP_Text timeLabel;
+  public TMP_Text peakScoreLabel;
+  public TMP_Text geneticModifierFood;
+  public TMP_Text geneticModifierSpeed;
+  public TMP_Text geneticModifierLockOn;
 
   // Called on start-up of game
   private void Awake()
@@ -41,9 +45,20 @@ public class Player : IntelligentAgent
     this.survivalTime += Time.deltaTime;
     DecayScore();
     UpdateSize();
+    UpdateGeneticsUI();
 
     // Lastly, update GUI to reflect updated data
     UpdateGUI();
+  }
+
+  void UpdateGeneticsUI()
+  {
+    if (geneticModifierFood && geneticModifierSpeed && geneticModifierLockOn)
+    {
+      geneticModifierFood.text = Math.Round(this.FoodGrowthMultiplier, 2).ToString();
+      geneticModifierSpeed.text = Math.Round(this.SpeedMultiplier, 2).ToString();
+      geneticModifierLockOn.text = Math.Round(this.LockOnRadiusMultiplier, 2).ToString();
+    }
   }
 
   // Function to update the GUI
@@ -53,8 +68,10 @@ public class Player : IntelligentAgent
     int minutes = TimeSpan.FromSeconds(this.survivalTime).Minutes;
     int seconds = TimeSpan.FromSeconds(this.survivalTime).Seconds;
 
+    this.peakScoreLabel.text = peakScore.ToString();
     this.timeLabel.text = hours.ToString() + ":" + minutes.ToString("D2") + ":" + seconds.ToString("D2");
   }
+
 
   // Override function to update the player radius and notify the game event handler
   public override void UpdateRadius()
@@ -66,36 +83,36 @@ public class Player : IntelligentAgent
   // Override function to set the player's target and change target's material properties
   public override void setTarget(GameObject obj)
   {
-	  if (obj != null)
-	  {
-		  FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "LockOn");
-		  float dist = Vector3.Distance(obj.gameObject.transform.position, transform.position);
-		  float travelTime = dist / (getSpeedMultiplier() * getPowerUpSpeedMultiplier() / transform.localScale.x);
-		  Debug.Log("Distance to target: " + dist + ", expected travel time: " + travelTime + " seconds");
+    if (obj != null)
+    {
+      FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "LockOn");
+      float dist = Vector3.Distance(obj.gameObject.transform.position, transform.position);
+      float travelTime = dist / (getSpeedMultiplier() * getPowerUpSpeedMultiplier() / transform.localScale.x);
+      Debug.Log("Distance to target: " + dist + ", expected travel time: " + travelTime + " seconds");
 
-		  string targetTag = obj.gameObject.tag;
-		  if (targetTag == "Enemy")
-		  {
-			  Debug.Log("Locked-onto enemy player: " + obj.GetComponent<IntelligentAgent>().getName());
-		  }
-		  else if (targetTag == "Food" || targetTag == "SuperFood")
-		  {
-			  Debug.Log("Locked-onto " + targetTag);
-		  }
-		  else if (targetTag == "PowerUp")
-		  {
-			  Debug.Log("Locked-onto Power-Up");
-		  }
-	  }
-	  else
-	  {
-		  // Target is being reset to null
-		  FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "FailedLockOn");
-	  }
-	  
-	  // Finally check if previous target needs material adjustment and set the new target
-	  GetComponent<LockOnController>().UpdateTargetMaterial(obj);
-	  this.Target = obj;
+      string targetTag = obj.gameObject.tag;
+      if (targetTag == "Enemy")
+      {
+        Debug.Log("Locked-onto enemy player: " + obj.GetComponent<IntelligentAgent>().getName());
+      }
+      else if (targetTag == "Food" || targetTag == "SuperFood")
+      {
+        Debug.Log("Locked-onto " + targetTag);
+      }
+      else if (targetTag == "PowerUp")
+      {
+        Debug.Log("Locked-onto Power-Up");
+      }
+    }
+    else
+    {
+      // Target is being reset to null
+      FindObjectOfType<AudioManager>().CreateAndPlay(this.gameObject, "FailedLockOn");
+    }
+
+    // Finally check if previous target needs material adjustment and set the new target
+    GetComponent<LockOnController>().UpdateTargetMaterial(obj);
+    this.Target = obj;
   }
 
   // Getter function for player survivial time

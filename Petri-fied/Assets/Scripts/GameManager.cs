@@ -42,12 +42,14 @@ public class GameManager : MonoBehaviour
   public void EndGameForPlayer()
   {
     // Don't animate fade out on death.
-    SceneManager.LoadScene(2);
-
-    GameManager.inst.SetGameOver(true);
-    FindObjectOfType<Player>().setPosition(new Vector3(-249.52f, 486, FindObjectOfType<Player>().Radius / 1.5f));
-    Camera.main.transform.rotation = Quaternion.Euler(20, -4, 0);
-    Camera.main.transform.position = new Vector3(-20, 8f, -10);
+    // SceneManager.LoadScene(2);
+    LevelLoader.Instance.LoadNextLevel(2, () =>
+    {
+      GameManager.inst.SetGameOver(true);
+      FindObjectOfType<Player>().setPosition(new Vector3(-249.52f, 486, -Player.transform.localScale.x * (Player.transform.localScale.x / 8)));
+      Camera.main.transform.rotation = Quaternion.Euler(20, -4, 0);
+      Camera.main.transform.position = new Vector3(-20, 8f, -10);
+    });
   }
 
   // Function for adding food to manager dictionary
@@ -160,23 +162,23 @@ public class GameManager : MonoBehaviour
       return null;
     }
 
-	// Declare output dictionary, to save time preallocate to the in Obj count
-	Dictionary<int, GameObject> visibleObjs = new Dictionary<int, GameObject>(objs.Count);
-	
+    // Declare output dictionary, to save time preallocate to the in Obj count
+    Dictionary<int, GameObject> visibleObjs = new Dictionary<int, GameObject>(objs.Count);
+
     foreach (var objClone in objs)
     {
-		bool isRendered = objClone.Value.GetComponent<MeshRenderer>().enabled;
-	  if (isRendered)
-	  {
-		  Vector3 screenPoint = Camera.main.WorldToViewportPoint(objClone.Value.transform.position);
-		  bool visibleToScreen = screenPoint.z > 0
-		  && screenPoint.x > 0 && screenPoint.x < 1
-		  && screenPoint.y > 0 && screenPoint.y < 1;
-		  if (visibleToScreen)
-		  {
-			  visibleObjs.Add(objClone.Key, objClone.Value);
-		  }
-	  }
+      bool isRendered = objClone.Value.GetComponent<MeshRenderer>().enabled;
+      if (isRendered)
+      {
+        Vector3 screenPoint = Camera.main.WorldToViewportPoint(objClone.Value.transform.position);
+        bool visibleToScreen = screenPoint.z > 0
+        && screenPoint.x > 0 && screenPoint.x < 1
+        && screenPoint.y > 0 && screenPoint.y < 1;
+        if (visibleToScreen)
+        {
+          visibleObjs.Add(objClone.Key, objClone.Value);
+        }
+      }
     }
 
     if (visibleObjs.Count == 0)
@@ -186,7 +188,7 @@ public class GameManager : MonoBehaviour
     }
     return visibleObjs;
   }
-  
+
   // Get all food in the world
   public Dictionary<int, GameObject> getFood()
   {

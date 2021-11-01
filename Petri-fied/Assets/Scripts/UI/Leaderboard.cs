@@ -18,6 +18,12 @@ public class Leaderboard : MonoBehaviour
 
   // Gameobjects
   public GameObject RowTemplate;
+  public GameObject PlayerRowTemplate;
+
+
+  // UI elements
+  public TMP_Text BigPlayerScoreLabel;
+  public TMP_Text TotalPlayersLabel;
 
   // List of agents in the game
   private List<GameObject> renderedRows;
@@ -88,14 +94,17 @@ public class Leaderboard : MonoBehaviour
         break;
       }
 
+
+      // Render the LeaderboardUIRow.
+      GameObject row = Instantiate(RowTemplate) as GameObject;
+
       // Check if it's a player row.
       if (agent.GetType().ToString().Equals("Player"))
       {
         playerIsInTopShown = true;
+        row = Instantiate(PlayerRowTemplate) as GameObject;
       }
 
-      // Render the LeaderboardUIRow.
-      GameObject row = Instantiate(RowTemplate) as GameObject;
       row.SetActive(true);
 
       // Apply top score styling if #1.
@@ -131,7 +140,7 @@ public class Leaderboard : MonoBehaviour
         if (agent.Equals(playerAgent))
         {
           // Render the LeaderboardUIRow.
-          GameObject row = Instantiate(RowTemplate) as GameObject;
+          GameObject row = Instantiate(PlayerRowTemplate) as GameObject;
           row.SetActive(true);
 
           // Add player styling to row.
@@ -148,6 +157,10 @@ public class Leaderboard : MonoBehaviour
         }
       }
     }
+    if (BigPlayerScoreLabel)
+      BigPlayerScoreLabel.text = playerRank.ToString();
+    if (TotalPlayersLabel)
+      TotalPlayersLabel.text = leaderboardAgents.Count.ToString();
   }
 
   /**
