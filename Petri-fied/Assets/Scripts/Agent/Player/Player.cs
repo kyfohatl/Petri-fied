@@ -67,12 +67,6 @@ public class Player : IntelligentAgent
     {
       powerUpUINullState.SetActive(false);
     }
-    Debug.Log("HAS SPEED BOOST");
-    Debug.Log(this.isSpeed());
-    Debug.Log("HAS MAGNET");
-    Debug.Log(this.isMagnet());
-    Debug.Log("HAS INVINC");
-    Debug.Log(this.isInvincible());
 
     // Choose which powerup ui elements should be visible.
     if (powerUpUISpeed)
