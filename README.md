@@ -96,6 +96,176 @@ public class firstPersonController : MonoBehaviour
 }
 ```
 
+## The Outline Shader
+Files involved:
+*  **Petri-fied/Assets/Shaders/LockOnOutline.shader**
+
+One of the things we quickly realized when creating a game with 6 degrees of freedom (DoF) in movement, is that coming up with a good control/camera scheme is hard, and there are many challenges involved. There are many professional games that do not do this well (space games, flight games, etc.), and coming up with clever solutions for the challenges of 6 DoF is key to making such a game fun.
+
+One such challenge was that, since the player character's forward movement is wherever the camera is pointing, that means that the player model blocks what is directly in front at the center of the screen. This issue becomes particularly noticeable when the player character grows larger in the late game and occupies a greater proportion of the screen: in such a situation, it becomes quite hard to aim for small things, like food particles, since the player cannot see directly in front.
+
+At the same time, we came up with a "lock-on" idea. We imagined that many would-be players of this game might want to play on their laptops, whilst dozing off in a lecture theatre somewhere, without a mouse. Locking on to targets would make the game much more accessible to players on trackpads. While we did create the necessary gameplay elements for locking on, we did not have any visual way of showing the player what they were locked onto.
+
+Thus we came up with the outline shader: we would create a shader which outlines around the selected target, shining around it and making it obvious that the player is locked onto it, as well as shining *through* things such as the player model, so that vision of it can never be obstructed.
+
+We start the shader in **LockOnOutline.shader** only defining vertex positions in the input structs to the vertex and fragment shader. This is because the position of the vertex is the only thing we care about for this shader, since we will pick a custom outline color:
+```c
+struct vertIn
+{
+float4 vertex : POSITION;
+};   
+
+struct vertOut
+{
+float4 vertex : POSITION;
+};
+```
+We will also define some properties to make the outline more configurable from the editor. We will define an outline color, as well as a minimum and maximum outline thickness. The min and max thickness parameters allow us to animate a "pulsating" outline effect around the target.
+```js
+_OutlineColor ("Outline Color", Color) = (0,0,0,1)
+_MinOutlineThickness ("Min Outline Thickness", Range(1.05, 3.0)) = 1.1
+_MaxOutlineThickness ("Max Outline Thickness", Range(1.05, 3.0)) = 1.2
+```
+If we wanted to have a static outline, we could simply multiply the position of each vertex in the vertex shader by some multiplier. This would have the effect of displacing all points on the mesh proportional to the multiplier. For example, multiplying all vertices by 0.5 would half their distance from the center of the mesh, whilst multiplying them by 2 would double it. This can be proven quite easily in 2D, and hence is shown below. The same concept extrapolates to 3D:
+<p align="center">
+  <img src="Images/proof.png">
+</p>
+
+In our case, since we just want an outline, the static multiplier would more subtle, such as 1.1:
+```c
+v.vertex.xyz *= 1.1f;
+```
+However, since we want to pulsate the outline, we will use this expression instead:
+```c
+v.vertex.xyz *= _MinOutlineThickness + ((_MaxOutlineThickness - _MinOutlineThickness) * (_SinTime.w + 1.0) / 2.0);
+```
+```_MaxOutlineThickness - _MinOutlineThickness``` gives us the difference between the min and max thicknesses, whilst ```(_SinTime.w + 1.0) / 2.0)``` gives us the a float that varies between 0 and 1, depending on the time (*since the Sin function outputs between -1 and 1, adding 1 to it and then halving the result would map that to the range 0 to 1*). Multiplying these two expressions together gives us a float that fluctuates between the minimum of 0 and the maximum of the difference between the min and max thickness.
+
+Adding the above result to ```_MinOutlineThickness``` gives us a float fluctuating between the minimum thickness and the maximum thickness parameters. We can now uses this float as a multiplier to our vertex positions make the outline grow and shrink between the given minimum and maximum outline thicknesses.
+
+Once we have displaced our vertex, we need to transform its position from what it is currently, in model space, into the game world (view space), and then project that 3D position in the game world onto our 2D screen. To do so, we can multiply the current position of the vertex by the model, view and projection matrices, which we can do in one step using the built-in unity ```UnityObjectToClipPos()``` function:
+```c
+o.vertex = UnityObjectToClipPos(v.vertex);
+```
+
+In the fragment shader, we can simply output the given ```_OutlineColor``` parameter to get the desired outline color:
+```c
+fixed4  frag (vertOut i) : COLOR
+{
+fixed4 col = _OutlineColor;
+return col;
+}
+```
+<p align="center">
+  <img src="Gifs/pulsating.gif">
+</p>
+
+Ok, we got the pulsating effect, but the result is not actually an outline. We are simply changing the color of the original object, and the making its vertices grow and shrink between two parameters. To make the effect an outline, we will need to create multiple passes, as well as changing some Shaderlab settings.
+
+First, we will define a main color (*and texture if we want to use textures in the future*) property, which we will use to change the color of the main object itself:
+```js
+_MainTex ("Texture", 2D) = "white" {}
+_MainColor ("Main Color", Color) = (0.5,0.5,0.5,1)
+```
+Then we will abstract the previous shader code into a pass, and at the top of the pass we will turn the **ZWrite** Shaderlab setting off:
+```c
+Pass
+{
+	ZWrite off
+	...rest of code
+}
+```
+Turning **ZWrite** off means that z-buffer depth information will not be stored for this pass, and is typically used for transparent objects. When z-depth information is not stored, objects behind (depth-wise) the outline will still be rendered over it. This means that we can draw over this outline in a subsequent pass and not have to worry about out outline obstructing the main object within the outline.
+
+Now in the next pass, we will render the object itself, without displacing its vertices. We will simply pass the main color and texture properties in, and render the object over the outline. Since this pass is placed *after* the outline pass, and the fact that we do not store depth buffer information for the previous pass, our main object will be rendered over the outline.
+
+The actual rendering of the object is simply Shaderlab boiler plate code to make sure it works correctly with the lighting, with the only key part being that we turn **ZWrite** back on since we do want our main object's z-depth to be taken into account when rendering (*so that it will be rendered in front of other objects when it is in front of them with respect to the camera*). Since there is no vertex or fragment shader in this pass, and it is not in HLSL, it will not be explained in more detail:
+```c
+Pass {
+	// We need to store z-buffer depth information so that the actual object renders over the
+	// outline object
+	ZWrite on
+	Lighting on
+
+	Material {
+		Diffuse[_MainColor]
+		Ambient[_MainColor]
+	}
+
+	SetTexture[_MainTex] {
+		ConstantColor[_MainColor]
+	}
+	  
+	SetTexture[_MainTex] {
+		Combine previous * primary DOUBLE
+	}
+}
+```
+And now our actual object renders over the outline. When given min and max outline properties that are over 1 (1.05 and 1.15 in this case), the outline will appear around our object, since that is the only part of the outline which is not overwritten by the main object itself:
+<p align="center">
+  <img src="Gifs/main-over-outline.gif">
+</p>
+
+Ok, we have the outline, but as mentioned at the start, we also want our outline shader to render through other objects, when the main object itself is obstructed. When an object is obstructed from the camera (as determined by z-depth information) the obstructing object will be rendered over it. So when our object goes behind the wall, we only see the wall, and not the object anymore. Since we do not even store the z-depth information for our outline, everything will be rendered over it, including objects behind it (from the camera's perspective).
+
+To address this issue, we can use the Shdarlab **ZTest** setting. By setting **ZTest** to **Always**, we ensure that the rendering engine will not perform z-depth testing on the geometry for this shader, ensuring that it is always rendered. This will means that the outline shader will render *through* other objects. However, since **ZWrite** is off and since the next pass will draw the main object itself, the main object will still render over the outline.
+```c
+ZTest always
+```
+So let us summarize the chain of events for better clarity:
+* In the first pass, we draw the outline itself and set **ZTest** to *Always*, to make sure that it renders through everything.
+* In the second pass, we render the object itself. Since **ZWrite** was off in the first pass, the second pass will overwrite the first pass, drawing the main objects on top of the outline.
+* However, when the main object is obstructed by something, such as the player model, it will not be rendered (since **ZTest** is not set to *Always* in the second pass), which will means that the outline will be rendered instead, which will be visible through the obstructing object, giving us a very cool targeting effect.
+<p align="center">
+  <img src="Gifs/visible-through-object.gif">
+</p>
+
+Ok we got the basic effect, but let's make it more interesting. When the object is obstructed and the outline is shining through things, let's also add a hollow inside part for where the object used to be. To do this, we can simply add a pass between our outline pass and the main object pass. This intermediate pass will be similar to the outline pass in that we will keep **ZWrite** *off* and **ZTest** to *Always*:
+```c
+Pass {
+	ZWrite off
+	ZTest always
+	...
+```
+However, we will not change the position of the vertices. This will ensure that they are rendered at exactly the same place the main object will be rendered. When the main object is not obstructed, this inside part will not be shown, otherwise it will render through other objects.
+```c
+vertOut vert (vertIn v) {
+	vertOut o;
+	o.vertex = UnityObjectToClipPos(v.vertex);
+	return o;
+}
+```
+We can then define a property for the inside color:
+```c
+_InsideColor ("Inside Color", Color) = (0,0,0,1)
+```
+And then return that color in the fragment shader of the pass:
+```c
+fixed4  frag(vertOut i) : COLOR {
+	fixed4 col = _InsideColor;
+	return col;
+}
+```
+And now we get our cool effect:
+<p align="center">
+  <img src="Gifs/hollow-inside-outline.gif">
+</p>
+
+Almost done. Let's add one more interesting feature: shining outline, or bloom. Now there is a way to handle bloom purely from a shader, which looks great but is quite a bit more work. We can cheat and achieve a similar effect with significantly less work. Since we are not using bloom for anything else in the scene, we can simply create a postprocessing volume in unity, then set the bloom threshold to be higher than 1; say 2. This means that ordinarily objects will not be affected by bloom, unless their color intensity reaches 2. We can then add a multiplier to our returned color for the outline pass in the fragment shader, to ensure that the color intensity is over 1, and our outline will be affected by bloom:
+```c
+fixed4 col = _OutlineColor * 10;
+```
+<p align="center">
+  <img src="Gifs/bloom-outline.gif">
+</p>
+
+The shader here was inspired by the following sources:
+* *Shader - Smooth Outline* youtube.com/watch?v=SlTkBe4YNbo
+* *Outlined Diffuse Shader Fixed for Unity 5.6* https://github.com/Shrimpey/Outlined-Diffuse-Shader-Fixed
+* *SILHOUETTE Highlight / Outline / Glow Diffuse Shader in Unity* https://www.youtube.com/watch?v=00qMZlacZQo
+* *Stack Overflow* https://stackoverflow.com/questions/57267289/how-to-make-3d-object-visible-behind-wall-but-invisible-if-behind-wall-and-unde
+* https://www.reddit.com/r/Unity3D/comments/3q3whw/need_to_make_a_shader_that_produces_a_silhouette/
+
 ## The Surface Noise Shader
 Files involved:
 * **Petri-fied/Assets/Shaders/PerlinNoise.cginc**
@@ -349,6 +519,8 @@ float perlinNoise = perlin3d(_Scale * v.vertex + float3(_Time.y + _OffsetX, _Off
 v.vertex *= perlinNoise + _AdditionalOffset;
 o.vertex = UnityObjectToClipPos(v.vertex);
 ```
+*Note that this part also involves multiplying each vertex by the MVP matrix to get them in to clip space, using the ```UnityObjectToClipPos()```. However this step was explained in the outline shader section, so see that section for the explanation.*
+
 Furthermore, to give a better appearance of depth to our shader, we can pass the Perlin value down to the fragment shader. We will do so by using the TEXCOORD0 channel defined in the vertex shader output struct:
 ```c
 struct vertOut
@@ -388,4 +560,27 @@ And now we can display "organic-looking" objects on screen:
   <img src="Gifs/surfaceNoise-shader.gif">
 </p>
 
+The shader work displayed here was inspired by the following:
+* *Perlin Noise: A Procedural Generation Algorithm* https://rtouti.github.io/graphics/perlin-noise-algorithm
+* *Stefan Gustavson's Simplex Noise Demystified, Linkoping University 2005* https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
 
+## Credits
+Perlin Noise: A Procedural Generation Algorithm
+https://rtouti.github.io/graphics/perlin-noise-algorithm
+
+Stefan Gustavson's *Simplex Noise Demystified*, Linkoping University 2005
+https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
+
+Shader - Smooth Outline
+youtube.com/watch?v=SlTkBe4YNbo
+
+Outlined Diffuse Shader Fixed for Unity 5.6
+https://github.com/Shrimpey/Outlined-Diffuse-Shader-Fixed
+
+SILHOUETTE Highlight / Outline / Glow Diffuse Shader in Unity
+https://www.youtube.com/watch?v=00qMZlacZQo
+
+Stack Overflow
+https://stackoverflow.com/questions/57267289/how-to-make-3d-object-visible-behind-wall-but-invisible-if-behind-wall-and-unde
+
+https://www.reddit.com/r/Unity3D/comments/3q3whw/need_to_make_a_shader_that_produces_a_silhouette/
