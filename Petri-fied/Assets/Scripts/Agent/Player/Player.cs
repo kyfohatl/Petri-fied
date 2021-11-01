@@ -17,6 +17,10 @@ public class Player : IntelligentAgent
   public TMP_Text geneticModifierFood;
   public TMP_Text geneticModifierSpeed;
   public TMP_Text geneticModifierLockOn;
+  public GameObject powerUpUISpeed;
+  public GameObject powerUpUIMagnet;
+  public GameObject powerUpUIInvincibility;
+  public GameObject powerUpUINullState;
 
   // Called on start-up of game
   private void Awake()
@@ -46,9 +50,64 @@ public class Player : IntelligentAgent
     DecayScore();
     UpdateSize();
     UpdateGeneticsUI();
+    UpdateActivePowerUpsUI();
 
     // Lastly, update GUI to reflect updated data
     UpdateGUI();
+  }
+
+  void UpdateActivePowerUpsUI()
+  {
+    // Show null state if no powers
+    if (!this.isInvincible() && !this.isSpeed() && !this.isMagnet())
+    {
+      powerUpUINullState.SetActive(true);
+    }
+    else
+    {
+      powerUpUINullState.SetActive(false);
+    }
+    Debug.Log("HAS SPEED BOOST");
+    Debug.Log(this.isSpeed());
+    Debug.Log("HAS MAGNET");
+    Debug.Log(this.isMagnet());
+    Debug.Log("HAS INVINC");
+    Debug.Log(this.isInvincible());
+
+    // Choose which powerup ui elements should be visible.
+    if (powerUpUISpeed)
+    {
+      if (this.isSpeed())
+      {
+        powerUpUISpeed.SetActive(true);
+      }
+      else
+      {
+        powerUpUISpeed.SetActive(false);
+      }
+    }
+    if (powerUpUIMagnet)
+    {
+      if (this.isMagnet())
+      {
+        powerUpUIMagnet.SetActive(true);
+      }
+      else
+      {
+        powerUpUIMagnet.SetActive(false);
+      }
+    }
+    if (powerUpUIInvincibility)
+    {
+      if (this.isInvincible())
+      {
+        powerUpUIInvincibility.SetActive(true);
+      }
+      else
+      {
+        powerUpUIInvincibility.SetActive(false);
+      }
+    }
   }
 
   void UpdateGeneticsUI()

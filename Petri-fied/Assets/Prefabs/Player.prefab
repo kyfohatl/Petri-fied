@@ -583,6 +583,10 @@ MonoBehaviour:
   geneticModifierFood: {fileID: 0}
   geneticModifierSpeed: {fileID: 0}
   geneticModifierLockOn: {fileID: 0}
+  powerUpUISpeed: {fileID: 0}
+  powerUpUIMagnet: {fileID: 0}
+  powerUpUIInvincibility: {fileID: 0}
+  powerUpUINullState: {fileID: 0}
 --- !u!114 &8850037745045172407
 MonoBehaviour:
   m_ObjectHideFlags: 0
