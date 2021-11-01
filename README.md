@@ -561,8 +561,8 @@ And now we can display "organic-looking" objects on screen:
 </p>
 
 The shader work displayed here was inspired by the following:
-* Perlin Noise: A Procedural Generation Algorithm https://rtouti.github.io/graphics/perlin-noise-algorithm
-* Stefan Gustavson's *Simplex Noise Demystified*, Linkoping University 2005 https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
+* *Perlin Noise: A Procedural Generation Algorithm* https://rtouti.github.io/graphics/perlin-noise-algorithm
+* *Stefan Gustavson's Simplex Noise Demystified, Linkoping University 2005* https://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
 
 ## Credits
 Perlin Noise: A Procedural Generation Algorithm
