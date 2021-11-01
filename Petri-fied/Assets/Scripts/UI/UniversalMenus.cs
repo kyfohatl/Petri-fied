@@ -27,7 +27,8 @@ public class UniversalMenus : MonoBehaviour
   public void QuitGame()
   {
     Debug.Log("Quit Game");
-    Application.Quit();
+    pauseMenuUi.SetActive(false);
+    GameManager.inst.EndGameForPlayer();
   }
 
   public void Resume()

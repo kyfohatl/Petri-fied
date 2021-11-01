@@ -15,7 +15,7 @@ public class IntelligentAgent : MonoBehaviour
   public int Score = 1;
   public float Radius = 1f;
   public float LockOnRadius = 10f;
-  private int peakScore = 1;
+  public int peakScore = 1;
   private float initialisationTime;
 
   // Player statistics tracking
@@ -32,10 +32,10 @@ public class IntelligentAgent : MonoBehaviour
 
   // Agent genetic modifiers
   [SerializeField] private float GeneticGrowthMultiplier = 0.5f;
-  [SerializeField] private float FoodGrowthMultiplier = 1f;
+  [SerializeField] public float FoodGrowthMultiplier = 1f;
   [SerializeField] private float ScoreDecayMultiplier = 1f;
-  [SerializeField] private float SpeedMultiplier = 1f;
-  [SerializeField] private float LockOnRadiusMultiplier = 15f;
+  [SerializeField] public float SpeedMultiplier = 1f;
+  [SerializeField] public float LockOnRadiusMultiplier = 15f;
 
   // Size update parameters
   private float sizeUpdateDuration = 1f; // default: 1 second

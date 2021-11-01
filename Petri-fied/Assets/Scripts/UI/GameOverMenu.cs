@@ -46,8 +46,8 @@ public class GameOverMenu : MonoBehaviour
     Destroy(GameObject.Find("Leaderboard"));
     Destroy(GameObject.Find("UniversalMenus"));
     Destroy(GameObject.Find("Player"));
-	Destroy(GameObject.FindWithTag("Arena"));
-	Destroy(GameObject.Find("AudioManager"));
+    Destroy(GameObject.FindWithTag("Arena"));
+    Destroy(GameObject.Find("AudioManager"));
     Destroy(GameObject.Find("UICanvas"));
     GameObject.Find("Main Camera").name = "Old Camera";
     LevelLoader.Instance.LoadNextLevel(0);

@@ -24,8 +24,6 @@ public class LeaderboardUIRow : MonoBehaviour
   {
     if (isPlayer)
     {
-      nameText.color = new Color32(6, 234, 138, 255);
-      scoreText.color = new Color32(6, 234, 138, 255);
       rankText.color = new Color32(6, 234, 138, 255);
     }
     if (isTopScore || isPlayer)

@@ -133,6 +133,7 @@ MonoBehaviour:
   Score: 1
   Radius: 1
   LockOnRadius: 10
+  peakScore: 1
   InvincibilityMode: 0
   GeneticGrowthMultiplier: 0.5
   FoodGrowthMultiplier: 1
