@@ -95,66 +95,6 @@ Shader "Unlit/LockedOnNoiseShader"
             ENDCG
         }
 
-        // The inside "hollow" pass
-        // For this one, we do not scale the vertices, so that by default the hollow inside part is 
-        // overriden bythe next pass which draws the object itself
-        // However, when the object is obstructed, this "hollow inside" effect will show
-        // Pass {
-        //     // Similar to the outline pass, we do not want to store depth info so that we can render the 
-        //     // main object over this effect
-        //     ZWrite off
-        //     // Ensure it is always drawn, excpet when overriden by the object itself
-        //     ZTest always
-
-        //     CGPROGRAM
-        //     #pragma vertex vert
-        //     #pragma fragment frag
-        //     // make fog work
-        //     #pragma multi_compile_fog
-
-        //     #include "UnityCG.cginc"
-        //     #include "PerlinNoise.cginc"
-
-        //     float4 _InsideColor;
-        //     float _OffsetX;
-        //     float _OffsetY;
-        //     float _Scale;
-        //     float _AdditionalOffset;
-
-        //     struct vertIn {
-        //         float4 vertex : POSITION;
-        //     };
-
-        //     struct vertOut {
-        //         float4 vertex : POSITION;
-        //         // This sets the fogcoord which is needed for the fog effect
-        //         UNITY_FOG_COORDS(1)
-        //     };
-
-        //     vertOut vert (vertIn v) {
-        //         float perlinNoise = perlin3d(_Scale * v.vertex + float3(_Time.y + _OffsetX, _OffsetY, 0.0f));
-
-        //         v.vertex.xyz *= (perlinNoise + _AdditionalOffset);
-
-        //         vertOut o;
-        //         // Translate vertex to world space
-        //         o.vertex = UnityObjectToClipPos(v.vertex);
-        //         // Fog effect
-        //         UNITY_TRANSFER_FOG(o,o.vertex);
-
-        //         return o;
-        //     }
-
-        //     fixed4 frag(vertOut i) : COLOR {
-        //         // Set the color to be the inside color
-        //         fixed4 col = _InsideColor;
-        //         // apply fog
-        //         UNITY_APPLY_FOG(i.fogCoord, col);
-        //         return col;
-        //     }
-        //     ENDCG
-        // }
-
         // The surface noise pass
         Pass
         {
