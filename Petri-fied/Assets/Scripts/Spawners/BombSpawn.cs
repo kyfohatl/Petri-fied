@@ -44,6 +44,8 @@ public class BombSpawn : SpawnerController
 	// Function to generate food bomb
 	public IEnumerator GenerateBomb()
 	{
+		// Initial wait before first spawn
+		yield return new WaitForSeconds(this.timeBetweenSpawns);
 		while (this.enabled)
 		{
 			int spawnCount = Random.Range(this.spawnMin, this.spawnMax + 1);
