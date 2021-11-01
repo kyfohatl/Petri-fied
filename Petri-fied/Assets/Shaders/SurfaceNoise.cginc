@@ -13,6 +13,7 @@ float _AdditionalOffset;
 float _IsInvincible;
 float _IsSpeed;
 float _IsMagnet;
+Vector _DefaultColorMult;
 
 struct vertIn
 {
@@ -41,7 +42,8 @@ vertOut vert (vertIn v)
 
 fixed4 frag (vertOut i) : SV_Target
 {
-    fixed4 color = fixed4(i.noise.x / 1.5f, i.noise.x / 1.5f , i.noise.x / 1.5f, 1);
+    fixed4 color = fixed4(i.noise.x * _DefaultColorMult.x, i.noise.x * _DefaultColorMult.y , i.noise.x * _DefaultColorMult.z, 1);
+    //fixed4(i.noise.x / 1.5f, i.noise.x / 1.5f , i.noise.x / 1.5f, 1);
 
     if (_IsInvincible > 0.1) {
         color = fixed4(i.noise.x / 1.5f, (sin(_Time.w * 1.7f) + 1.0f) / 2.5f  , i.noise.x / 1.5f, 1);

@@ -15,6 +15,7 @@ Shader "Unlit/LockedOnNoiseShader"
         _IsInvincible ("Invicibility Effect", Float) = 0.0
         _IsSpeed ("Speed Powerup Effect", Float) = 0.0
         _IsMagnet ("Magnet Powerup Effect", Float) = 0.0
+        _DefaultColorMult ("The Multiplier For Each RGB Of The Default Color", Vector) = (0.666, 0.666, 0.666, 0)
     }
     SubShader
     {
