@@ -182,7 +182,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabToSpawn: {fileID: 888029972118381692, guid: 657b1c4688f5348f6a7f41f8bee8a7af, type: 3}
   timeBetweenSpawns: 1
-  spawnMin: 3
+  spawnMin: 2
   spawnMax: 8
   spawnLimit: 300
   spawnAroundPlayerMax: 4
@@ -228,7 +228,7 @@ MonoBehaviour:
   spawnLimit: 170
   SuperFoodAtCore: {fileID: 4959743416389808174, guid: 0e282f824d06d4ddfab66284f3392835, type: 3}
   PowerAtCore: {fileID: 1109749477207911808, guid: c2a83d51ccade48cd85cb74c881ce1bf, type: 3}
-  probabilityPow: 0.99
+  probabilityPow: 0.2
   innerSphereCount: 15
   outerSphereCount: 30
   innerRadius: 4
